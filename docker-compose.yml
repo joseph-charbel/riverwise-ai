@@ -1,0 +1,18 @@
+services:
+  server:
+    build:
+      context: ./server
+    ports:
+      - "8000:8000"
+    environment:
+      - CORS_ORIGINS=http://localhost:3000
+    env_file:
+      - ./server/.env
+
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
