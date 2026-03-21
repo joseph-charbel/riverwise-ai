@@ -43,6 +43,28 @@ export class SceneManager {
     // Build and fade in new scene
     const scene = new Scene(config, this.infoPanel);
     await scene.init();
+
+    // Prefetch all info hotspot content in one batch request
+    const infoHotspots = config.hotspots.filter((h) => h.type === "info");
+    if (infoHotspots.length > 0) {
+      const prompts: Record<string, string> = {};
+      for (const h of infoHotspots) {
+        if ("body" in h) prompts[h.id] = h.body as string;
+      }
+      fetch("/api/dummy-invokes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompts }),
+      })
+        .then((res) => res.json())
+        .then((data: { results: Record<string, string> }) => {
+          scene.applyPrefetchedContent(data.results);
+        })
+        .catch(() => {
+          // Prefetch failed — hotspots will fall back to individual on-demand calls
+        });
+    }
+
     scene.container.alpha = 0;
     this.app.stage.addChildAt(scene.container, 0);
 

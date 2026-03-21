@@ -8,6 +8,7 @@ export class InfoHotspot extends Hotspot {
   private body: string;
   private panel: InfoPanel;
   private sceneId: string;
+  private prefetchedContent: string | null = null;
 
   constructor(config: InfoHotspotConfig, panel: InfoPanel, sceneId: string) {
     super(config);
@@ -17,14 +18,23 @@ export class InfoHotspot extends Hotspot {
     this.sceneId = sceneId;
   }
 
+  setPrefetchedContent(content: string): void {
+    this.prefetchedContent = content;
+  }
+
   protected debugColor(): number {
     return 0xffdd44;
   }
 
   execute(): void {
-    this.panel.show(this.title, "Loading...");
     eventBus.emit("info:viewed", { sceneId: this.sceneId, hotspotId: this.config.id });
 
+    if (this.prefetchedContent !== null) {
+      this.panel.show(this.title, this.prefetchedContent);
+      return;
+    }
+
+    this.panel.show(this.title, "Loading...");
     fetch("/api/dummy-invoke", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

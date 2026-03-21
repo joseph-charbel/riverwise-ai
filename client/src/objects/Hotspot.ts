@@ -143,6 +143,10 @@ export abstract class Hotspot {
 
   abstract execute(): void;
 
+  get id(): string {
+    return this.config.id;
+  }
+
   destroy(): void {
     if (this.animFrameId) cancelAnimationFrame(this.animFrameId);
     this.hitGraphic.removeAllListeners();

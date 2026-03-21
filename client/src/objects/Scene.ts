@@ -3,6 +3,7 @@ import type { SceneConfig } from "../types/schemas.ts";
 import type { InfoPanel } from "../ui/InfoPanel.ts";
 import { createHotspot } from "./HotspotFactory.ts";
 import { Hotspot } from "./Hotspot.ts";
+import { InfoHotspot } from "./InfoHotspot.ts";
 import { StateSwapHotspot } from "./StateSwapHotspot.ts";
 import { AnimationHotspot } from "./AnimationHotspot.ts";
 import { eventBus } from "../core/EventBus.ts";
@@ -61,6 +62,17 @@ export class Scene {
 
       hotspot.addTo(this.container);
       this.hotspots.push(hotspot);
+    }
+  }
+
+  applyPrefetchedContent(results: Record<string, string>): void {
+    for (const hotspot of this.hotspots) {
+      if (hotspot instanceof InfoHotspot) {
+        const content = results[hotspot.id];
+        if (content !== undefined) {
+          hotspot.setPrefetchedContent(content);
+        }
+      }
     }
   }
 
