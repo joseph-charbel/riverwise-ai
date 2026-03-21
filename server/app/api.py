@@ -1,10 +1,12 @@
+from typing import Dict
+
 import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from app.index import dummy_invoke
+from app.index import dummy_invoke, dummy_invokes
 
 app = FastAPI(title="Backend API")
 
@@ -33,10 +35,24 @@ def health():
     return {"status": "ok"}
 
 
+class DummyInvokesRequest(BaseModel):
+    prompts: Dict[str, str]
+
+
+class DummyInvokesResponse(BaseModel):
+    results: Dict[str, str]
+
+
 @app.post("/api/dummy-invoke", response_model=DummyInvokeResponse)
-def api_dummy_invoke(request: DummyInvokeRequest):
-    response = dummy_invoke(request.prompt)
+async def api_dummy_invoke(request: DummyInvokeRequest):
+    response = await dummy_invoke(request.prompt)
     return DummyInvokeResponse(content=response.content)
+
+
+@app.post("/api/dummy-invokes", response_model=DummyInvokesResponse)
+async def api_dummy_invokes(request: DummyInvokesRequest):
+    responses = await dummy_invokes(request.prompts)
+    return DummyInvokesResponse(results={key: msg.content for key, msg in responses.items()})
 
 
 if __name__ == "__main__":

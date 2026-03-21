@@ -1,3 +1,5 @@
+import asyncio
+from typing import Dict
 from app.ai.model import Model
 from app.logging_config import get_logger
 from langchain_core.messages import AIMessage
@@ -9,9 +11,15 @@ In Nepal, the intensification of agriculture to meet the needs of a growing popu
 """
 
 
-def dummy_invoke(prompt: str):
+async def dummy_invoke(prompt: str):
         content = f"DUMMY LOGIC\n{prompt}\nDUMMY LOGIC"
         return AIMessage(content=content)
+
+
+async def dummy_invokes(prompts: Dict[str, str]):
+        keys = list(prompts.keys())
+        results = await asyncio.gather(*[dummy_invoke(prompts[key]) for key in keys])
+        return dict(zip(keys, results))
 
 
 def test() -> None:
