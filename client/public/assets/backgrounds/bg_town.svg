@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#87CEEB"/>
+      <stop offset="100%" stop-color="#E0F7FA"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#sky)"/>
+  <rect y="380" width="960" height="160" fill="#7CB342"/>
+  <rect x="200" y="250" width="180" height="130" fill="#795548" rx="4"/>
+  <rect x="250" y="290" width="40" height="50" fill="#4FC3F7"/>
+  <rect x="310" y="290" width="40" height="50" fill="#4FC3F7"/>
+  <rect x="270" y="340" width="30" height="40" fill="#5D4037"/>
+  <rect x="680" y="200" width="120" height="180" fill="#8D6E63" rx="4"/>
+  <rect x="710" y="240" width="60" height="80" fill="#FFCC02"/>
+  <text x="720" y="290" font-family="Arial" font-size="12" fill="#333">CAFE</text>
+  <rect x="40" y="320" width="130" height="60" fill="#4DB6AC" rx="8" opacity="0.7"/>
+  <text x="65" y="355" font-family="Arial" font-size="14" fill="white">→ River</text>
+  <circle cx="480" cy="200" r="8" fill="#FFF176"/>
+  <rect x="476" y="208" width="8" height="120" fill="#9E9E9E"/>
+  <text x="380" y="500" font-family="Arial" font-size="20" fill="#333" opacity="0.5">Town Center</text>
+</svg>

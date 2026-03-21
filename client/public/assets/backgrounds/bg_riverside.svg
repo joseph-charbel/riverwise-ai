@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540">
+  <defs>
+    <linearGradient id="water" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1565C0"/>
+      <stop offset="50%" stop-color="#42A5F5"/>
+      <stop offset="100%" stop-color="#1565C0"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="#81C784"/>
+  <rect y="300" width="960" height="240" fill="url(#water)"/>
+  <ellipse cx="200" cy="300" rx="80" ry="20" fill="#388E3C"/>
+  <ellipse cx="600" cy="280" rx="100" ry="25" fill="#388E3C"/>
+  <rect x="790" y="220" width="110" height="120" fill="#4DB6AC" rx="8" opacity="0.7"/>
+  <text x="805" y="285" font-family="Arial" font-size="14" fill="white">Town →</text>
+  <text x="370" y="500" font-family="Arial" font-size="20" fill="white" opacity="0.5">Riverside</text>
+</svg>
