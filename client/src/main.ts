@@ -1,7 +1,9 @@
 import { Engine } from "./Engine.ts";
-import scenesData from "./config/scenes.json";
-import mapData from "./config/map.json";
+import config from "./config/config.yaml";
 import type { SceneConfig, MapConfig } from "./types/schemas.ts";
+
+const scenesData = config.scenes as SceneConfig[];
+const mapData = config.map as MapConfig;
 
 const container = document.getElementById("app")!;
 const engine = new Engine();
@@ -9,8 +11,8 @@ const engine = new Engine();
 engine
   .start(
     container,
-    scenesData as SceneConfig[],
-    mapData as MapConfig,
+    scenesData,
+    mapData,
     scenesData[0]!.node_id
   )
   .then(() => {

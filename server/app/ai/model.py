@@ -1,8 +1,9 @@
-from typing import Any, Awaitable
+from typing import Any
 
-from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.prompts import PromptTemplate
 
 from app.config.base_config import ConfigManager
 from app.logging_config import get_logger
@@ -12,10 +13,12 @@ logger = get_logger(__name__)
 
 def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
         """Replace {{variable}} placeholders in the template with provided values."""
-        result = template
-        for key, value in variables.items():
-                result = result.replace("{{" + key + "}}", str(value))
-        return result
+        prompt = PromptTemplate.from_template(template=template)
+        assert variables.keys() == {"GRADE_LEVEL", "INTEREST"}
+        return prompt.format(
+                GRADE_LEVEL=variables["GRADE_LEVEL"],
+                INTEREST=variables["INTEREST"],
+        )
 
 
 class Model:
@@ -50,7 +53,7 @@ class Model:
                 grade_level: str | None = None,
                 student_interest: str | None = None,
                 **variables: Any,
-        ) -> Awaitable[BaseMessage]:
+        ) -> AIMessage:
                 """
                 Invoke the LLM with the given prompt.
 
@@ -59,9 +62,9 @@ class Model:
                 """
                 vars_dict: dict[str, Any] = dict(variables)
                 if grade_level is not None:
-                        vars_dict["grade_level"] = grade_level
+                        vars_dict["GRADE_LEVEL"] = grade_level
                 if student_interest is not None:
-                        vars_dict["student_interest"] = student_interest
+                        vars_dict["INTEREST"] = student_interest
 
                 system_prompt = _render_system_prompt(
                         self._system_prompt_template, vars_dict
@@ -71,4 +74,18 @@ class Model:
                         HumanMessage(content=prompt),
                 ]
                 logger.debug("Sending %d messages to chat model", len(messages))
-                return self.llm.invoke(messages)
+                res = await self.llm.ainvoke(messages)
+                return res
+
+
+if __name__ == "__main__":
+        model = Model()
+        system_prompt = _render_system_prompt(
+                model._system_prompt_template,
+                {
+                        "GRADE_LEVEL": "1",
+                        "INTEREST": "space",
+                },
+        )
+
+        print(system_prompt)

@@ -22,18 +22,18 @@ async def dummy_invokes(prompts: Dict[str, str]):
         return dict(zip(keys, results))
 
 
-def test() -> None:
+async def test() -> None:
         logger.info("Initializing model")
         model = Model()
         logger.info("Invoking model")
-        response = model.invoke(
+        response = await model.invoke(
                 prompt=_TEST_INFORMATION_CARD,
-                grade_level="3",
+                grade_level="1",
                 student_interest="Space",
         )
-        logger.info("Model response received")
+        logger.info(f"Model response received:\n{response}")
         print(f"\n\n{response.content}")
 
 
 if __name__ == "__main__":
-        test()
+        asyncio.run(test())
