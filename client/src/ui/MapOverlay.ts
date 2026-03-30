@@ -121,6 +121,8 @@ export class MapOverlay {
       const tex = await Assets.load(node.icon_incomplete);
       const iconSprite = new Sprite(tex);
       iconSprite.anchor.set(0.5);
+      iconSprite.width = node.w;
+      iconSprite.height = node.h;
       iconSprite.position.set(node.x, node.y);
       iconSprite.eventMode = "static";
       iconSprite.cursor = "pointer";
@@ -132,8 +134,16 @@ export class MapOverlay {
         this.toggle();
         eventBus.emit("scene:load", node.node_id);
       });
-      iconSprite.on("pointerover", () => iconSprite.scale.set(1.2));
-      iconSprite.on("pointerout", () => iconSprite.scale.set(1));
+      const baseW = node.w;
+      const baseH = node.h;
+      iconSprite.on("pointerover", () => {
+        iconSprite.width = baseW * 1.2;
+        iconSprite.height = baseH * 1.2;
+      });
+      iconSprite.on("pointerout", () => {
+        iconSprite.width = baseW;
+        iconSprite.height = baseH;
+      });
 
       const label = new Text({ text: node.label, style: labelStyle });
       label.anchor.set(0.5, 0);

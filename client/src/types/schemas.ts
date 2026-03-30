@@ -87,6 +87,8 @@ export interface MapNodeConfig {
   label: string;
   x: number;
   y: number;
+  w: number;
+  h: number;
   icon_incomplete: string;
   icon_complete: string;
 }

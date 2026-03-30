@@ -43,6 +43,8 @@ export class Scene {
 
     const bgTexture = await Assets.load(this.config.background_asset);
     const bg = new Sprite(bgTexture);
+    bg.width = 960;
+    bg.height = 540;
     this.container.addChild(bg);
 
     for (const hConfig of this.config.hotspots) {

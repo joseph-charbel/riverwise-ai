@@ -89,15 +89,20 @@ export abstract class Hotspot {
     this.root.addChild(this.hitGraphic);
   }
 
-  /** Load the image_asset if one was provided in config */
+  /** Load the image_asset if one was provided in config, sized to geometry */
   async loadImage(): Promise<void> {
     if (!this.config.image_asset) return;
     const texture = await Assets.load(this.config.image_asset);
     this.imageSprite = new Sprite(texture);
 
     const geo = this.config.geometry;
-    if (geo.shape === "circle") {
+    if (geo.shape === "rect") {
+      this.imageSprite.width = geo.w;
+      this.imageSprite.height = geo.h;
+    } else if (geo.shape === "circle") {
       this.imageSprite.anchor.set(0.5);
+      this.imageSprite.width = geo.r * 2;
+      this.imageSprite.height = geo.r * 2;
     }
 
     // Insert behind hit graphic so pointer events still fire
