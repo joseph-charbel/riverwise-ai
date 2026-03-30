@@ -1,0 +1,517 @@
+# Riverwise – illustrated map configuration
+# 5 scenes along the river: Farm, Village, Kids Play Area, Temple, Factories
+
+map:
+  background_asset: assets/map/Riverwise_Map.png
+  nodes:
+    - node_id: farm
+      label: Farm
+      x: 170
+      y: 200
+      w: 40
+      h: 40
+      icon_incomplete: assets/nodes/Square_-_black_simple-cropped.svg
+      icon_complete: assets/nodes/Square_-_black_simple-cropped.svg
+
+    - node_id: village
+      label: Village
+      x: 370
+      y: 310
+      w: 40
+      h: 40
+      icon_incomplete: assets/nodes/Square_-_black_simple-cropped.svg
+      icon_complete: assets/nodes/Square_-_black_simple-cropped.svg
+
+    - node_id: kids_play_area
+      label: Kids Play Area
+      x: 530
+      y: 460
+      w: 40
+      h: 40
+      icon_incomplete: assets/nodes/Square_-_black_simple-cropped.svg
+      icon_complete: assets/nodes/Square_-_black_simple-cropped.svg
+
+    - node_id: temple
+      label: Temple
+      x: 740
+      y: 80
+      w: 40
+      h: 40
+      icon_incomplete: assets/nodes/Square_-_black_simple-cropped.svg
+      icon_complete: assets/nodes/Square_-_black_simple-cropped.svg
+
+    - node_id: factories
+      label: Factories
+      x: 830
+      y: 230
+      w: 40
+      h: 40
+      icon_incomplete: assets/nodes/Square_-_black_simple-cropped.svg
+      icon_complete: assets/nodes/Square_-_black_simple-cropped.svg
+
+scenes:
+  # ── Farm ──────────────────────────────────────────────────────────────
+  - node_id: farm
+    background_asset: assets/scenes/farm.png
+    hotspots:
+      - id: farm_to_village
+        type: navigation
+        geometry: { shape: rect, x: 850, y: 400, w: 100, h: 80 }
+        target_node: village
+
+      - id: farm_to_temple
+        type: navigation
+        geometry: { shape: rect, x: 850, y: 50, w: 100, h: 80 }
+        target_node: temple
+
+      - id: info_farm_runoff
+        type: info
+        geometry: { shape: rect, x: 150, y: 350, w: 60, h: 60 }
+        title: Agricultural Runoff
+        body: >-
+          Fertilisers and pesticides applied to crops can wash into nearby
+          waterways during rain. This nutrient-rich runoff triggers algal
+          blooms that deplete dissolved oxygen — suffocating fish and other
+          aquatic organisms downstream.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_farm_irrigation
+        type: info
+        geometry: { shape: rect, x: 350, y: 150, w: 60, h: 60 }
+        title: Irrigation Channels
+        body: >-
+          The irrigation channels divert water from the river to the fields.
+          Over-extraction can lower river levels, concentrating pollutants
+          and raising water temperatures — both harmful to freshwater species
+          that depend on cool, flowing water.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_farm_soil
+        type: info
+        geometry: { shape: rect, x: 550, y: 250, w: 60, h: 60 }
+        title: Soil Erosion
+        body: >-
+          Tilling exposes topsoil to wind and rain. Without ground cover,
+          loose sediment washes into the river, increasing turbidity. Turbid
+          water blocks sunlight from reaching aquatic plants, disrupting the
+          base of the food chain.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_farm_buffer
+        type: info
+        geometry: { shape: rect, x: 100, y: 120, w: 60, h: 60 }
+        title: Riparian Buffer Zones
+        body: >-
+          Strips of native vegetation between farmland and the river act as
+          natural filters. Their roots trap sediment and absorb excess
+          nutrients before they reach the water — one of the most effective
+          and low-cost river protection strategies.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_farm_livestock
+        type: info
+        geometry: { shape: rect, x: 700, y: 400, w: 60, h: 60 }
+        title: Livestock & Waterways
+        body: >-
+          When cattle access the river directly, their hooves compact the
+          bank and disturb sediment. Manure adds bacteria such as E. coli,
+          making the water unsafe for downstream communities. Fencing stock
+          out of waterways dramatically improves water quality.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+    questions:
+      - question: What is the primary effect of agricultural runoff on a river?
+        options:
+          - It makes the water warmer
+          - It triggers algal blooms that deplete oxygen
+          - It increases the river's flow speed
+          - It makes the water taste salty
+        correct: 1
+
+      - question: Why are riparian buffer zones effective at protecting rivers?
+        options:
+          - They shade the water from sunlight
+          - Their roots trap sediment and absorb nutrients
+          - They prevent flooding
+          - They attract predatory fish
+        correct: 1
+
+      - question: How does livestock access to waterways affect water quality?
+        options:
+          - It adds beneficial minerals
+          - It introduces bacteria like E. coli
+          - It cools the water temperature
+          - It has no measurable effect
+        correct: 1
+
+  # ── Village ───────────────────────────────────────────────────────────
+  - node_id: village
+    background_asset: assets/scenes/village.png
+    hotspots:
+      - id: village_to_farm
+        type: navigation
+        geometry: { shape: rect, x: 10, y: 200, w: 80, h: 80 }
+        target_node: farm
+
+      - id: village_to_kids
+        type: navigation
+        geometry: { shape: rect, x: 850, y: 420, w: 100, h: 80 }
+        target_node: kids_play_area
+
+      - id: info_village_well
+        type: info
+        geometry: { shape: rect, x: 440, y: 300, w: 60, h: 60 }
+        title: Community Well
+        body: >-
+          The village well draws from the same aquifer fed by the river.
+          Contaminants that enter the river upstream — fertilisers, sewage,
+          industrial discharge — can seep into groundwater and eventually
+          reach the drinking supply.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_village_waste
+        type: info
+        geometry: { shape: rect, x: 200, y: 380, w: 60, h: 60 }
+        title: Domestic Waste
+        body: >-
+          Household waste, including detergents and cooking oils, often
+          ends up in the river via open drains. Phosphates in detergents
+          fuel algal growth, while oils form a surface film that reduces
+          oxygen exchange between air and water.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_village_garden
+        type: info
+        geometry: { shape: rect, x: 650, y: 250, w: 60, h: 60 }
+        title: Community Garden
+        body: >-
+          This community garden uses composting and mulching instead of
+          synthetic fertilisers. Organic practices reduce nutrient runoff
+          and build healthy soil that retains water, decreasing the volume
+          of stormwater that reaches the river.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_village_bridge
+        type: info
+        geometry: { shape: rect, x: 350, y: 130, w: 60, h: 60 }
+        title: The Old Bridge
+        body: >-
+          Bridges and hard surfaces increase impervious cover, speeding up
+          stormwater flow and delivering pollutants directly to the river.
+          Permeable surfaces and rain gardens around infrastructure can
+          slow runoff and filter out contaminants.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_village_cistern
+        type: info
+        geometry: { shape: rect, x: 120, y: 100, w: 60, h: 60 }
+        title: Rainwater Harvesting
+        body: >-
+          Several homes collect rainwater in cisterns for irrigation and
+          washing. This reduces demand on the river during dry spells and
+          lowers the volume of stormwater runoff that carries pollutants
+          into the waterway during storms.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+    questions:
+      - question: How can contaminants from the river affect the village well?
+        options:
+          - They travel through underground pipes
+          - They seep into the shared aquifer
+          - They evaporate and fall as acid rain
+          - They cannot — wells are completely separate
+        correct: 1
+
+      - question: Why are phosphates in household detergents harmful to rivers?
+        options:
+          - They dissolve fish scales
+          - They fuel algal growth
+          - They raise water temperature
+          - They make the water cloudy
+        correct: 1
+
+      - question: What is the benefit of rainwater harvesting for river health?
+        options:
+          - It increases river flow
+          - It reduces stormwater runoff volume
+          - It raises groundwater levels
+          - It filters out heavy metals
+        correct: 1
+
+  # ── Kids Play Area ────────────────────────────────────────────────────
+  - node_id: kids_play_area
+    background_asset: assets/scenes/kids-play-area.png
+    hotspots:
+      - id: kids_to_village
+        type: navigation
+        geometry: { shape: rect, x: 10, y: 200, w: 80, h: 80 }
+        target_node: village
+
+      - id: info_kids_macroinvertebrates
+        type: info
+        geometry: { shape: rect, x: 200, y: 380, w: 60, h: 60 }
+        title: Macroinvertebrates
+        body: >-
+          Tiny creatures like mayfly larvae, stoneflies and freshwater
+          shrimp live under rocks in the river. Their presence — or
+          absence — is one of the best indicators of water quality. Citizen
+          scientists count these organisms to monitor river health.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_kids_safety
+        type: info
+        geometry: { shape: rect, x: 500, y: 300, w: 60, h: 60 }
+        title: Water Safety
+        body: >-
+          Even clear-looking water can harbour pathogens from upstream
+          pollution. After heavy rain, bacteria counts spike as stormwater
+          flushes animal waste and sewage overflows into the river. Always
+          check local water quality advisories before swimming.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_kids_biodiversity
+        type: info
+        geometry: { shape: rect, x: 700, y: 150, w: 60, h: 60 }
+        title: River Biodiversity
+        body: >-
+          Healthy rivers support an extraordinary web of life — fish,
+          amphibians, birds, insects and plants all depend on clean,
+          flowing water. When one species declines, ripple effects can
+          disrupt the entire food chain.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_kids_litter
+        type: info
+        geometry: { shape: rect, x: 350, y: 200, w: 60, h: 60 }
+        title: Litter & Microplastics
+        body: >-
+          Plastic wrappers, bottles and bags break down into microplastics
+          that persist in the river for centuries. Fish and birds mistake
+          these tiny fragments for food. Organising regular clean-up days
+          is one of the simplest ways to make a difference.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_kids_citizen_science
+        type: info
+        geometry: { shape: rect, x: 150, y: 100, w: 60, h: 60 }
+        title: Citizen Science
+        body: >-
+          You don't need a lab to help — recording observations like water
+          colour, smell, wildlife sightings and litter counts builds a
+          valuable dataset. Schools and community groups feed this data
+          into regional water quality databases used by scientists.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+    questions:
+      - question: Why are macroinvertebrates useful indicators of water quality?
+        options:
+          - They change colour in polluted water
+          - Their presence or absence reflects water conditions
+          - They produce chemicals that neutralise pollutants
+          - They are easy to see from the river bank
+        correct: 1
+
+      - question: When do bacteria counts in rivers typically spike?
+        options:
+          - During droughts
+          - After heavy rainfall
+          - At night
+          - In winter only
+        correct: 1
+
+      - question: How do microplastics enter the food chain?
+        options:
+          - They dissolve into the water
+          - Fish and birds mistake them for food
+          - They are absorbed through plant roots
+          - They evaporate into the air
+        correct: 1
+
+  # ── Temple ────────────────────────────────────────────────────────────
+  - node_id: temple
+    background_asset: assets/scenes/temple.png
+    hotspots:
+      - id: temple_to_farm
+        type: navigation
+        geometry: { shape: rect, x: 10, y: 400, w: 80, h: 80 }
+        target_node: farm
+
+      - id: temple_to_factories
+        type: navigation
+        geometry: { shape: rect, x: 850, y: 300, w: 100, h: 80 }
+        target_node: factories
+
+      - id: info_temple_cultural
+        type: info
+        geometry: { shape: rect, x: 450, y: 100, w: 60, h: 60 }
+        title: Cultural Significance
+        body: >-
+          For centuries, communities along this river have regarded it as
+          sacred. Rituals of gratitude for clean water reinforce a cultural
+          ethic of stewardship — a powerful motivator for conservation that
+          predates modern environmental science.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_temple_waterfall
+        type: info
+        geometry: { shape: rect, x: 700, y: 200, w: 60, h: 60 }
+        title: The Waterfall
+        body: >-
+          Waterfalls aerate the river, boosting dissolved oxygen levels.
+          This natural oxygenation supports fish and other aquatic life
+          downstream. Dams and weirs that flatten the flow can reduce this
+          effect, creating low-oxygen "dead zones."
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_temple_offerings
+        type: info
+        geometry: { shape: rect, x: 250, y: 300, w: 60, h: 60 }
+        title: Eco-Friendly Offerings
+        body: >-
+          Traditional offerings made from flowers and leaves are
+          biodegradable and harmless. However, modern substitutes —
+          plastic wrappings, synthetic dyes, chemical candles — can pollute
+          the river. Many temples now promote eco-friendly alternatives.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_temple_springs
+        type: info
+        geometry: { shape: rect, x: 150, y: 150, w: 60, h: 60 }
+        title: Mountain Springs
+        body: >-
+          The river originates from mountain springs fed by snowmelt and
+          rainfall. Deforestation on the slopes accelerates erosion and
+          reduces the land's ability to absorb water, leading to flash
+          floods in the wet season and drought in the dry season.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_temple_forest
+        type: info
+        geometry: { shape: rect, x: 550, y: 380, w: 60, h: 60 }
+        title: Sacred Groves
+        body: >-
+          Forests around the temple are protected by tradition. These
+          groves act as the river's lungs — their root systems anchor
+          soil, their canopy regulates temperature, and leaf litter feeds
+          a micro-ecosystem of decomposers that keeps the water clean.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+    questions:
+      - question: How do waterfalls benefit aquatic life downstream?
+        options:
+          - They create barriers that protect fish from predators
+          - They aerate the water, boosting dissolved oxygen
+          - They filter out pollutants naturally
+          - They lower the water temperature
+        correct: 1
+
+      - question: Why is deforestation on mountain slopes harmful to rivers?
+        options:
+          - It blocks sunlight from reaching the water
+          - It accelerates erosion and disrupts water absorption
+          - It introduces invasive plant species
+          - It attracts more wildlife to the riverbank
+        correct: 1
+
+      - question: What makes traditional flower and leaf offerings safer for rivers than modern substitutes?
+        options:
+          - They sink to the bottom quickly
+          - They are biodegradable
+          - They repel fish
+          - They dissolve immediately
+        correct: 1
+
+  # ── Factories ─────────────────────────────────────────────────────────
+  - node_id: factories
+    background_asset: assets/scenes/factories.png
+    hotspots:
+      - id: factories_to_village
+        type: navigation
+        geometry: { shape: rect, x: 10, y: 350, w: 80, h: 80 }
+        target_node: village
+
+      - id: factories_to_temple
+        type: navigation
+        geometry: { shape: rect, x: 10, y: 100, w: 80, h: 80 }
+        target_node: temple
+
+      - id: info_factories_discharge
+        type: info
+        geometry: { shape: rect, x: 600, y: 350, w: 60, h: 60 }
+        title: Industrial Discharge
+        body: >-
+          Pipes carrying untreated or partially treated wastewater release
+          heavy metals like mercury, lead and cadmium into the river.
+          These toxins accumulate in fish tissue — a process called
+          bioaccumulation — making them unsafe to eat.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_factories_thermal
+        type: info
+        geometry: { shape: rect, x: 400, y: 200, w: 60, h: 60 }
+        title: Thermal Pollution
+        body: >-
+          Factories use river water for cooling and return it at a higher
+          temperature. Warm water holds less dissolved oxygen, stressing
+          cold-water species like trout. Even a few degrees of change can
+          shift the entire ecosystem.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_factories_regulation
+        type: info
+        geometry: { shape: rect, x: 200, y: 300, w: 60, h: 60 }
+        title: Environmental Regulation
+        body: >-
+          Government regulations set limits on what factories can
+          discharge. Monitoring stations measure pollutant levels
+          continuously. When limits are breached, fines and mandatory
+          clean-ups are enforced — but enforcement depends on funding and
+          political will.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_factories_treatment
+        type: info
+        geometry: { shape: rect, x: 750, y: 150, w: 60, h: 60 }
+        title: Wastewater Treatment
+        body: >-
+          Modern treatment plants use physical, chemical and biological
+          processes to remove contaminants before water is returned to the
+          river. Constructed wetlands offer a low-energy alternative,
+          using natural processes to break down pollutants.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+      - id: info_factories_circular
+        type: info
+        geometry: { shape: rect, x: 500, y: 100, w: 60, h: 60 }
+        title: Circular Water Use
+        body: >-
+          Some factories now recycle process water in closed loops,
+          drastically reducing the volume they extract from — and return
+          to — the river. This "circular" approach cuts both water
+          consumption and pollution simultaneously.
+        image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+
+    questions:
+      - question: What is bioaccumulation?
+        options:
+          - The growth of algae on factory pipes
+          - The build-up of toxins in fish tissue over time
+          - The increase in river flow near factories
+          - The natural breakdown of pollutants
+        correct: 1
+
+      - question: How does thermal pollution affect cold-water species?
+        options:
+          - It forces them to migrate upstream
+          - Warmer water holds less dissolved oxygen, stressing them
+          - It makes them grow faster than normal
+          - It has no significant effect
+        correct: 1
+
+      - question: What is a low-energy alternative to conventional wastewater treatment?
+        options:
+          - Chlorine dosing
+          - Constructed wetlands
+          - Reverse osmosis
+          - Ultraviolet filtration
+        correct: 1

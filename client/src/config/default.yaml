@@ -8,6 +8,8 @@ map:
       label: Town Center
       x: 480
       y: 200
+      w: 48
+      h: 48
       icon_incomplete: assets/map/town_incomplete.svg
       icon_complete: assets/map/town_complete.svg
 
@@ -15,6 +17,8 @@ map:
       label: Coffee Shop
       x: 650
       y: 150
+      w: 48
+      h: 48
       icon_incomplete: assets/map/coffee_incomplete.svg
       icon_complete: assets/map/coffee_complete.svg
 
@@ -22,6 +26,8 @@ map:
       label: Riverside
       x: 300
       y: 320
+      w: 48
+      h: 48
       icon_incomplete: assets/map/river_incomplete.svg
       icon_complete: assets/map/river_complete.svg
 
