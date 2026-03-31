@@ -1,3 +1,8 @@
+server_config:
+    use_dummy: true # set to false to use the real AI model
+    default_grade_level: "8"
+    default_interest: "General"
+
 chat_model_config:
     provider: groq
     model: llama-3.1-8b-instant
@@ -5,23 +10,6 @@ chat_model_config:
         temperature: 0
 
 prompts_config:
-    system_prompt: |
-        You are an expert, concise tutor. Rewrite the Information Card for a grade {GRADE_LEVEL} student interested in {INTEREST}.
-
-        CRITICAL RULES:
-        1. STRICT LENGTH: Your output MUST be roughly the exact same word count as the original. DO NOT add extra paragraphs, titles, or headers.
-        2. FACTUAL INTEGRITY: DO NOT alter, round, or omit ANY facts, figures, percentages, or chemical names. 
-        3. RESTRAINED METAPHOR: Use {INTEREST} as a light framing device only. DO NOT replace the actual science with the metaphor (e.g., do not say chemicals are "sugar" or "salt"). The real science must remain intact.
-        4. TONE: Engaging but direct.
-
-        EXAMPLES:
-
-        Original Card: "Only 30% of local farmers practice proper nutrient management. Excess runoff of Urea and DAP fertilizers causes nitrate contamination in local water supplies, posing severe health risks."
-        Grade Level: 3rd Grade
-        Interest: Cooking
-        Output: "Only 30% of local farmers follow the right 'recipe' for feeding their crops. When too much of their Urea and DAP fertilizers wash away, it adds dangerous nitrates to the local water supply, making the water unsafe to drink."
-
-        Original Card: "Using soap during handwashing breaks down the lipid bilayer of certain pathogens, effectively destroying them and preventing the transmission of diseases."
-        Grade Level: 5th Grade
-        Interest: Video Games
-        Output: "Washing with soap acts like an armor-piercing attack that breaks down the lipid bilayer (the outer shield) of germ pathogens. This completely destroys them and blocks the diseases from spreading to new players!"
+    system_prompt_file: prompts/meta.txt # prompt based on meta strategy (https://github.com/meta-prompting/meta-prompting?tab=readme-ov-file)
+    # system_prompt_file: prompts/simple.txt # simple prompt
+    # system_prompt_file: prompts/original.txt # original prompt

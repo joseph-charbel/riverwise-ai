@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Optional, cast
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, SecretStr
 import os
 
 from .config_loader import CONFIG
+
+# Server root: two levels up from this file (app/config → app → server)
+_SERVER_ROOT = Path(__file__).resolve().parents[2]
 
 _env_loaded = False
 
@@ -37,6 +41,12 @@ class ChatConfig(BaseModel):
         kwargs: dict[str, Any] = Field(default_factory=dict)
 
 
+class ServerConfig(BaseModel):
+        use_dummy: bool = True
+        default_grade_level: str = "8"
+        default_interest: str = "General"
+
+
 class PromptConfig(BaseModel):
         """Configuration for system prompts"""
 
@@ -56,6 +66,7 @@ class ConfigManager:
         # Config instances
         _chat_model_config: Optional[ChatConfig] = None
         _prompt_config: Optional[PromptConfig] = None
+        _server_config: Optional[ServerConfig] = None
 
         def __new__(cls):
                 if cls._instance is None:
@@ -94,6 +105,19 @@ class ConfigManager:
                         kwargs=kwargs,
                 )
 
+                # ---------------- SERVER CONFIG ----------------
+                server_raw: Any = config_data.get("server_config", {})
+                server_data: dict[str, Any] = (
+                        cast(dict[str, Any], server_raw)
+                        if isinstance(server_raw, dict)
+                        else {}
+                )
+                self._server_config = ServerConfig(
+                        use_dummy=bool(server_data.get("use_dummy", True)),
+                        default_grade_level=str(server_data.get("default_grade_level", "8")),
+                        default_interest=str(server_data.get("default_interest", "General")),
+                )
+
                 # ---------------- PROMPTS ----------------
                 prompts_raw: Any = config_data.get("prompts_config", {})
                 prompts_config: dict[str, Any] = (
@@ -101,13 +125,22 @@ class ConfigManager:
                         if isinstance(prompts_raw, dict)
                         else {}
                 )
+                system_prompt_file = prompts_config.get("system_prompt_file")
+                if system_prompt_file:
+                        prompt_path = _SERVER_ROOT / str(system_prompt_file)
+                        system_prompt = prompt_path.read_text(encoding="utf-8").strip()
+                else:
+                        system_prompt = str(prompts_config.get("system_prompt", "")).strip()
                 self._prompt_config = PromptConfig(
-                        system_prompt=str(prompts_config.get("system_prompt")).strip(),
-                        # rewrite_prompt=prompts_config.get("rewrite_prompt", ""),
-                        # validate_prompt=prompts_config.get("validate_prompt", ""),
+                        system_prompt=system_prompt,
                 )
 
         # ---------------- ACCESSORS ----------------
+        def server_config(self) -> ServerConfig:
+                if self._server_config is None:
+                        raise RuntimeError("Server configuration is not initialized")
+                return self._server_config
+
         def prompt_config(self) -> PromptConfig:
                 if self._prompt_config is None:
                         raise RuntimeError("Prompt configuration is not initialized")

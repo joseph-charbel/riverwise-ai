@@ -14,10 +14,10 @@ logger = get_logger(__name__)
 def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
         """Replace {{variable}} placeholders in the template with provided values."""
         prompt = PromptTemplate.from_template(template=template)
-        assert variables.keys() == {"GRADE_LEVEL", "INTEREST"}
+        assert variables.keys() == {"grade_level", "student_interest"}
         return prompt.format(
-                GRADE_LEVEL=variables["GRADE_LEVEL"],
-                INTEREST=variables["INTEREST"],
+                grade_level=variables["grade_level"],
+                student_interest=variables["student_interest"],
         )
 
 
@@ -62,9 +62,9 @@ class Model:
                 """
                 vars_dict: dict[str, Any] = dict(variables)
                 if grade_level is not None:
-                        vars_dict["GRADE_LEVEL"] = grade_level
+                        vars_dict["grade_level"] = grade_level
                 if student_interest is not None:
-                        vars_dict["INTEREST"] = student_interest
+                        vars_dict["student_interest"] = student_interest
 
                 system_prompt = _render_system_prompt(
                         self._system_prompt_template, vars_dict
@@ -83,8 +83,8 @@ if __name__ == "__main__":
         system_prompt = _render_system_prompt(
                 model._system_prompt_template,
                 {
-                        "GRADE_LEVEL": "1",
-                        "INTEREST": "space",
+                        "grade_level": "1",
+                        "student_interest": "space",
                 },
         )
 
