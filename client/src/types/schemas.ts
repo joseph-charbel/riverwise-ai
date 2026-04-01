@@ -1,3 +1,8 @@
+export interface StudentConfig {
+  grade_level: string;
+  interest: string;
+}
+
 export interface RectGeometry {
   shape: "rect";
   x: number;

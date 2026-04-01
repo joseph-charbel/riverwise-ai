@@ -1,9 +1,10 @@
 import { Engine } from "./Engine.ts";
-import type { SceneConfig, MapConfig } from "./types/schemas.ts";
+import type { SceneConfig, MapConfig, StudentConfig } from "./types/schemas.ts";
 
 interface GameConfig {
   map: MapConfig;
   scenes: SceneConfig[];
+  student?: StudentConfig;
 }
 
 const configs = import.meta.glob("./config/*.yaml", {
@@ -26,7 +27,8 @@ if (!cfg) {
   );
 }
 
-const { map: mapData, scenes: scenesData } = cfg;
+const { map: mapData, scenes: scenesData, student: studentData } = cfg;
+const studentConfig: StudentConfig = studentData ?? { grade_level: "8", interest: "General" };
 
 const container = document.getElementById("app")!;
 const engine = new Engine();
@@ -36,7 +38,8 @@ engine
     container,
     scenesData,
     mapData,
-    scenesData[0]!.node_id
+    scenesData[0]!.node_id,
+    studentConfig,
   )
   .then(() => {
     console.log("[Riverwise] Engine started. Press M to open the map.");

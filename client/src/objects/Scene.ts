@@ -1,5 +1,5 @@
 import { Container, Sprite, Assets } from "pixi.js";
-import type { SceneConfig } from "../types/schemas.ts";
+import type { SceneConfig, StudentConfig } from "../types/schemas.ts";
 import type { InfoPanel } from "../ui/InfoPanel.ts";
 import { createHotspot } from "./HotspotFactory.ts";
 import { Hotspot } from "./Hotspot.ts";
@@ -14,14 +14,16 @@ export class Scene {
   private hotspots: Hotspot[] = [];
   private config: SceneConfig;
   private infoPanel: InfoPanel;
+  private studentConfig: StudentConfig;
 
   private totalInfoCount = 0;
   private viewedInfos = new Set<string>();
   private infoViewedHandler: (payload: unknown) => void;
 
-  constructor(config: SceneConfig, infoPanel: InfoPanel) {
+  constructor(config: SceneConfig, infoPanel: InfoPanel, studentConfig: StudentConfig) {
     this.config = config;
     this.infoPanel = infoPanel;
+    this.studentConfig = studentConfig;
     this.nodeId = config.node_id;
     this.container = new Container();
 
@@ -48,7 +50,7 @@ export class Scene {
     this.container.addChild(bg);
 
     for (const hConfig of this.config.hotspots) {
-      const hotspot = createHotspot(hConfig, this.infoPanel, this.nodeId);
+      const hotspot = createHotspot(hConfig, this.infoPanel, this.nodeId, this.studentConfig);
 
       await hotspot.loadImage();
 

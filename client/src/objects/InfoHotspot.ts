@@ -1,4 +1,4 @@
-import type { InfoHotspotConfig } from "../types/schemas.ts";
+import type { InfoHotspotConfig, StudentConfig } from "../types/schemas.ts";
 import type { InfoPanel } from "../ui/InfoPanel.ts";
 import { Hotspot } from "./Hotspot.ts";
 import { eventBus } from "../core/EventBus.ts";
@@ -9,13 +9,15 @@ export class InfoHotspot extends Hotspot {
   private panel: InfoPanel;
   private sceneId: string;
   private prefetchedContent: string | null = null;
+  private studentConfig: StudentConfig;
 
-  constructor(config: InfoHotspotConfig, panel: InfoPanel, sceneId: string) {
+  constructor(config: InfoHotspotConfig, panel: InfoPanel, sceneId: string, studentConfig: StudentConfig) {
     super(config);
     this.title = config.title;
     this.body = config.body;
     this.panel = panel;
     this.sceneId = sceneId;
+    this.studentConfig = studentConfig;
   }
 
   setPrefetchedContent(content: string): void {
@@ -38,7 +40,11 @@ export class InfoHotspot extends Hotspot {
     fetch("/api/dummy-invoke", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: this.body }),
+      body: JSON.stringify({
+        prompt: this.body,
+        grade_level: this.studentConfig.grade_level,
+        interest: this.studentConfig.interest,
+      }),
     })
       .then((res) => res.json())
       .then((data: { content: string }) => {

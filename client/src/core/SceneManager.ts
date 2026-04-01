@@ -1,5 +1,5 @@
 import type { Application } from "pixi.js";
-import type { SceneConfig } from "../types/schemas.ts";
+import type { SceneConfig, StudentConfig } from "../types/schemas.ts";
 import type { InfoPanel } from "../ui/InfoPanel.ts";
 import { Scene } from "../objects/Scene.ts";
 import { eventBus } from "./EventBus.ts";
@@ -10,10 +10,12 @@ export class SceneManager {
   private transitioning = false;
   private app: Application;
   private infoPanel: InfoPanel;
+  private studentConfig: StudentConfig;
 
-  constructor(app: Application, sceneConfigs: SceneConfig[], infoPanel: InfoPanel) {
+  constructor(app: Application, sceneConfigs: SceneConfig[], infoPanel: InfoPanel, studentConfig: StudentConfig) {
     this.app = app;
     this.infoPanel = infoPanel;
+    this.studentConfig = studentConfig;
     this.scenes = new Map(sceneConfigs.map((s) => [s.node_id, s]));
 
     eventBus.on("scene:load", (nodeId: unknown) => {
@@ -41,7 +43,7 @@ export class SceneManager {
     }
 
     // Build and fade in new scene
-    const scene = new Scene(config, this.infoPanel);
+    const scene = new Scene(config, this.infoPanel, this.studentConfig);
     await scene.init();
 
     // Prefetch all info hotspot content in one batch request
@@ -54,7 +56,11 @@ export class SceneManager {
       fetch("/api/dummy-invokes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompts }),
+        body: JSON.stringify({
+          prompts,
+          grade_level: this.studentConfig.grade_level,
+          interest: this.studentConfig.interest,
+        }),
       })
         .then((res) => res.json())
         .then((data: { results: Record<string, string> }) => {

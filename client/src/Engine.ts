@@ -1,5 +1,5 @@
 import { Application } from "pixi.js";
-import type { SceneConfig, MapConfig, QuizQuestion } from "./types/schemas.ts";
+import type { SceneConfig, MapConfig, QuizQuestion, StudentConfig } from "./types/schemas.ts";
 import { SceneManager } from "./core/SceneManager.ts";
 import { InputManager } from "./core/InputManager.ts";
 import { MapOverlay } from "./ui/MapOverlay.ts";
@@ -25,7 +25,8 @@ export class Engine {
     container: HTMLElement,
     sceneConfigs: SceneConfig[],
     mapConfig: MapConfig,
-    startScene: string
+    startScene: string,
+    studentConfig: StudentConfig,
   ): Promise<void> {
     await this.app.init({
       width: 960,
@@ -58,7 +59,7 @@ export class Engine {
 
     // Scene manager
     this.inputManager = new InputManager(this.app);
-    this.sceneManager = new SceneManager(this.app, sceneConfigs, this.infoPanel);
+    this.sceneManager = new SceneManager(this.app, sceneConfigs, this.infoPanel, studentConfig);
 
     // Map overlay + button
     this.mapOverlay = new MapOverlay(mapConfig, 960, 540);
