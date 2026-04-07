@@ -1,0 +1,12 @@
+interests:
+  - General
+  - Basketball
+  - Space
+  - Dance
+  - Video Games
+  - Cooking
+
+grade:
+  min: 0
+  max: 12
+  default: 2
