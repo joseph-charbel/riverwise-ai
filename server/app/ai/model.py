@@ -1,11 +1,10 @@
 from typing import Any
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
-from langchain_groq import ChatGroq
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import PromptTemplate
 
-from app.config.base_config import ConfigManager
+from app.config.base_config import ConfigManager, ChatConfig
 from app.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -21,6 +20,26 @@ def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
         )
 
 
+def _make_llm(chat_config: ChatConfig) -> BaseChatModel:
+        provider = chat_config.provider
+        if provider == "groq":
+                from langchain_groq import ChatGroq
+
+                return ChatGroq(
+                        model=chat_config.model,
+                        **chat_config.kwargs,
+                )
+        elif provider == "google":
+                from langchain_google_genai import ChatGoogleGenerativeAI
+
+                return ChatGoogleGenerativeAI(
+                        model=chat_config.model,
+                        **chat_config.kwargs,
+                )
+        else:
+                raise ValueError(f"Unsupported provider: {provider}")
+
+
 class Model:
         def __init__(self):
                 self.config = ConfigManager()
@@ -30,10 +49,7 @@ class Model:
                 if api_key:
                         llm_kwargs.setdefault("api_key", api_key)
 
-                self.llm: BaseChatModel = ChatGroq(
-                        model=chat_config.model,
-                        **llm_kwargs,
-                )
+                self.llm: BaseChatModel = _make_llm(chat_config)
                 logger.info(
                         "Chat model initialized with provider=%s model=%s",
                         chat_config.provider,
