@@ -12,6 +12,7 @@ RUN uv sync --frozen --no-dev
 # Copy application
 COPY app/ ./app/
 COPY config/ ./config/
+COPY prompts/ ./prompts/
 
 EXPOSE 8000
 
