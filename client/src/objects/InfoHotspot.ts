@@ -2,6 +2,7 @@ import type { InfoHotspotConfig, StudentConfig } from "../types/schemas.ts";
 import type { InfoPanel } from "../ui/InfoPanel.ts";
 import { Hotspot } from "./Hotspot.ts";
 import { eventBus } from "../core/EventBus.ts";
+import { invokePrompt } from "../services/api.ts";
 
 export class InfoHotspot extends Hotspot {
   private title: string;
@@ -37,21 +38,8 @@ export class InfoHotspot extends Hotspot {
     }
 
     this.panel.show(this.title, "Loading...");
-    fetch("/api/dummy-invoke", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: this.body,
-        grade_level: this.studentConfig.grade_level,
-        interest: this.studentConfig.interest,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data: { content: string }) => {
-        this.panel.updateBody(data.content);
-      })
-      .catch(() => {
-        this.panel.updateBody(this.body);
-      });
+    invokePrompt(this.body, this.config.id, this.studentConfig)
+      .then((content) => this.panel.updateBody(content))
+      .catch(() => this.panel.updateBody(this.body));
   }
 }

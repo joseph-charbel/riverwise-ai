@@ -1,17 +1,169 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Riverwise</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a2e; }
-      #app { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-    </style>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riverwise</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #1a1a2e;
+    }
+
+    #app {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Student Setup Overlay ── */
+
+    #student-setup {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a2e;
+      z-index: 9999;
+      animation: setupIn 0.4s ease-out;
+    }
+
+    #student-setup.fade-out {
+      animation: setupOut 0.35s ease-in forwards;
+    }
+
+    @keyframes setupIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes setupOut {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0; transform: scale(1.02); }
+    }
+
+    .setup-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: #0f2318;
+      border: 2px solid #4a9a6e;
+      border-radius: 16px;
+      padding: 40px 48px 36px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .setup-title {
+      font-family: Georgia, serif;
+      font-size: 28px;
+      color: #8eeeb4;
+      margin: 0;
+    }
+
+    .setup-subtitle {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #6ec99a;
+      margin: -4px 0 8px;
+    }
+
+    .setup-label {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #c8e6c9;
+      align-self: flex-start;
+      margin-bottom: -6px;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .slider-bound {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      color: #6ec99a;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    #grade-slider {
+      flex: 1;
+      accent-color: #4a9a6e;
+      cursor: pointer;
+    }
+
+    .grade-value {
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      font-weight: bold;
+      color: #8eeeb4;
+      margin-top: -8px;
+    }
+
+    #interest-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #3d6b55;
+      border-radius: 8px;
+      background: #1a3a28;
+      color: #c8e6c9;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    #interest-select:focus {
+      border-color: #4a9a6e;
+    }
+
+    #setup-start {
+      margin-top: 8px;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 10px;
+      background: #4a9a6e;
+      color: #0f2318;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    #setup-start:hover {
+      background: #6ec99a;
+    }
+
+    #setup-start:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>

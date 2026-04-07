@@ -3,6 +3,15 @@ export interface StudentConfig {
   interest: string;
 }
 
+export interface StudentOptions {
+  interests: string[];
+  grade: {
+    min: number;
+    max: number;
+    default: number;
+  };
+}
+
 export interface RectGeometry {
   shape: "rect";
   x: number;

@@ -1,4 +1,6 @@
 import { Engine } from "./Engine.ts";
+import { showStudentSetup } from "./ui/StudentSetup.ts";
+import { loadStudentOptions } from "./utils/studentOptions.ts";
 import type { SceneConfig, MapConfig, StudentConfig } from "./types/schemas.ts";
 
 interface GameConfig {
@@ -12,9 +14,6 @@ const configs = import.meta.glob("./config/*.yaml", {
   import: "default",
 }) as Record<string, GameConfig>;
 
-// Choose which config to load (edit the string below)
-// - "default" => SVG map + scenes
-// - "riverwise" => PNG map + scenes
 const SELECTED_CONFIG = "riverwise" as const;
 const key = `./config/${SELECTED_CONFIG}.yaml`;
 const cfg = configs[key];
@@ -23,24 +22,19 @@ if (!cfg) {
     .map((k) => k.replace("./config/", "").replace(".yaml", ""))
     .join(", ");
   throw new Error(
-    `[Riverwise] Unknown config "${SELECTED_CONFIG}". Available: ${available}`
+    `[Riverwise] Unknown config "${SELECTED_CONFIG}". Available: ${available}`,
   );
 }
 
-const { map: mapData, scenes: scenesData, student: studentData } = cfg;
-const studentConfig: StudentConfig = studentData ?? { grade_level: "8", interest: "General" };
-
+const { map: mapData, scenes: scenesData } = cfg;
 const container = document.getElementById("app")!;
-const engine = new Engine();
 
+const studentOptions = loadStudentOptions();
+const studentConfig = await showStudentSetup(container, studentOptions);
+
+const engine = new Engine();
 engine
-  .start(
-    container,
-    scenesData,
-    mapData,
-    scenesData[0]!.node_id,
-    studentConfig,
-  )
+  .start(container, scenesData, mapData, scenesData[0]!.node_id, studentConfig)
   .then(() => {
     console.log("[Riverwise] Engine started. Press M to open the map.");
   })

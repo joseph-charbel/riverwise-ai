@@ -1,17 +1,25 @@
 import { Container, Graphics, Text, TextStyle } from "pixi.js";
 
 const PANEL_W = 420;
-const PANEL_H = 260;
 const CANVAS_W = 960;
 const CANVAS_H = 540;
 const FADE_SPEED = 0.12;
+
+const BODY_TOP = 68;
+const BOTTOM_PAD = 24;
+const MIN_PANEL_H = 160;
+const MAX_PANEL_H = 460;
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
 
 export class InfoPanel {
   readonly container: Container;
   private visible = false;
   private targetAlpha = 0;
   private animFrameId = 0;
-  private bodyText: Text | null = null;
+  private currentTitle = "";
 
   constructor() {
     this.container = new Container();
@@ -22,12 +30,48 @@ export class InfoPanel {
   }
 
   show(title: string, body: string): void {
-    // Rebuild content each call
+    this.currentTitle = title;
+    this.redraw(title, body);
+    this.container.visible = true;
+    this.visible = true;
+    this.targetAlpha = 1;
+    this.startFade();
+  }
+
+  updateBody(newBody: string): void {
+    if (!this.visible) return;
+    this.redraw(this.currentTitle, newBody);
+  }
+
+  hide(): void {
+    if (!this.visible) return;
+    this.visible = false;
+    this.targetAlpha = 0;
+    this.startFade();
+  }
+
+  private redraw(title: string, body: string): void {
     this.container.removeChildren();
-    this.bodyText = null;
 
     const x = (CANVAS_W - PANEL_W) / 2;
-    const y = (CANVAS_H - PANEL_H) / 2;
+
+    // Create body text first so we can measure its height
+    const bodyText = new Text({
+      text: body,
+      style: new TextStyle({
+        fontFamily: "Arial, sans-serif",
+        fontSize: 14,
+        fill: 0xc8e6c9,
+        wordWrap: true,
+        wordWrapWidth: PANEL_W - 48,
+        lineHeight: 22,
+      }),
+    });
+    // Force Pixi to compute text layout so height is accurate
+    bodyText.getBounds();
+
+    const panelH = clamp(BODY_TOP + bodyText.height + BOTTOM_PAD, MIN_PANEL_H, MAX_PANEL_H);
+    const y = (CANVAS_H - panelH) / 2;
 
     // Backdrop blocker (full-screen, transparent — eats clicks behind the panel)
     const blocker = new Graphics();
@@ -39,7 +83,7 @@ export class InfoPanel {
 
     // Panel card
     const card = new Graphics();
-    card.roundRect(x, y, PANEL_W, PANEL_H, 12);
+    card.roundRect(x, y, PANEL_W, panelH, 12);
     card.fill({ color: 0x0f2318, alpha: 0.95 });
     card.setStrokeStyle({ width: 2, color: 0x4a9a6e });
     card.stroke();
@@ -73,21 +117,10 @@ export class InfoPanel {
     divider.eventMode = "none";
     this.container.addChild(divider);
 
-    // Body text (word-wrapped)
-    this.bodyText = new Text({
-      text: body,
-      style: new TextStyle({
-        fontFamily: "Arial, sans-serif",
-        fontSize: 14,
-        fill: 0xc8e6c9,
-        wordWrap: true,
-        wordWrapWidth: PANEL_W - 48,
-        lineHeight: 22,
-      }),
-    });
-    this.bodyText.position.set(x + 24, y + 68);
-    this.bodyText.eventMode = "none";
-    this.container.addChild(this.bodyText);
+    // Body text
+    bodyText.position.set(x + 24, y + BODY_TOP);
+    bodyText.eventMode = "none";
+    this.container.addChild(bodyText);
 
     // Close button (top-right of card)
     const closeBtn = new Graphics();
@@ -111,25 +144,6 @@ export class InfoPanel {
     xIcon.position.set(x + PANEL_W - 20, y + 20);
     xIcon.eventMode = "none";
     this.container.addChild(xIcon);
-
-    // Animate in
-    this.container.visible = true;
-    this.visible = true;
-    this.targetAlpha = 1;
-    this.startFade();
-  }
-
-  updateBody(newBody: string): void {
-    if (this.bodyText) {
-      this.bodyText.text = newBody;
-    }
-  }
-
-  hide(): void {
-    if (!this.visible) return;
-    this.visible = false;
-    this.targetAlpha = 0;
-    this.startFade();
   }
 
   private startFade(): void {
