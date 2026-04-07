@@ -32,13 +32,24 @@ async def ai_invoke(prompt: str, *, grade_level: str, interest: str) -> AIMessag
         )
 
 
-async def ai_invokes(prompts: Dict[str, str], *, grade_level: str, interest: str) -> Dict[str, AIMessage]:
+async def ai_invokes(
+        prompts: Dict[str, str], *, grade_level: str, interest: str
+) -> Dict[str, AIMessage]:
         keys = list(prompts.keys())
-        results = await asyncio.gather(*[ai_invoke(prompts[key], grade_level=grade_level, interest=interest) for key in keys])
+        results = await asyncio.gather(
+                *[
+                        ai_invoke(
+                                prompts[key], grade_level=grade_level, interest=interest
+                        )
+                        for key in keys
+                ]
+        )
         return dict(zip(keys, results))
 
 
-async def invoke(prompt: str, *, grade_level: str = "8", interest: str = "General") -> AIMessage:
+async def invoke(
+        prompt: str, *, grade_level: str = "8", interest: str = "General"
+) -> AIMessage:
         if ConfigManager().server_config().use_dummy:
                 logger.info("Mode: dummy")
                 return await dummy_invoke(prompt)
@@ -46,11 +57,18 @@ async def invoke(prompt: str, *, grade_level: str = "8", interest: str = "Genera
         return await ai_invoke(prompt, grade_level=grade_level, interest=interest)
 
 
-async def invokes(prompts: Dict[str, str], *, grade_level: str = "8", interest: str = "General") -> Dict[str, AIMessage]:
+async def invokes(
+        prompts: Dict[str, str], *, grade_level: str = "8", interest: str = "General"
+) -> Dict[str, AIMessage]:
         if ConfigManager().server_config().use_dummy:
                 logger.info("Mode: dummy (batch %d)", len(prompts))
                 return await dummy_invokes(prompts)
-        logger.info("Mode: AI (batch %d grade=%s interest=%s)", len(prompts), grade_level, interest)
+        logger.info(
+                "Mode: AI (batch %d grade=%s interest=%s)",
+                len(prompts),
+                grade_level,
+                interest,
+        )
         return await ai_invokes(prompts, grade_level=grade_level, interest=interest)
 
 
