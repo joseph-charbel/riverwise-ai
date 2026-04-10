@@ -6,7 +6,7 @@ student:
     interest: "Basketball"
 
 map:
-    background_asset: assets/map/Riverwise_Map.png
+    background_asset: assets/map/map.png
     nodes:
         - node_id: farm
           label: Farm
@@ -152,69 +152,44 @@ scenes:
     - node_id: village
       background_asset: assets/scenes/village.png
       hotspots:
-          - id: village_to_farm
-            type: navigation
-            geometry: { shape: rect, x: 10, y: 200, w: 80, h: 80 }
-            target_node: farm
+          # - id: village_to_farm
+          #   type: navigation
+          #   geometry: { shape: rect, x: 10, y: 200, w: 80, h: 80 }
+          #   target_node: farm
 
-          - id: village_to_kids
-            type: navigation
-            geometry: { shape: rect, x: 850, y: 420, w: 100, h: 80 }
-            target_node: kids_play_area
+          # - id: village_to_kids
+          #   type: navigation
+          #   geometry: { shape: rect, x: 850, y: 420, w: 100, h: 80 }
+          #   target_node: kids_play_area
 
           - id: info_village_well
             type: info
-            geometry: { shape: rect, x: 440, y: 300, w: 60, h: 60 }
-            title: Community Well
+            geometry: { shape: rect, x: 305, y: 305, w: 125, h: 70 }
+            title: Rain Carries Waste
             body: >-
-                The village well draws from the same aquifer fed by the river.
-                Contaminants that enter the river upstream — fertilisers, sewage,
-                industrial discharge — can seep into groundwater and eventually
-                reach the drinking supply.
+                When rubbish is left on the ground, rainwater can wash it away. This water flows over land and carries waste into drains, streams, and rivers. This process is called runoff.
+                In villages and towns, poor waste management means more rubbish can end up in rivers, especially during heavy rain.
+
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_village_waste
             type: info
-            geometry: { shape: rect, x: 200, y: 380, w: 60, h: 60 }
-            title: Domestic Waste
+            geometry: { shape: rect, x: 200, y: 330, w: 100, h: 100 }
+            title: Household Wastewater
             body: >-
-                Household waste, including detergents and cooking oils, often
-                ends up in the river via open drains. Phosphates in detergents
-                fuel algal growth, while oils form a surface film that reduces
-                oxygen exchange between air and water.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+                Water used in homes—for washing clothes, dishes, and bathing—is called wastewater.
+                In many areas, this water is not treated before being released into the environment. It can flow through pipes or open drains directly into rivers. Wastewater can carry soap, dirt, and harmful germs, which pollute rivers and make the water unsafe for people and animals.
 
-          - id: info_village_garden
-            type: info
-            geometry: { shape: rect, x: 650, y: 250, w: 60, h: 60 }
-            title: Community Garden
-            body: >-
-                This community garden uses composting and mulching instead of
-                synthetic fertilisers. Organic practices reduce nutrient runoff
-                and build healthy soil that retains water, decreasing the volume
-                of stormwater that reaches the river.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_village_bridge
             type: info
-            geometry: { shape: rect, x: 350, y: 130, w: 60, h: 60 }
-            title: The Old Bridge
+            geometry: { shape: rect, x: 370, y: 450, w: 125, h: 60 }
+            title: Medicines in Rivers
             body: >-
-                Bridges and hard surfaces increase impervious cover, speeding up
-                stormwater flow and delivering pollutants directly to the river.
-                Permeable surfaces and rain gardens around infrastructure can
-                slow runoff and filter out contaminants.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+                Medicines should be disposed of carefully, but sometimes they are thrown away with regular waste.
+                Rainwater can carry these substances into rivers. Even small amounts of medicines can affect water quality and harm aquatic life. Safe disposal of medicines helps reduce pollution and protect ecosystems.
 
-          - id: info_village_cistern
-            type: info
-            geometry: { shape: rect, x: 120, y: 100, w: 60, h: 60 }
-            title: Rainwater Harvesting
-            body: >-
-                Several homes collect rainwater in cisterns for irrigation and
-                washing. This reduces demand on the river during dry spells and
-                lowers the volume of stormwater runoff that carries pollutants
-                into the waterway during storms.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
       questions:
