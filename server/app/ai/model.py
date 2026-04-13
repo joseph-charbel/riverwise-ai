@@ -11,13 +11,33 @@ logger = get_logger(__name__)
 
 
 def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
-        """Replace {{variable}} placeholders in the template with provided values."""
+        """Substitute template vars, then append YAML grade band rules if matched."""
         prompt = PromptTemplate.from_template(template=template)
         assert variables.keys() == {"grade_level", "student_interest"}
-        return prompt.format(
+        rendered = prompt.format(
                 grade_level=variables["grade_level"],
                 student_interest=variables["student_interest"],
         )
+        grade_raw = variables["grade_level"]
+        try:
+                grade_num = int(str(grade_raw).strip())
+        except (ValueError, TypeError):
+                logger.warning(
+                        "Invalid grade_level %r; skipping grade rules append",
+                        grade_raw,
+                )
+                return rendered
+        rules = ConfigManager().rules_for_grade(grade_num)
+        if rules is None:
+                logger.warning(
+                        "No grade_rules band for grade %s; skipping append",
+                        grade_num,
+                )
+                return rendered
+
+        system_prompt = f"{rendered}\n\n### Grade-Specific Rules\n{rules}"
+        logger.info(f"System prompt: {system_prompt}")
+        return system_prompt
 
 
 def _make_llm(chat_config: ChatConfig) -> BaseChatModel:

@@ -8,7 +8,10 @@ from langchain_core.messages import AIMessage
 logger = get_logger(__name__)
 
 _TEST_INFORMATION_CARD = """
-In Nepal, the intensification of agriculture to meet the needs of a growing population has led to a significant increase in the use of chemical fertilizers, particularly Urea and DAP. During the monsoon season, heavy rainfall causes significant agricultural runoff, where excess nitrogen and phosphorus are washed from hillside farms and the Terai plains into major river systems like the Bagmati and Koshi. This influx of nutrients triggers eutrophication, a process that depletes dissolved oxygen in the water, leading to "biological deserts" where fish and aquatic plants cannot survive. Furthermore, recent 2026 data shows that only about 30% of farmers are using the correct nutrient management practices, resulting in high levels of nitrate contamination in both surface water and shallow groundwater, which poses severe health risks to local communities.
+When pollutants enter rivers, the water can become cloudy, dark, or have a strange smell.
+In Nepal, rivers near cities and industrial areas—such as parts of the Bagmati River—have become polluted due to untreated waste. Poor water quality can harm ecosystems and make water unsafe for daily use.
+
+Did you know? Parts of the Bagmati River near Kathmandu are heavily polluted due to untreated sewage and industrial waste.
 """
 
 

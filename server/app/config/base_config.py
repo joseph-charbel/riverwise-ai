@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Optional, cast
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field, SecretStr
+from pydantic import BaseModel, Field, SecretStr, ValidationError
 import os
 
 from .config_loader import CONFIG
@@ -55,6 +55,16 @@ class PromptConfig(BaseModel):
         # validate_prompt: str = Field(default="")
 
 
+class GradeRule(BaseModel):
+        start: int
+        end: int
+        rules: str
+
+
+class GradeRulesConfig(BaseModel):
+        rules: list[GradeRule] = Field(default_factory=list)
+
+
 # ===============================
 # CONFIG MANAGER
 # ===============================
@@ -67,6 +77,7 @@ class ConfigManager:
         _chat_model_config: Optional[ChatConfig] = None
         _prompt_config: Optional[PromptConfig] = None
         _server_config: Optional[ServerConfig] = None
+        _grade_rules_config: Optional[GradeRulesConfig] = None
 
         def __new__(cls):
                 if cls._instance is None:
@@ -134,6 +145,42 @@ class ConfigManager:
                 self._prompt_config = PromptConfig(
                         system_prompt=system_prompt,
                 )
+
+                # ---------------- GRADE RULES ----------------
+                grade_rules_raw: Any = config_data.get("grade_rules", [])
+                grade_rules_list: list[GradeRule] = []
+                if isinstance(grade_rules_raw, list):
+                        for item in cast(list[Any], grade_rules_raw):
+                                if isinstance(item, dict):
+                                        try:
+                                                grade_rules_list.append(
+                                                        GradeRule.model_validate(
+                                                                cast(
+                                                                        dict[
+                                                                                str,
+                                                                                Any,
+                                                                        ],
+                                                                        item,
+                                                                )
+                                                        )
+                                                )
+                                        except ValidationError:
+                                                pass
+                self._grade_rules_config = GradeRulesConfig(rules=grade_rules_list)
+
+        def rules_for_grade(self, grade_level: int) -> str | None:
+                """Return rules text for the first band where start <= grade <= end."""
+                if self._grade_rules_config is None:
+                        return None
+                for band in self._grade_rules_config.rules:
+                        if band.start <= grade_level <= band.end:
+                                return band.rules.strip()
+                return None
+
+        def grade_rules(self) -> GradeRulesConfig:
+                if self._grade_rules_config is None:
+                        return GradeRulesConfig()
+                return self._grade_rules_config
 
         # ---------------- ACCESSORS ----------------
         def server_config(self) -> ServerConfig:

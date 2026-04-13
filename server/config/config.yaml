@@ -3,18 +3,37 @@ server_config:
     default_grade_level: "8"
     default_interest: "General"
 
-# chat_model_config:
-#     provider: groq
-#     model: llama-3.1-8b-instant
-#     kwargs:
-#         temperature: 0
 chat_model_config:
-    provider: google
-    model: gemini-2.5-flash-lite
+    provider: groq
+    model: llama-3.1-8b-instant
     kwargs:
         temperature: 0
+# chat_model_config:
+#     provider: google
+#     model: gemini-2.5-flash-lite
+#     kwargs:
+#         temperature: 0
 
 prompts_config:
     system_prompt_file: prompts/meta.txt # prompt based on meta strategy (https://github.com/meta-prompting/meta-prompting?tab=readme-ov-file)
+    system_prompt_file: prompts/dynamic.txt # dynamic prompt
     # system_prompt_file: prompts/simple.txt # simple prompt
     # system_prompt_file: prompts/original.txt # original prompt
+
+grade_rules:
+  - start: 0
+    end: 4
+    rules: |
+      - **Target Audience:** 10 to 12-year-old students. Assume English is their second language and they read at a beginner-to-intermediate level.
+        - **Rule 1: Simple Vocabulary:** Use common, everyday English words. Absolutely no jargon, complex academic terms, or Western idioms. If a scientific or historical term must be used, define it simply in the same sentence.
+        - **Rule 2: Short Sentences:** Keep sentences under 15 words. Stick to exactly one clear idea per sentence. 
+        - **Rule 3: Concrete Concepts:** Explain ideas using physical things the student can see, touch, or easily imagine in their daily life. Avoid abstract theories.
+        - **Rule 4: Active Voice:** Always use active verbs (e.g., "The sun heats the earth" instead of "The earth is heated by the sun").
+  - start: 5
+    end: 8
+    rules: |
+      Use compound sentences. Introduce 1-2 technical terms but explain them as "special moves" or "rules" within the metaphor.
+  - start: 9
+    end: 12
+    rules: |
+      Use nuanced vocabulary and maintain the data's original precision while using the metaphor for structural flow.
