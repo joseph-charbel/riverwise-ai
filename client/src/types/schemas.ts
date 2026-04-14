@@ -74,6 +74,7 @@ export interface InfoHotspotConfig extends BaseHotspotConfig {
   type: "info";
   title: string;
   body: string;
+  target_mechanic?: string;
 }
 
 export type HotspotConfig =

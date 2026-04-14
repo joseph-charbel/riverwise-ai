@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.index import invoke, invokes
 from app.types import (
+    DummyInvokeBatchItem,
     DummyInvokeRequest,
     DummyInvokeResponse,
     DummyInvokesRequest,
@@ -39,7 +40,7 @@ async def api_dummy_invoke(request: DummyInvokeRequest):
 
 @app.post("/api/dummy-invokes", response_model=DummyInvokesResponse)
 async def api_dummy_invokes(request: DummyInvokesRequest):
-    responses = await invokes(request.prompts, grade_level=request.grade_level, interest=request.interest, target_mechanic=request.target_mechanic)
+    responses = await invokes(request.items, grade_level=request.grade_level, interest=request.interest)
     return DummyInvokesResponse(results={key: msg.content for key, msg in responses.items()})
 
 

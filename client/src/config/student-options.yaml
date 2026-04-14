@@ -7,6 +7,6 @@ interests:
   - Cooking
 
 grade:
-  min: 0
+  min: 4
   max: 12
   default: 2

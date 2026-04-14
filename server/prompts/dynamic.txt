@@ -17,6 +17,6 @@ You are an expert educational adapter. Your task is to rewrite a short education
 - CRITICAL RULE: The examples above are strictly for learning the pattern. DO NOT copy them. You must generate a brand new analogy specific to the [Original Text], [Target Mechanic], and [Student Interest].
 
 ### Inputs:
-- Target Mechanic: {target_mechanic}
 - Grade Level: {grade_level}
 - Student Interest: {student_interest}
+- Original Card: [Attached Below]

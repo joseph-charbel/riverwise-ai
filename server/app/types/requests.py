@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import List
 
 from pydantic import BaseModel
 
@@ -10,8 +10,13 @@ class DummyInvokeRequest(BaseModel):
     target_mechanic: str = ""
 
 
+class DummyInvokeBatchItem(BaseModel):
+    id: str
+    prompt: str
+    target_mechanic: str = ""
+
+
 class DummyInvokesRequest(BaseModel):
-    prompts: Dict[str, str]
+    items: List[DummyInvokeBatchItem]
     grade_level: str = "8"
     interest: str = "General"
-    target_mechanic: str = ""

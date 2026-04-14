@@ -3,7 +3,7 @@ import type { SceneConfig, StudentConfig } from "../types/schemas.ts";
 import type { InfoPanel } from "../ui/InfoPanel.ts";
 import { Scene } from "../objects/Scene.ts";
 import { eventBus } from "./EventBus.ts";
-import { invokePromptsBatch } from "../services/api.ts";
+import { invokePromptsBatch, type InvokeBatchItem } from "../services/api.ts";
 
 export class SceneManager {
   private scenes: Map<string, SceneConfig>;
@@ -49,11 +49,17 @@ export class SceneManager {
 
     const infoHotspots = config.hotspots.filter((h) => h.type === "info");
     if (infoHotspots.length > 0) {
-      const prompts: Record<string, string> = {};
+      const items: InvokeBatchItem[] = [];
       for (const h of infoHotspots) {
-        if ("body" in h) prompts[h.id] = h.body as string;
+        if ("body" in h) {
+          items.push({
+            id: h.id,
+            prompt: h.body as string,
+            target_mechanic: ("target_mechanic" in h ? h.target_mechanic as string : undefined) ?? "",
+          });
+        }
       }
-      invokePromptsBatch(prompts, this.studentConfig)
+      invokePromptsBatch(items, this.studentConfig)
         .then((results) => scene.applyPrefetchedContent(results))
         .catch(() => {
           // Prefetch failed — hotspots will fall back to individual on-demand calls

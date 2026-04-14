@@ -11,6 +11,7 @@ export class InfoHotspot extends Hotspot {
   private sceneId: string;
   private prefetchedContent: string | null = null;
   private studentConfig: StudentConfig;
+  private targetMechanic: string;
 
   constructor(config: InfoHotspotConfig, panel: InfoPanel, sceneId: string, studentConfig: StudentConfig) {
     super(config);
@@ -19,6 +20,7 @@ export class InfoHotspot extends Hotspot {
     this.panel = panel;
     this.sceneId = sceneId;
     this.studentConfig = studentConfig;
+    this.targetMechanic = config.target_mechanic ?? "";
   }
 
   setPrefetchedContent(content: string): void {
@@ -38,7 +40,7 @@ export class InfoHotspot extends Hotspot {
     }
 
     this.panel.show(this.title, "Loading...");
-    invokePrompt(this.body, this.config.id, this.studentConfig)
+    invokePrompt(this.body, this.config.id, this.studentConfig, this.targetMechanic)
       .then((content) => this.panel.updateBody(content))
       .catch(() => this.panel.updateBody(this.body));
   }

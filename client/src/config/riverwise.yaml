@@ -2,7 +2,7 @@
 # 5 scenes along the river: Farm, Village, Kids Play Area, Temple, Factories
 
 student:
-    grade_level: "1"
+    grade_level: "4"
     interest: "Basketball"
 
 map:
@@ -77,6 +77,7 @@ scenes:
                 waterways during rain. This nutrient-rich runoff triggers algal
                 blooms that deplete dissolved oxygen — suffocating fish and other
                 aquatic organisms downstream.
+            target_mechanic: Nutrient pollution and algal bloom formation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_farm_irrigation
@@ -88,6 +89,7 @@ scenes:
                 Over-extraction can lower river levels, concentrating pollutants
                 and raising water temperatures — both harmful to freshwater species
                 that depend on cool, flowing water.
+            target_mechanic: Water over-extraction and resulting habitat degradation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_farm_soil
@@ -99,6 +101,7 @@ scenes:
                 loose sediment washes into the river, increasing turbidity. Turbid
                 water blocks sunlight from reaching aquatic plants, disrupting the
                 base of the food chain.
+            target_mechanic: Soil erosion leading to high turbidity and sunlight blockage.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_farm_buffer
@@ -110,6 +113,7 @@ scenes:
                 natural filters. Their roots trap sediment and absorb excess
                 nutrients before they reach the water — one of the most effective
                 and low-cost river protection strategies.
+            target_mechanic: Natural filtration via riparian buffer vegetation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_farm_livestock
@@ -121,6 +125,7 @@ scenes:
                 bank and disturb sediment. Manure adds bacteria such as E. coli,
                 making the water unsafe for downstream communities. Fencing stock
                 out of waterways dramatically improves water quality.
+            target_mechanic: Bank disturbance and bacterial contamination from livestock.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
       questions:
@@ -169,6 +174,7 @@ scenes:
             body: >-
                 When rubbish is left on the ground, rainwater can wash it away. This water flows over land and carries waste into drains, streams, and rivers. This process is called runoff.
                 In villages and towns, poor waste management means more rubbish can end up in rivers, especially during heavy rain.
+            target_mechanic: Stormwater runoff transporting solid waste.
 
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
@@ -179,6 +185,7 @@ scenes:
             body: >-
                 Water used in homes—for washing clothes, dishes, and bathing—is called wastewater.
                 In many areas, this water is not treated before being released into the environment. It can flow through pipes or open drains directly into rivers. Wastewater can carry soap, dirt, and harmful germs, which pollute rivers and make the water unsafe for people and animals.
+            target_mechanic: Untreated domestic wastewater and pathogen introduction.
 
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
@@ -189,6 +196,7 @@ scenes:
             body: >-
                 Medicines should be disposed of carefully, but sometimes they are thrown away with regular waste.
                 Rainwater can carry these substances into rivers. Even small amounts of medicines can affect water quality and harm aquatic life. Safe disposal of medicines helps reduce pollution and protect ecosystems.
+            target_mechanic: Pharmaceutical pollution from improper disposal.
 
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
@@ -235,6 +243,7 @@ scenes:
                 shrimp live under rocks in the river. Their presence — or
                 absence — is one of the best indicators of water quality. Citizen
                 scientists count these organisms to monitor river health.
+            target_mechanic: Biological indicators for monitoring water health.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_kids_safety
@@ -246,6 +255,7 @@ scenes:
                 pollution. After heavy rain, bacteria counts spike as stormwater
                 flushes animal waste and sewage overflows into the river. Always
                 check local water quality advisories before swimming.
+            target_mechanic: Post-rainfall pathogen and bacteria spikes.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_kids_biodiversity
@@ -257,6 +267,7 @@ scenes:
                 amphibians, birds, insects and plants all depend on clean,
                 flowing water. When one species declines, ripple effects can
                 disrupt the entire food chain.
+            target_mechanic: Ecosystem interdependence and food web disruption.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_kids_litter
@@ -268,6 +279,7 @@ scenes:
                 that persist in the river for centuries. Fish and birds mistake
                 these tiny fragments for food. Organising regular clean-up days
                 is one of the simplest ways to make a difference.
+            target_mechanic: Microplastic degradation and wildlife ingestion.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_kids_citizen_science
@@ -279,6 +291,7 @@ scenes:
                 colour, smell, wildlife sightings and litter counts builds a
                 valuable dataset. Schools and community groups feed this data
                 into regional water quality databases used by scientists.
+            target_mechanic: Community data collection for scientific monitoring.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
       questions:
@@ -329,6 +342,7 @@ scenes:
                 sacred. Rituals of gratitude for clean water reinforce a cultural
                 ethic of stewardship — a powerful motivator for conservation that
                 predates modern environmental science.
+            target_mechanic: Cultural stewardship and historical conservation ethics.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_temple_waterfall
@@ -340,6 +354,7 @@ scenes:
                 This natural oxygenation supports fish and other aquatic life
                 downstream. Dams and weirs that flatten the flow can reduce this
                 effect, creating low-oxygen "dead zones."
+            target_mechanic: Natural aeration generating dissolved oxygen.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_temple_offerings
@@ -351,6 +366,7 @@ scenes:
                 biodegradable and harmless. However, modern substitutes —
                 plastic wrappings, synthetic dyes, chemical candles — can pollute
                 the river. Many temples now promote eco-friendly alternatives.
+            target_mechanic: Environmental impact of biodegradable versus synthetic materials.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_temple_springs
@@ -362,6 +378,7 @@ scenes:
                 rainfall. Deforestation on the slopes accelerates erosion and
                 reduces the land's ability to absorb water, leading to flash
                 floods in the wet season and drought in the dry season.
+            target_mechanic: Deforestation altering upstream water cycles and flow rates.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_temple_forest
@@ -373,6 +390,7 @@ scenes:
                 groves act as the river's lungs — their root systems anchor
                 soil, their canopy regulates temperature, and leaf litter feeds
                 a micro-ecosystem of decomposers that keeps the water clean.
+            target_mechanic: Forest micro-ecosystems acting as natural climate and soil regulators.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
       questions:
@@ -423,6 +441,7 @@ scenes:
                 heavy metals like mercury, lead and cadmium into the river.
                 These toxins accumulate in fish tissue — a process called
                 bioaccumulation — making them unsafe to eat.
+            target_mechanic: Heavy metal toxicity and bioaccumulation in food chains.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_factories_thermal
@@ -434,6 +453,7 @@ scenes:
                 temperature. Warm water holds less dissolved oxygen, stressing
                 cold-water species like trout. Even a few degrees of change can
                 shift the entire ecosystem.
+            target_mechanic: Thermal pollution reducing dissolved oxygen capacity.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_factories_regulation
@@ -446,6 +466,7 @@ scenes:
                 continuously. When limits are breached, fines and mandatory
                 clean-ups are enforced — but enforcement depends on funding and
                 political will.
+            target_mechanic: Regulatory monitoring and penalty enforcement.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_factories_treatment
@@ -457,6 +478,7 @@ scenes:
                 processes to remove contaminants before water is returned to the
                 river. Constructed wetlands offer a low-energy alternative,
                 using natural processes to break down pollutants.
+            target_mechanic: Contaminant removal via industrial wastewater treatment.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_factories_circular
@@ -468,6 +490,7 @@ scenes:
                 drastically reducing the volume they extract from — and return
                 to — the river. This "circular" approach cuts both water
                 consumption and pollution simultaneously.
+            target_mechanic: Closed-loop water recycling reducing extraction and discharge.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
       questions:
