@@ -1,5 +1,3 @@
-version: 1.0
-
 grade_rules:
   - start: 0
     end: 4

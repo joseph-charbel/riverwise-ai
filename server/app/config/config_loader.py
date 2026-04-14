@@ -60,7 +60,9 @@ def render_placeholders(config_data: Any, context: dict[str, Any]) -> Any:
                 return config_data
 
 
-def _merge_grade_rules_file(config_data: dict[str, Any], grade_rules_path: Path) -> None:
+def _merge_grade_rules_file(
+        config_data: dict[str, Any], grade_rules_path: Path
+) -> None:
         """Overlay ``grade_rules`` and ``grade_rules_version`` (from ``version``) when file present."""
         if not grade_rules_path.exists():
                 return
@@ -76,9 +78,6 @@ def _merge_grade_rules_file(config_data: dict[str, Any], grade_rules_path: Path)
         gr_key = gr_data.get("grade_rules")
         if gr_key is not None:
                 config_data["grade_rules"] = gr_key
-        ver = gr_data.get("version")
-        if ver is not None:
-                config_data["grade_rules_version"] = str(ver).strip()
 
 
 def load_config(context: dict[str, Any] | None = None) -> dict[str, Any]:
