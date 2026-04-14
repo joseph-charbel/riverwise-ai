@@ -62,6 +62,7 @@ class GradeRule(BaseModel):
 
 
 class GradeRulesConfig(BaseModel):
+        version: str = Field(default="")
         rules: list[GradeRule] = Field(default_factory=list)
 
 
@@ -125,8 +126,12 @@ class ConfigManager:
                 )
                 self._server_config = ServerConfig(
                         use_dummy=bool(server_data.get("use_dummy", True)),
-                        default_grade_level=str(server_data.get("default_grade_level", "8")),
-                        default_interest=str(server_data.get("default_interest", "General")),
+                        default_grade_level=str(
+                                server_data.get("default_grade_level", "8")
+                        ),
+                        default_interest=str(
+                                server_data.get("default_interest", "General")
+                        ),
                 )
 
                 # ---------------- PROMPTS ----------------
@@ -141,12 +146,14 @@ class ConfigManager:
                         prompt_path = _SERVER_ROOT / str(system_prompt_file)
                         system_prompt = prompt_path.read_text(encoding="utf-8").strip()
                 else:
-                        system_prompt = str(prompts_config.get("system_prompt", "")).strip()
+                        system_prompt = str(
+                                prompts_config.get("system_prompt", "")
+                        ).strip()
                 self._prompt_config = PromptConfig(
                         system_prompt=system_prompt,
                 )
 
-                # ---------------- GRADE RULES ----------------
+                # ---------------- GRADE RULES (rules + version from config/grade_rules.yaml via config_loader) ----------------
                 grade_rules_raw: Any = config_data.get("grade_rules", [])
                 grade_rules_list: list[GradeRule] = []
                 if isinstance(grade_rules_raw, list):
@@ -166,7 +173,14 @@ class ConfigManager:
                                                 )
                                         except ValidationError:
                                                 pass
-                self._grade_rules_config = GradeRulesConfig(rules=grade_rules_list)
+                gr_ver_raw: Any = config_data.get("grade_rules_version")
+                grade_rules_version = (
+                        str(gr_ver_raw).strip() if gr_ver_raw is not None else ""
+                )
+                self._grade_rules_config = GradeRulesConfig(
+                        version=grade_rules_version,
+                        rules=grade_rules_list,
+                )
 
         def rules_for_grade(self, grade_level: int) -> str | None:
                 """Return rules text for the first band where start <= grade <= end."""
@@ -199,3 +213,13 @@ class ConfigManager:
                                 "Chat model configuration is not initialized"
                         )
                 return self._chat_model_config
+
+
+if __name__ == "__main__":
+        config_manager = ConfigManager()
+        print(f"Grade rules version: {config_manager.grade_rules().version}")
+        print("Grade rules:")
+        for rule in config_manager.grade_rules().rules:
+                print(f"  - Start: {rule.start}, End: {rule.end}")
+                print(f"    Rules: {rule.rules}")
+                print()

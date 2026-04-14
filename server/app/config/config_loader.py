@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import Any, cast
 
@@ -61,14 +60,33 @@ def render_placeholders(config_data: Any, context: dict[str, Any]) -> Any:
                 return config_data
 
 
+def _merge_grade_rules_file(config_data: dict[str, Any], grade_rules_path: Path) -> None:
+        """Overlay ``grade_rules`` and ``grade_rules_version`` (from ``version``) when file present."""
+        if not grade_rules_path.exists():
+                return
+        try:
+                gr_data = load_yaml(str(grade_rules_path))
+        except Exception as e:
+                logger.warning(
+                        "Failed to load grade rules file %s: %s", grade_rules_path, e
+                )
+                return
+        if not isinstance(gr_data, dict):
+                return
+        gr_key = gr_data.get("grade_rules")
+        if gr_key is not None:
+                config_data["grade_rules"] = gr_key
+        ver = gr_data.get("version")
+        if ver is not None:
+                config_data["grade_rules_version"] = str(ver).strip()
+
+
 def load_config(context: dict[str, Any] | None = None) -> dict[str, Any]:
-        config_file_path = Path("config/config.yaml")
+        root_path = Path(__file__).resolve().parents[2]
+        config_file_path = root_path / "config" / "config.yaml"
+        grade_rules_file_path = root_path / "config" / "grade_rules.yaml"
 
-        if not os.path.isabs(config_file_path):
-                root_path = Path(__file__).resolve().parents[2]
-                config_file_path = root_path / config_file_path
-
-        if os.path.exists(config_file_path):
+        if config_file_path.exists():
                 try:
                         config_data = load_yaml(str(config_file_path))
                         logger.info("Config loaded from %s", config_file_path)
@@ -76,6 +94,12 @@ def load_config(context: dict[str, Any] | None = None) -> dict[str, Any]:
                         if not config_data:
                                 logger.warning("Config file is empty.")
                                 return {}
+
+                        if isinstance(config_data, dict):
+                                _merge_grade_rules_file(
+                                        cast(dict[str, Any], config_data),
+                                        grade_rules_file_path,
+                                )
 
                         if context:
                                 config_data = render_placeholders(config_data, context)

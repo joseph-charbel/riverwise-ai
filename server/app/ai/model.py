@@ -36,7 +36,7 @@ def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
                 return rendered
 
         system_prompt = f"{rendered}\n\n### Grade-Specific Rules\n{rules}"
-        logger.info(f"System prompt: {system_prompt}")
+        logger.info(f"SYSTEM PROMPT:\n{system_prompt}")
         return system_prompt
 
 
@@ -108,7 +108,9 @@ class Model:
                 )
 
                 if target_mechanic:
-                        human_content = f"**Target Mechanic:** {target_mechanic}\n\n{prompt}"
+                        human_content = (
+                                f"**Target Mechanic:** {target_mechanic}\n\n{prompt}"
+                        )
                 else:
                         human_content = prompt
 
