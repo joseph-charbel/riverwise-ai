@@ -1,12 +1,15 @@
-from typing import Dict
-
 import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
 from app.index import invoke, invokes
+from app.types import (
+    DummyInvokeRequest,
+    DummyInvokeResponse,
+    DummyInvokesRequest,
+    DummyInvokesResponse,
+)
 
 app = FastAPI(title="Backend API")
 
@@ -22,40 +25,21 @@ app.add_middleware(
 )
 
 
-class DummyInvokeRequest(BaseModel):
-    prompt: str
-    grade_level: str = "8"
-    interest: str = "General"
-
-
-class DummyInvokeResponse(BaseModel):
-    content: str
-
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
 
-class DummyInvokesRequest(BaseModel):
-    prompts: Dict[str, str]
-    grade_level: str = "8"
-    interest: str = "General"
-
-
-class DummyInvokesResponse(BaseModel):
-    results: Dict[str, str]
-
-
 @app.post("/api/dummy-invoke", response_model=DummyInvokeResponse)
 async def api_dummy_invoke(request: DummyInvokeRequest):
-    response = await invoke(request.prompt, grade_level=request.grade_level, interest=request.interest)
+    response = await invoke(request.prompt, grade_level=request.grade_level, interest=request.interest, target_mechanic=request.target_mechanic)
     return DummyInvokeResponse(content=response.content)
 
 
 @app.post("/api/dummy-invokes", response_model=DummyInvokesResponse)
 async def api_dummy_invokes(request: DummyInvokesRequest):
-    responses = await invokes(request.prompts, grade_level=request.grade_level, interest=request.interest)
+    responses = await invokes(request.prompts, grade_level=request.grade_level, interest=request.interest, target_mechanic=request.target_mechanic)
     return DummyInvokesResponse(results={key: msg.content for key, msg in responses.items()})
 
 

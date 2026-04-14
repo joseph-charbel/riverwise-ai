@@ -13,10 +13,11 @@ logger = get_logger(__name__)
 def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
         """Substitute template vars, then append YAML grade band rules if matched."""
         prompt = PromptTemplate.from_template(template=template)
-        assert variables.keys() == {"grade_level", "student_interest"}
+        assert variables.keys() == {"grade_level", "student_interest", "target_mechanic"}
         rendered = prompt.format(
                 grade_level=variables["grade_level"],
                 student_interest=variables["student_interest"],
+                target_mechanic=variables["target_mechanic"],
         )
         grade_raw = variables["grade_level"]
         try:
@@ -88,12 +89,13 @@ class Model:
                 *,
                 grade_level: str | None = None,
                 student_interest: str | None = None,
+                target_mechanic: str | None = None,
                 **variables: Any,
         ) -> AIMessage:
                 """
                 Invoke the LLM with the given prompt.
 
-                Dynamic variables (e.g. grade_level, student_interest) are substituted
+                Dynamic variables (e.g. grade_level, student_interest, target_mechanic) are substituted
                 into the system prompt template. Pass as keyword args or via **variables.
                 """
                 vars_dict: dict[str, Any] = dict(variables)
@@ -101,6 +103,8 @@ class Model:
                         vars_dict["grade_level"] = grade_level
                 if student_interest is not None:
                         vars_dict["student_interest"] = student_interest
+                if target_mechanic is not None:
+                        vars_dict["target_mechanic"] = target_mechanic
 
                 system_prompt = _render_system_prompt(
                         self._system_prompt_template, vars_dict
