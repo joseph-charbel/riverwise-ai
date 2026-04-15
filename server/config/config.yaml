@@ -3,6 +3,11 @@ server_config:
     default_grade_level: "8"
     default_interest: "General"
 
+cache_config:
+    enabled: true
+    ttl: 3600 # seconds; 0 = no expiry
+    provider: memory # future: redis, file
+
 chat_model_config:
     provider: groq
     model: llama-3.1-8b-instant

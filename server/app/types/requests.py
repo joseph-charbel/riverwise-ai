@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class DummyInvokeRequest(BaseModel):
+    id: str = ""
     prompt: str
     grade_level: str = "8"
     interest: str = "General"
