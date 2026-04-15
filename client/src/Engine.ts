@@ -25,8 +25,8 @@ export class Engine {
     container: HTMLElement,
     sceneConfigs: SceneConfig[],
     mapConfig: MapConfig,
-    startScene: string,
     studentConfig: StudentConfig,
+    startScene?: string,
   ): Promise<void> {
     await this.app.init({
       width: 960,
@@ -76,8 +76,12 @@ export class Engine {
       this.mapOverlay.setCompleted(sceneId as string, true);
     });
 
-    // Load initial scene
-    await this.sceneManager.loadScene(startScene);
+    // Load initial scene or open map for selection
+    if (startScene) {
+      await this.sceneManager.loadScene(startScene);
+    } else {
+      this.mapOverlay.open();
+    }
 
     void this.inputManager;
   }
