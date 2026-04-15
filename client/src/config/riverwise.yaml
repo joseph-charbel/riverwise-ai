@@ -157,25 +157,18 @@ scenes:
     - node_id: village
       background_asset: assets/scenes/village.png
       hotspots:
-          # - id: village_to_farm
-          #   type: navigation
-          #   geometry: { shape: rect, x: 10, y: 200, w: 80, h: 80 }
-          #   target_node: farm
-
-          # - id: village_to_kids
-          #   type: navigation
-          #   geometry: { shape: rect, x: 850, y: 420, w: 100, h: 80 }
-          #   target_node: kids_play_area
 
           - id: info_village_well
             type: info
             geometry: { shape: rect, x: 305, y: 305, w: 125, h: 70 }
             title: Rain Carries Waste
             body: >-
-                When rubbish is left on the ground, rainwater can wash it away. This water flows over land and carries waste into drains, streams, and rivers. This process is called runoff.
-                In villages and towns, poor waste management means more rubbish can end up in rivers, especially during heavy rain.
-            target_mechanic: Stormwater runoff transporting solid waste.
-
+                When rubbish is left on the ground, rainwater can wash it away.
+                This water flows over land and carries waste into drains, streams, 
+                and rivers. This process is called runoff. In villages and towns, 
+                poor waste management means more rubbish can end up in rivers, especially
+                during heavy rain.
+            target_mechanic:  Runoff transporting waste into waterways during rain events.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_village_waste
@@ -229,70 +222,81 @@ scenes:
     - node_id: kids_play_area
       background_asset: assets/scenes/kids-play-area.png
       hotspots:
-          - id: kids_to_village
-            type: navigation
-            geometry: { shape: rect, x: 10, y: 200, w: 80, h: 80 }
-            target_node: village
 
           - id: info_kids_macroinvertebrates
             type: info
-            geometry: { shape: rect, x: 200, y: 380, w: 60, h: 60 }
-            title: Macroinvertebrates
+            geometry: { shape: rect, x: 120, y: 410, w: 90, h: 90 }
+            title: Plastic Bag Near The River
             body: >-
-                Tiny creatures like mayfly larvae, stoneflies and freshwater
-                shrimp live under rocks in the river. Their presence — or
-                absence — is one of the best indicators of water quality. Citizen
-                scientists count these organisms to monitor river health.
-            target_mechanic: Biological indicators for monitoring water health.
+                Plastic bottles and wrappers are common types of rubbish found in rivers.
+                Unlike food or paper, plastic does not break down quickly. It can stay in
+                the environment for many years.
+
+                Fish and other animals may mistake plastic for food, which can make them sick. 
+                Plastic can also block waterways or get tangled around plants and animals.
+                
+                To protect rivers, plastic waste should be placed in bins or recycling, not 
+                left on the ground where it can wash into the water.
+
+                💡Did you know? A single plastic bottle can take hundreds of years to break down.
+
+            target_mechanic: Impacts of plastic pollution on aquatic life and waterways.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_kids_safety
             type: info
-            geometry: { shape: rect, x: 500, y: 300, w: 60, h: 60 }
-            title: Water Safety
+            geometry: { shape: rect, x: 500, y: 430, w: 60, h: 60 }
+            title: Fish Swimming in the Rubbish
             body: >-
-                Even clear-looking water can harbour pathogens from upstream
-                pollution. After heavy rain, bacteria counts spike as stormwater
-                flushes animal waste and sewage overflows into the river. Always
-                check local water quality advisories before swimming.
-            target_mechanic: Post-rainfall pathogen and bacteria spikes.
+                Rivers are home to many animals, including fish, insects, and birds. 
+                These animals depend on clean water to survive.
+               
+                When rubbish enters the river, it can damage habitats and make it 
+                harder for animals to find food or breathe properly.
+                
+                Clean rivers support healthy ecosystems and also provide water that 
+                communities can safely use.
+
+            target_mechanic: Rubbish in rivers damaging habitats
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
-          - id: info_kids_biodiversity
-            type: info
-            geometry: { shape: rect, x: 700, y: 150, w: 60, h: 60 }
-            title: River Biodiversity
-            body: >-
-                Healthy rivers support an extraordinary web of life — fish,
-                amphibians, birds, insects and plants all depend on clean,
-                flowing water. When one species declines, ripple effects can
-                disrupt the entire food chain.
-            target_mechanic: Ecosystem interdependence and food web disruption.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+          #- id: info_kids_biodiversity
+          #  type: info
+          #  geometry: { shape: rect, x: 700, y: 150, w: 60, h: 60 }
+          #  title: 
+          #  body: >-
+          #      Healthy rivers support an extraordinary web of life — fish,
+          #      amphibians, birds, insects and plants all depend on clean,
+          #      flowing water. When one species declines, ripple effects can
+          #      disrupt the entire food chain.
+          #      target_mechanic: Ecosystem interdependence and food web disruption.
+          #      image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
           - id: info_kids_litter
             type: info
-            geometry: { shape: rect, x: 350, y: 200, w: 60, h: 60 }
-            title: Litter & Microplastics
+            geometry: { shape: rect, x: 190, y: 240, w: 100, h: 100 }
+            title: Stormwater Drain or Pipe
             body: >-
-                Plastic wrappers, bottles and bags break down into microplastics
-                that persist in the river for centuries. Fish and birds mistake
-                these tiny fragments for food. Organising regular clean-up days
-                is one of the simplest ways to make a difference.
+                During rain, water flows into drains and pipes that carry it away from roads and buildings. This water is called stormwater.
+                Stormwater often flows directly into rivers without being cleaned first. If rubbish or pollution enters the drain, it can travel straight into the river.
+                Keeping streets and public places clean helps stop pollution from reaching waterways.
+                
+                💡Did you know? Studies in Nepal show that urban drainage systems often carry waste directly into rivers without treatment. In cities like Kathmandu, many drains and pipes release untreated wastewater straight into rivers like the Bagmati.
+
             target_mechanic: Microplastic degradation and wildlife ingestion.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
-          - id: info_kids_citizen_science
-            type: info
-            geometry: { shape: rect, x: 150, y: 100, w: 60, h: 60 }
-            title: Citizen Science
-            body: >-
-                You don't need a lab to help — recording observations like water
-                colour, smell, wildlife sightings and litter counts builds a
-                valuable dataset. Schools and community groups feed this data
-                into regional water quality databases used by scientists.
-            target_mechanic: Community data collection for scientific monitoring.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+          # - id: info_kids_citizen_science
+          #   type: info
+          #   geometry: { shape: rect, x: 150, y: 100, w: 60, h: 60 }
+          #   title: Citizen Science
+          #   body: >-
+          #       You don't need a lab to help — recording observations like water
+          #       colour, smell, wildlife sightings and litter counts builds a
+          #       valuable dataset. Schools and community groups feed this data
+          #       into regional water quality databases used by scientists.
+          #   target_mechanic: Community data collection for scientific monitoring.
+          #   image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
       questions:
           - question: Why are macroinvertebrates useful indicators of water quality?
