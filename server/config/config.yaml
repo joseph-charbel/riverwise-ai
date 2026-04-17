@@ -19,5 +19,6 @@ chat_model_config:
 prompts_config:
     # system_prompt_file: prompts/meta.txt # prompt based on meta strategy (https://github.com/meta-prompting/meta-prompting?tab=readme-ov-file)
     system_prompt_file: prompts/dynamic.md # dynamic prompt
+    example_prompt_file: prompts/dynamic_example.md # appended when include_example=True
     # system_prompt_file: prompts/simple.txt # simple prompt
     # system_prompt_file: prompts/original.txt # original prompt

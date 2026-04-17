@@ -9,12 +9,14 @@ class DummyInvokeRequest(BaseModel):
     grade_level: str = "8"
     interest: str = "General"
     target_mechanic: str = ""
+    include_example: bool = True
 
 
 class DummyInvokeBatchItem(BaseModel):
     id: str
     prompt: str
     target_mechanic: str = ""
+    include_example: bool = True
 
 
 class DummyInvokesRequest(BaseModel):
