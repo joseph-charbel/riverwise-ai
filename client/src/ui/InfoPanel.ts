@@ -59,9 +59,9 @@ export class InfoPanel {
     const bodyText = new Text({
       text: body,
       style: new TextStyle({
-        fontFamily: "Arial, sans-serif",
-        fontSize: 14,
-        fill: 0xc8e6c9,
+        fontFamily: "Nunito, sans-serif",
+        fontSize: 14, 
+        fill: 0x2C3E50,
         wordWrap: true,
         wordWrapWidth: PANEL_W - 48,
         lineHeight: 22,
@@ -81,11 +81,17 @@ export class InfoPanel {
     blocker.on("pointerdown", () => this.hide());
     this.container.addChild(blocker);
 
+    // Soft shadow behind the panel (rgba(0,0,0,0.1))
+    const cardShadow = new Graphics();
+    cardShadow.roundRect(x + 2, y + 4, PANEL_W, panelH, 12);
+    cardShadow.fill({ color: 0x000000, alpha: 0.2 });
+    this.container.addChild(cardShadow);
+
     // Panel card
     const card = new Graphics();
     card.roundRect(x, y, PANEL_W, panelH, 12);
-    card.fill({ color: 0x0f2318, alpha: 0.95 });
-    card.setStrokeStyle({ width: 2, color: 0x4a9a6e });
+    card.fill({ color: 0xEEF7FF, alpha: 1 });
+    card.setStrokeStyle({ width: 2, color: 0xD9F2FF });
     card.stroke();
     // Subtle inner highlight line at top
     card.setStrokeStyle({ width: 1, color: 0x6ec99a, alpha: 0.3 });
@@ -99,12 +105,16 @@ export class InfoPanel {
       text: title,
       style: new TextStyle({
         fontFamily: "Poppins, sans-serif",
+        align: 'center',
         fontSize: 20,
-        fill: 0x8eeeb4,
+        fill: 0x7ED957,
         fontWeight: "bold",
+        align: 'center', 
       }),
     });
-    titleText.position.set(x + 24, y + 22);
+
+    titleText.anchor.set(0.5, 0);
+    titleText.position.set(x + PANEL_W / 2, y + 22);
     titleText.eventMode = "none";
     this.container.addChild(titleText);
 
@@ -125,8 +135,8 @@ export class InfoPanel {
     // Close button (top-right of card)
     const closeBtn = new Graphics();
     closeBtn.circle(0, 0, 14);
-    closeBtn.fill({ color: 0x1a3a28, alpha: 0.9 });
-    closeBtn.setStrokeStyle({ width: 1.5, color: 0x4a9a6e });
+    closeBtn.fill({ color: 0xD9F2FF, alpha: 0.9 });
+    closeBtn.setStrokeStyle({ width: 1.5, color: 0x2C3E50 });
     closeBtn.stroke();
     closeBtn.position.set(x + PANEL_W - 20, y + 20);
     closeBtn.eventMode = "static";
@@ -138,7 +148,7 @@ export class InfoPanel {
 
     const xIcon = new Text({
       text: "✕",
-      style: new TextStyle({ fontFamily: "Arial", fontSize: 13, fill: 0x8eeeb4 }),
+      style: new TextStyle({ fontFamily: "Poppins, sans-serif", fontSize: 13, fill: 0x2C3E50 }),
     });
     xIcon.anchor.set(0.5);
     xIcon.position.set(x + PANEL_W - 20, y + 20);
