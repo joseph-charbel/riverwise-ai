@@ -64,20 +64,14 @@ scenes:
             geometry: { shape: rect, x: 150, y: 350, w: 60, h: 60 }
             title: Agricultural Runoff
             body: >-
-                Farmers use fertilisers to help crops grow strong and healthy.
+                Farmers use fertilisers to help crops grow strong and healthy. However, when too much fertiliser is used, rain can wash it off the soil.
                 
-                However, when too much fertiliser is used, rain can wash it off the soil.
-                
-                This is called runoff. The fertiliser can flow into rivers, making the water 
-                dirty and unsafe. It can also harm fish and other animals living in the water. 
-                Using the right amount of fertiliser and managing runoff helps protect rivers.
-                
-                💡Did you know? Studies show that too many nutrients in water can cause algae 
-                to grow quickly, which reduces oxygen for fish and harms them as you saw before!
+                This is called runoff. The fertiliser can flow into rivers, making the water dirty and unsafe.
 
             target_mechanic: Nutrient pollution and algal bloom formation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
-            include_example: true
+            include_example: false
+            fun_fact: 💡Did you know? Studies show that too many nutrients in water can cause algae to grow quickly, which reduces oxygen for fish and harms them as you saw before!
 
           - id: info_farm_irrigation
             type: info
@@ -104,36 +98,21 @@ scenes:
 
                 Polluted water can affect animals, plants, and people who depend on the river. Managing farm waste and runoff helps keep rivers clean.
 
-                💡Did you know? Cloudy water (called high sediment) can block sunlight and harm plants and fish in the river.
             target_mechanic: Soil erosion leading to high turbidity and sunlight blockage.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
-            include_example: true
-            fun_fact: null
+            include_example: false
+            fun_fact: 💡Did you know? Cloudy water (called high sediment) can block sunlight and harm plants and fish in the river.
 
-          - id: info_farm_buffer
+          - id: info_farm_native_vegetation
             type: info
             geometry: { shape: rect, x: 100, y: 120, w: 60, h: 60 }
             title: Riparian Buffer Zones
             body: >-
-                Strips of native vegetation between farmland and the river act as
-                natural filters. Their roots trap sediment and absorb excess
-                nutrients before they reach the water — one of the most effective
-                and low-cost river protection strategies.
-            target_mechanic: Natural filtration via riparian buffer vegetation.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
-            include_example: true
-            fun_fact: null
+                Plants and trees growing between farms and the river act like nature’s filter. 
+                Their roots help catch dirt and soak up extra nutrients before they can get into the water. 
+                This is one of the easiest and best ways to help keep rivers clean and healthy.
 
-          - id: info_farm_livestock
-            type: info
-            geometry: { shape: rect, x: 700, y: 400, w: 60, h: 60 }
-            title: Livestock & Waterways
-            body: >-
-                When cattle access the river directly, their hooves compact the
-                bank and disturb sediment. Manure adds bacteria such as E. coli,
-                making the water unsafe for downstream communities. Fencing stock
-                out of waterways dramatically improves water quality.
-            target_mechanic: Bank disturbance and bacterial contamination from livestock.
+            target_mechanic: Natural filtration via riparian buffer vegetation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
