@@ -77,6 +77,7 @@ scenes:
 
             target_mechanic: Nutrient pollution and algal bloom formation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
 
           - id: info_farm_irrigation
             type: info
@@ -90,6 +91,7 @@ scenes:
 
             target_mechanic: Water over-extraction and resulting habitat degradation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
 
           - id: info_farm_soil
             type: info
@@ -105,6 +107,8 @@ scenes:
                 💡Did you know? Cloudy water (called high sediment) can block sunlight and harm plants and fish in the river.
             target_mechanic: Soil erosion leading to high turbidity and sunlight blockage.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_farm_buffer
             type: info
@@ -117,6 +121,8 @@ scenes:
                 and low-cost river protection strategies.
             target_mechanic: Natural filtration via riparian buffer vegetation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_farm_livestock
             type: info
@@ -129,6 +135,8 @@ scenes:
                 out of waterways dramatically improves water quality.
             target_mechanic: Bank disturbance and bacterial contamination from livestock.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
       questions:
           - question: What is the primary effect of agricultural runoff on a river?
@@ -172,6 +180,9 @@ scenes:
                 during heavy rain.
             target_mechanic:  Runoff transporting waste into waterways during rain events.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: false
+            fun_fact: >-
+                Did you know? Runoff is a major contributor to water pollution. It can carry harmful chemicals, bacteria, and other pollutants into rivers and streams.
 
           - id: info_village_waste
             type: info
@@ -183,6 +194,8 @@ scenes:
             target_mechanic: Untreated domestic wastewater and pathogen introduction.
 
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_village_bridge
             type: info
@@ -194,6 +207,8 @@ scenes:
             target_mechanic: Pharmaceutical pollution from improper disposal.
 
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
       questions:
           - question: How can contaminants from the river affect the village well?
@@ -244,6 +259,8 @@ scenes:
 
             target_mechanic: Impacts of plastic pollution on aquatic life and waterways.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_kids_safety
             type: info
@@ -261,6 +278,8 @@ scenes:
 
             target_mechanic: Rubbish in rivers damaging habitats
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           #- id: info_kids_biodiversity
           #  type: info
@@ -287,6 +306,8 @@ scenes:
 
             target_mechanic: Microplastic degradation and wildlife ingestion.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           # - id: info_kids_citizen_science
           #   type: info
@@ -350,6 +371,8 @@ scenes:
                 predates modern environmental science.
             target_mechanic: Cultural stewardship and historical conservation ethics.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_temple_waterfall
             type: info
@@ -362,6 +385,8 @@ scenes:
                 effect, creating low-oxygen "dead zones."
             target_mechanic: Natural aeration generating dissolved oxygen.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_temple_offerings
             type: info
@@ -374,6 +399,8 @@ scenes:
                 the river. Many temples now promote eco-friendly alternatives.
             target_mechanic: Environmental impact of biodegradable versus synthetic materials.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_temple_springs
             type: info
@@ -386,6 +413,8 @@ scenes:
                 floods in the wet season and drought in the dry season.
             target_mechanic: Deforestation altering upstream water cycles and flow rates.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_temple_forest
             type: info
@@ -398,6 +427,8 @@ scenes:
                 a micro-ecosystem of decomposers that keeps the water clean.
             target_mechanic: Forest micro-ecosystems acting as natural climate and soil regulators.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
       questions:
           - question: How do waterfalls benefit aquatic life downstream?
@@ -449,6 +480,8 @@ scenes:
                 bioaccumulation — making them unsafe to eat.
             target_mechanic: Heavy metal toxicity and bioaccumulation in food chains.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_factories_thermal
             type: info
@@ -461,6 +494,8 @@ scenes:
                 shift the entire ecosystem.
             target_mechanic: Thermal pollution reducing dissolved oxygen capacity.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_factories_regulation
             type: info
@@ -474,6 +509,8 @@ scenes:
                 political will.
             target_mechanic: Regulatory monitoring and penalty enforcement.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_factories_treatment
             type: info
@@ -486,6 +523,8 @@ scenes:
                 using natural processes to break down pollutants.
             target_mechanic: Contaminant removal via industrial wastewater treatment.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
           - id: info_factories_circular
             type: info
@@ -498,6 +537,8 @@ scenes:
                 consumption and pollution simultaneously.
             target_mechanic: Closed-loop water recycling reducing extraction and discharge.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            include_example: true
+            fun_fact: null
 
       questions:
           - question: What is bioaccumulation?
