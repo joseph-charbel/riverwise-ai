@@ -55,6 +55,12 @@ class PromptConfig(BaseModel):
         # validate_prompt: str = Field(default="")
 
 
+class CacheConfig(BaseModel):
+        enabled: bool = True
+        ttl: int = 3600
+        provider: str = "memory"
+
+
 class GradeRule(BaseModel):
         start: int
         end: int
@@ -79,6 +85,7 @@ class ConfigManager:
         _prompt_config: Optional[PromptConfig] = None
         _server_config: Optional[ServerConfig] = None
         _grade_rules_config: Optional[GradeRulesConfig] = None
+        _cache_config: Optional[CacheConfig] = None
 
         def __new__(cls):
                 if cls._instance is None:
@@ -153,6 +160,19 @@ class ConfigManager:
                         system_prompt=system_prompt,
                 )
 
+                # ---------------- CACHE CONFIG ----------------
+                cache_raw: Any = config_data.get("cache_config", {})
+                cache_data: dict[str, Any] = (
+                        cast(dict[str, Any], cache_raw)
+                        if isinstance(cache_raw, dict)
+                        else {}
+                )
+                self._cache_config = CacheConfig(
+                        enabled=bool(cache_data.get("enabled", True)),
+                        ttl=int(cache_data.get("ttl", 3600)),
+                        provider=str(cache_data.get("provider", "memory")),
+                )
+
                 # ---------------- GRADE RULES (rules + version from config/grade_rules.yaml via config_loader) ----------------
                 grade_rules_raw: Any = config_data.get("grade_rules", [])
                 grade_rules_list: list[GradeRule] = []
@@ -213,6 +233,11 @@ class ConfigManager:
                                 "Chat model configuration is not initialized"
                         )
                 return self._chat_model_config
+
+        def cache_config(self) -> CacheConfig:
+                if self._cache_config is None:
+                        raise RuntimeError("Cache configuration is not initialized")
+                return self._cache_config
 
 
 if __name__ == "__main__":

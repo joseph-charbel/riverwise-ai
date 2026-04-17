@@ -9,6 +9,17 @@ from langchain_core.messages import AIMessage
 
 logger = get_logger(__name__)
 
+# Shared model instance — keeps cache alive across requests
+_model: Model | None = None
+
+
+def _get_model() -> Model:
+        global _model
+        if _model is None:
+                _model = Model()
+        return _model
+
+
 _TEST_INFORMATION_CARD = {
         "prompt": dedent("""
                 When pollutants enter rivers, the water can become cloudy, dark, or have a strange smell.
@@ -33,8 +44,7 @@ async def dummy_invokes(items: List[DummyInvokeBatchItem]):
 async def ai_invoke(
         prompt: str, *, grade_level: str, interest: str, target_mechanic: str
 ) -> AIMessage:
-        model = Model()
-        return await model.invoke(
+        return await _get_model().invoke(
                 prompt=prompt,
                 grade_level=grade_level,
                 student_interest=interest,
@@ -103,9 +113,8 @@ async def invokes(
 
 async def test() -> None:
         logger.info("Initializing model")
-        model = Model()
         logger.info("Invoking model")
-        response = await model.invoke(
+        response = await _get_model().invoke(
                 prompt=_TEST_INFORMATION_CARD["prompt"],
                 grade_level="2",
                 student_interest="Dance",

@@ -163,6 +163,13 @@ export class MapOverlay {
     entry.iconSprite.texture = await Assets.load(asset);
   }
 
+  open(): void {
+    if (this.visible) return;
+    this.visible = true;
+    this.container.visible = true;
+    eventBus.emit("map:open");
+  }
+
   toggle(): void {
     this.visible = !this.visible;
     this.container.visible = this.visible;

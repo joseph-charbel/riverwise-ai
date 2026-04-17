@@ -1,9 +1,10 @@
 from typing import Any
 
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import PromptTemplate
 
+from app.cache import CacheService, InMemoryCacheProvider
 from app.config.base_config import ConfigManager, ChatConfig
 from app.logging_config import get_logger
 
@@ -82,6 +83,14 @@ class Model:
                         len(self._system_prompt_template),
                 )
 
+                self._cache = CacheService(
+                        config=self.config.cache_config(),
+                        provider=InMemoryCacheProvider(),
+                )
+                logger.info(
+                        f"Cache initialized with config: {self.config.cache_config()}"
+                )
+
         async def invoke(
                 self,
                 prompt: str,
@@ -119,7 +128,19 @@ class Model:
                         HumanMessage(content=human_content),
                 ]
                 logger.debug("Sending %d messages to chat model", len(messages))
+                res = await self._invoke(messages)
+                return res
+
+        async def _invoke(self, messages: list[BaseMessage]) -> AIMessage:
+                cache_key = self._cache.make_key(messages)
+                cached = await self._cache.get(cache_key)
+                if cached is not None:
+                        logger.info("Cache hit key=%s", cache_key[:12])
+                        return cached
+
+                logger.debug("Cache miss key=%s — invoking LLM", cache_key[:12])
                 res = await self.llm.ainvoke(messages)
+                await self._cache.set(cache_key, res)
                 return res
 
 

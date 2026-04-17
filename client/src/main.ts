@@ -34,9 +34,9 @@ const studentConfig = await showStudentSetup(container, studentOptions);
 
 const engine = new Engine();
 engine
-  .start(container, scenesData, mapData, scenesData[0]!.node_id, studentConfig)
+  .start(container, scenesData, mapData, studentConfig)
   .then(() => {
-    console.log("[Riverwise] Engine started. Press M to open the map.");
+    console.log("[Riverwise] Engine started. Select a scene from the map.");
   })
   .catch((err) => {
     console.error("[Riverwise] Failed to start:", err);
