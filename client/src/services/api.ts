@@ -4,6 +4,7 @@ export interface InvokeBatchItem {
   id: string;
   prompt: string;
   target_mechanic: string;
+  include_example: boolean;
 }
 
 export async function invokePrompt(
@@ -11,6 +12,7 @@ export async function invokePrompt(
   hotspotId: string,
   studentConfig: StudentConfig,
   targetMechanic: string = "",
+  includeExample: boolean = true,
 ): Promise<string> {
   const res = await fetch("/api/dummy-invoke", {
     method: "POST",
@@ -21,6 +23,7 @@ export async function invokePrompt(
       grade_level: studentConfig.grade_level,
       interest: studentConfig.interest,
       target_mechanic: targetMechanic,
+      include_example: includeExample,
     }),
   });
   const data: { content: string } = await res.json();
