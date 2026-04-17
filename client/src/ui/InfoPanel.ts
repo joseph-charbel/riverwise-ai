@@ -98,7 +98,7 @@ export class InfoPanel {
     const titleText = new Text({
       text: title,
       style: new TextStyle({
-        fontFamily: "Georgia, serif",
+        fontFamily: "Poppins, sans-serif",
         fontSize: 20,
         fill: 0x8eeeb4,
         fontWeight: "bold",

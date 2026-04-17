@@ -58,25 +58,23 @@ scenes:
     - node_id: farm
       background_asset: assets/scenes/farm.png
       hotspots:
-          - id: farm_to_village
-            type: navigation
-            geometry: { shape: rect, x: 850, y: 400, w: 100, h: 80 }
-            target_node: village
-
-          - id: farm_to_temple
-            type: navigation
-            geometry: { shape: rect, x: 850, y: 50, w: 100, h: 80 }
-            target_node: temple
 
           - id: info_farm_runoff
             type: info
             geometry: { shape: rect, x: 150, y: 350, w: 60, h: 60 }
             title: Agricultural Runoff
             body: >-
-                Fertilisers and pesticides applied to crops can wash into nearby
-                waterways during rain. This nutrient-rich runoff triggers algal
-                blooms that deplete dissolved oxygen — suffocating fish and other
-                aquatic organisms downstream.
+                Farmers use fertilisers to help crops grow strong and healthy.
+                
+                However, when too much fertiliser is used, rain can wash it off the soil.
+                
+                This is called runoff. The fertiliser can flow into rivers, making the water 
+                dirty and unsafe. It can also harm fish and other animals living in the water. 
+                Using the right amount of fertiliser and managing runoff helps protect rivers.
+                
+                💡Did you know? Studies show that too many nutrients in water can cause algae 
+                to grow quickly, which reduces oxygen for fish and harms them as you saw before!
+
             target_mechanic: Nutrient pollution and algal bloom formation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
@@ -85,10 +83,11 @@ scenes:
             geometry: { shape: rect, x: 350, y: 150, w: 60, h: 60 }
             title: Irrigation Channels
             body: >-
-                The irrigation channels divert water from the river to the fields.
-                Over-extraction can lower river levels, concentrating pollutants
-                and raising water temperatures — both harmful to freshwater species
-                that depend on cool, flowing water.
+                Farmers use water from rivers to grow crops. This is called irrigation. 
+                If the river water is dirty, it can carry germs and pollution onto fruits 
+                and vegetables. This means food may not be safe to eat unless it is properly 
+                cleaned. Clean water is very important for both farming and health.
+
             target_mechanic: Water over-extraction and resulting habitat degradation.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
@@ -97,10 +96,13 @@ scenes:
             geometry: { shape: rect, x: 550, y: 250, w: 60, h: 60 }
             title: Soil Erosion
             body: >-
-                Tilling exposes topsoil to wind and rain. Without ground cover,
-                loose sediment washes into the river, increasing turbidity. Turbid
-                water blocks sunlight from reaching aquatic plants, disrupting the
-                base of the food chain.
+                Water that flows off farms can carry soil, fertiliser, and waste into nearby rivers.
+                
+                This can make the river cloudy and polluted.
+
+                Polluted water can affect animals, plants, and people who depend on the river. Managing farm waste and runoff helps keep rivers clean.
+
+                💡Did you know? Cloudy water (called high sediment) can block sunlight and harm plants and fish in the river.
             target_mechanic: Soil erosion leading to high turbidity and sunlight blockage.
             image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
