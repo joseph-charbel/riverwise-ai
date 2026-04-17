@@ -12,14 +12,18 @@ logger = get_logger(__name__)
 
 
 def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
-        """Substitute template vars, then append YAML grade band rules if matched."""
+        """Substitute template vars into the core prompt. Does not append grade rules."""
         prompt = PromptTemplate.from_template(template=template)
         assert variables.keys() == {"grade_level", "student_interest"}
         rendered = prompt.format(
                 grade_level=variables["grade_level"],
                 student_interest=variables["student_interest"],
         )
-        grade_raw = variables["grade_level"]
+        return rendered
+
+
+def _append_grade_rules(rendered: str, grade_raw: Any) -> str:
+        """Append grade-band rules to a rendered prompt. Returns rendered unchanged on miss."""
         try:
                 grade_num = int(str(grade_raw).strip())
         except (ValueError, TypeError):
@@ -35,10 +39,7 @@ def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
                         grade_num,
                 )
                 return rendered
-
-        system_prompt = f"{rendered}\n\n### Grade-Specific Rules\n{rules}"
-        logger.info(f"SYSTEM PROMPT:\n{system_prompt}")
-        return system_prompt
+        return f"{rendered}\n\n### Grade-Specific Rules\n{rules}"
 
 
 def _make_llm(chat_config: ChatConfig) -> BaseChatModel:
@@ -77,10 +78,16 @@ class Model:
                         chat_config.model,
                 )
 
-                self._system_prompt_template = self.config.prompt_config().system_prompt
+                prompt_config = self.config.prompt_config()
+                self._system_prompt_template = prompt_config.system_prompt
+                self._example_prompt_template = prompt_config.example_prompt
                 logger.info(
                         "System prompt template loaded with length %d characters",
                         len(self._system_prompt_template),
+                )
+                logger.info(
+                        "Example prompt template loaded with length %d characters",
+                        len(self._example_prompt_template),
                 )
 
                 self._cache = CacheService(
@@ -98,6 +105,7 @@ class Model:
                 grade_level: str | None = None,
                 student_interest: str | None = None,
                 target_mechanic: str | None = None,
+                include_example: bool = True,
                 **variables: Any,
         ) -> AIMessage:
                 """
@@ -105,6 +113,10 @@ class Model:
 
                 Dynamic variables (e.g. grade_level, student_interest, target_mechanic) are substituted
                 into the system prompt template. Pass as keyword args or via **variables.
+
+                include_example: when True, appends the example/analogy prompt block between the
+                core prompt and the grade-specific rules. Set False to omit the target-mechanic
+                analogy instruction (note: target_mechanic is only meaningful when this is True).
                 """
                 vars_dict: dict[str, Any] = dict(variables)
                 if grade_level is not None:
@@ -115,6 +127,10 @@ class Model:
                 system_prompt = _render_system_prompt(
                         self._system_prompt_template, vars_dict
                 )
+                if include_example and self._example_prompt_template:
+                        system_prompt = f"{system_prompt}\n\n{self._example_prompt_template}"
+                system_prompt = _append_grade_rules(system_prompt, vars_dict.get("grade_level"))
+                logger.info("SYSTEM PROMPT:\n%s", system_prompt)
 
                 if target_mechanic:
                         human_content = (
@@ -145,13 +161,9 @@ class Model:
 
 
 if __name__ == "__main__":
+        vars_dict = {"grade_level": "1", "student_interest": "space"}
         model = Model()
-        system_prompt = _render_system_prompt(
-                model._system_prompt_template,
-                {
-                        "grade_level": "1",
-                        "student_interest": "space",
-                },
-        )
-
-        print(system_prompt)
+        core = _render_system_prompt(model._system_prompt_template, vars_dict)
+        with_example = f"{core}\n\n{model._example_prompt_template}" if model._example_prompt_template else core
+        full_prompt = _append_grade_rules(with_example, vars_dict["grade_level"])
+        print(full_prompt)

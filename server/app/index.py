@@ -24,8 +24,6 @@ _TEST_INFORMATION_CARD = {
         "prompt": dedent("""
                 When pollutants enter rivers, the water can become cloudy, dark, or have a strange smell.
                 In Nepal, rivers near cities and industrial areas—such as parts of the Bagmati River—have become polluted due to untreated waste. Poor water quality can harm ecosystems and make water unsafe for daily use.
-
-                Did you know? Parts of the Bagmati River near Kathmandu are heavily polluted due to untreated sewage and industrial waste.
         """),
         "target_mechanic": "Pollution dilution",
 }
@@ -42,18 +40,27 @@ async def dummy_invokes(items: List[DummyInvokeBatchItem]):
 
 
 async def ai_invoke(
-        prompt: str, *, grade_level: str, interest: str, target_mechanic: str
+        prompt: str,
+        *,
+        grade_level: str,
+        interest: str,
+        target_mechanic: str,
+        include_example: bool = True,
 ) -> AIMessage:
         return await _get_model().invoke(
                 prompt=prompt,
                 grade_level=grade_level,
                 student_interest=interest,
                 target_mechanic=target_mechanic,
+                include_example=include_example,
         )
 
 
 async def ai_invokes(
-        items: List[DummyInvokeBatchItem], *, grade_level: str, interest: str
+        items: List[DummyInvokeBatchItem],
+        *,
+        grade_level: str,
+        interest: str,
 ) -> Dict[str, AIMessage]:
         results = await asyncio.gather(
                 *[
@@ -62,6 +69,7 @@ async def ai_invokes(
                                 grade_level=grade_level,
                                 interest=interest,
                                 target_mechanic=item.target_mechanic,
+                                include_example=item.include_example,
                         )
                         for item in items
                 ]
@@ -75,21 +83,24 @@ async def invoke(
         grade_level: str = "8",
         interest: str = "General",
         target_mechanic: str = "",
+        include_example: bool = True,
 ) -> AIMessage:
         if ConfigManager().server_config().use_dummy:
                 logger.info("Mode: dummy")
                 return await dummy_invoke(prompt)
         logger.info(
-                "Mode: AI (grade=%s interest=%s target_mechanic=%s)",
+                "Mode: AI (grade=%s interest=%s target_mechanic=%s include_example=%s)",
                 grade_level,
                 interest,
                 target_mechanic,
+                include_example,
         )
         return await ai_invoke(
                 prompt,
                 grade_level=grade_level,
                 interest=interest,
                 target_mechanic=target_mechanic,
+                include_example=include_example,
         )
 
 
@@ -116,9 +127,10 @@ async def test() -> None:
         logger.info("Invoking model")
         response = await _get_model().invoke(
                 prompt=_TEST_INFORMATION_CARD["prompt"],
-                grade_level="2",
+                grade_level="4",
                 student_interest="Dance",
                 target_mechanic=_TEST_INFORMATION_CARD["target_mechanic"],
+                include_example=True,
         )
         logger.info(f"Model response received:\n{response}")
         print(f"\n\n{response.content}")

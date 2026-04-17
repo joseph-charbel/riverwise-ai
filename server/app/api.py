@@ -34,13 +34,23 @@ def health():
 
 @app.post("/api/dummy-invoke", response_model=DummyInvokeResponse)
 async def api_dummy_invoke(request: DummyInvokeRequest):
-    response = await invoke(request.prompt, grade_level=request.grade_level, interest=request.interest, target_mechanic=request.target_mechanic)
+    response = await invoke(
+        request.prompt,
+        grade_level=request.grade_level,
+        interest=request.interest,
+        target_mechanic=request.target_mechanic,
+        include_example=request.include_example,
+    )
     return DummyInvokeResponse(content=response.content)
 
 
 @app.post("/api/dummy-invokes", response_model=DummyInvokesResponse)
 async def api_dummy_invokes(request: DummyInvokesRequest):
-    responses = await invokes(request.items, grade_level=request.grade_level, interest=request.interest)
+    responses = await invokes(
+        request.items,
+        grade_level=request.grade_level,
+        interest=request.interest,
+    )
     return DummyInvokesResponse(results={key: msg.content for key, msg in responses.items()})
 
 

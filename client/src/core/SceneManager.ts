@@ -56,6 +56,7 @@ export class SceneManager {
             id: h.id,
             prompt: h.body as string,
             target_mechanic: ("target_mechanic" in h ? h.target_mechanic as string : undefined) ?? "",
+            include_example: ("include_example" in h ? h.include_example as boolean : undefined) ?? true,
           });
         }
       }

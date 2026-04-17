@@ -51,6 +51,7 @@ class PromptConfig(BaseModel):
         """Configuration for system prompts"""
 
         system_prompt: str = Field(default="")
+        example_prompt: str = Field(default="")
         # rewrite_prompt: str = Field(default="")
         # validate_prompt: str = Field(default="")
 
@@ -156,8 +157,19 @@ class ConfigManager:
                         system_prompt = str(
                                 prompts_config.get("system_prompt", "")
                         ).strip()
+
+                example_prompt_file = prompts_config.get("example_prompt_file")
+                if example_prompt_file:
+                        example_path = _SERVER_ROOT / str(example_prompt_file)
+                        example_prompt = example_path.read_text(encoding="utf-8").strip()
+                else:
+                        example_prompt = str(
+                                prompts_config.get("example_prompt", "")
+                        ).strip()
+
                 self._prompt_config = PromptConfig(
                         system_prompt=system_prompt,
+                        example_prompt=example_prompt,
                 )
 
                 # ---------------- CACHE CONFIG ----------------

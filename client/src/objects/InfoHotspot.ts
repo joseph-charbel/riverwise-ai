@@ -12,6 +12,8 @@ export class InfoHotspot extends Hotspot {
   private prefetchedContent: string | null = null;
   private studentConfig: StudentConfig;
   private targetMechanic: string;
+  private includeExample: boolean;
+  private funFact: string | null;
 
   constructor(config: InfoHotspotConfig, panel: InfoPanel, sceneId: string, studentConfig: StudentConfig) {
     super(config);
@@ -21,6 +23,8 @@ export class InfoHotspot extends Hotspot {
     this.sceneId = sceneId;
     this.studentConfig = studentConfig;
     this.targetMechanic = config.target_mechanic ?? "";
+    this.includeExample = config.include_example ?? true;
+    this.funFact = config.fun_fact ?? null;
   }
 
   setPrefetchedContent(content: string): void {
@@ -31,17 +35,21 @@ export class InfoHotspot extends Hotspot {
     return 0xffdd44;
   }
 
+  private compose(content: string): string {
+    return this.funFact ? `${content}\n\n💡${this.funFact}` : content;
+  }
+
   execute(): void {
     eventBus.emit("info:viewed", { sceneId: this.sceneId, hotspotId: this.config.id });
 
     if (this.prefetchedContent !== null) {
-      this.panel.show(this.title, this.prefetchedContent);
+      this.panel.show(this.title, this.compose(this.prefetchedContent));
       return;
     }
 
     this.panel.show(this.title, "Loading...");
-    invokePrompt(this.body, this.config.id, this.studentConfig, this.targetMechanic)
-      .then((content) => this.panel.updateBody(content))
-      .catch(() => this.panel.updateBody(this.body));
+    invokePrompt(this.body, this.config.id, this.studentConfig, this.targetMechanic, this.includeExample)
+      .then((content) => this.panel.updateBody(this.compose(content)))
+      .catch(() => this.panel.updateBody(this.compose(this.body)));
   }
 }
