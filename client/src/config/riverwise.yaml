@@ -69,7 +69,7 @@ scenes:
                 This is called runoff. The fertiliser can flow into rivers, making the water dirty and unsafe.
 
             target_mechanic: Nutrient pollution and algal bloom formation.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: false
             fun_fact: 💡Did you know? Studies show that too many nutrients in water can cause algae to grow quickly, which reduces oxygen for fish and harms them as you saw before!
 
@@ -84,7 +84,7 @@ scenes:
                 cleaned. Clean water is very important for both farming and health.
 
             target_mechanic: Water over-extraction and resulting habitat degradation.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
 
           - id: info_farm_soil
@@ -99,7 +99,7 @@ scenes:
                 Polluted water can affect animals, plants, and people who depend on the river. Managing farm waste and runoff helps keep rivers clean.
 
             target_mechanic: Soil erosion leading to high turbidity and sunlight blockage.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: false
             fun_fact: 💡Did you know? Cloudy water (called high sediment) can block sunlight and harm plants and fish in the river.
 
@@ -113,7 +113,7 @@ scenes:
                 This is one of the easiest and best ways to help keep rivers clean and healthy.
 
             target_mechanic: Natural filtration via riparian buffer vegetation.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -158,7 +158,7 @@ scenes:
                 poor waste management means more rubbish can end up in rivers, especially
                 during heavy rain.
             target_mechanic:  Runoff transporting waste into waterways during rain events.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: false
             fun_fact: >-
                 Did you know? Runoff is a major contributor to water pollution. It can carry harmful chemicals, bacteria, and other pollutants into rivers and streams.
@@ -172,7 +172,7 @@ scenes:
                 In many areas, this water is not treated before being released into the environment. It can flow through pipes or open drains directly into rivers. Wastewater can carry soap, dirt, and harmful germs, which pollute rivers and make the water unsafe for people and animals.
             target_mechanic: Untreated domestic wastewater and pathogen introduction.
 
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -185,7 +185,7 @@ scenes:
                 Rainwater can carry these substances into rivers. Even small amounts of medicines can affect water quality and harm aquatic life. Safe disposal of medicines helps reduce pollution and protect ecosystems.
             target_mechanic: Pharmaceutical pollution from improper disposal.
 
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -237,7 +237,7 @@ scenes:
                 💡Did you know? A single plastic bottle can take hundreds of years to break down.
 
             target_mechanic: Impacts of plastic pollution on aquatic life and waterways.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -256,7 +256,7 @@ scenes:
                 communities can safely use.
 
             target_mechanic: Rubbish in rivers damaging habitats
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -284,7 +284,7 @@ scenes:
                 💡Did you know? Studies in Nepal show that urban drainage systems often carry waste directly into rivers without treatment. In cities like Kathmandu, many drains and pipes release untreated wastewater straight into rivers like the Bagmati.
 
             target_mechanic: Microplastic degradation and wildlife ingestion.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -349,7 +349,7 @@ scenes:
                 ethic of stewardship — a powerful motivator for conservation that
                 predates modern environmental science.
             target_mechanic: Cultural stewardship and historical conservation ethics.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -363,7 +363,7 @@ scenes:
                 downstream. Dams and weirs that flatten the flow can reduce this
                 effect, creating low-oxygen "dead zones."
             target_mechanic: Natural aeration generating dissolved oxygen.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -377,7 +377,7 @@ scenes:
                 plastic wrappings, synthetic dyes, chemical candles — can pollute
                 the river. Many temples now promote eco-friendly alternatives.
             target_mechanic: Environmental impact of biodegradable versus synthetic materials.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -391,7 +391,7 @@ scenes:
                 reduces the land's ability to absorb water, leading to flash
                 floods in the wet season and drought in the dry season.
             target_mechanic: Deforestation altering upstream water cycles and flow rates.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -405,7 +405,7 @@ scenes:
                 soil, their canopy regulates temperature, and leaf litter feeds
                 a micro-ecosystem of decomposers that keeps the water clean.
             target_mechanic: Forest micro-ecosystems acting as natural climate and soil regulators.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -449,7 +449,7 @@ scenes:
                 These toxins accumulate in fish tissue — a process called
                 bioaccumulation — making them unsafe to eat.
             target_mechanic: Heavy metal toxicity and bioaccumulation in food chains.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -463,7 +463,7 @@ scenes:
                 cold-water species like trout. Even a few degrees of change can
                 shift the entire ecosystem.
             target_mechanic: Thermal pollution reducing dissolved oxygen capacity.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -478,7 +478,7 @@ scenes:
                 clean-ups are enforced — but enforcement depends on funding and
                 political will.
             target_mechanic: Regulatory monitoring and penalty enforcement.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
@@ -492,7 +492,7 @@ scenes:
                 river. Constructed wetlands offer a low-energy alternative,
                 using natural processes to break down pollutants.
             target_mechanic: Contaminant removal via industrial wastewater treatment.
-            image_asset: assets/nodes/Square_-_black_simple-cropped.svg
+            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
