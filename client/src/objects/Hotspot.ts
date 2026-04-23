@@ -30,7 +30,7 @@ export abstract class Hotspot {
   /** Root container positioned at the hotspot's geometry location */
   readonly root: Container;
   /** Invisible hit-area graphic */
-  private hitGraphic: Graphics;
+  protected hitGraphic: Graphics;
   /** Optional visible image sprite */
   protected imageSprite: Sprite | null = null;
 
@@ -126,7 +126,7 @@ export abstract class Hotspot {
     this.animFrameId = requestAnimationFrame(tick);
   }
 
-  private drawDebug(): void {
+  protected drawDebug(): void {
     const geo = this.config.geometry;
     const color = this.debugColor();
     const fillAlpha = this.debugFillAlpha();
@@ -148,7 +148,7 @@ export abstract class Hotspot {
     }
   }
 
-  private drawDebugShape(geo: HotspotGeometry): void {
+  protected drawDebugShape(geo: HotspotGeometry): void {
     if (geo.shape === "rect") {
       this.hitGraphic.rect(0, 0, geo.w, geo.h);
     } else if (geo.shape === "circle") {
