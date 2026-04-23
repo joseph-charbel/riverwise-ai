@@ -35,6 +35,19 @@ export class InfoHotspot extends Hotspot {
     return 0xffdd44;
   }
 
+  protected debugFillAlpha(): number {
+    return 0;
+  }
+
+  protected debugStrokeLayers(): Array<{ width: number; alpha: number }> {
+    return [
+      { width: 10, alpha: 0.12 },
+      { width: 6, alpha: 0.25 },
+      { width: 3, alpha: 0.5 },
+      { width: 2, alpha: 0.95 },
+    ];
+  }
+
   private compose(content: string): string {
     return this.funFact ? `${content}\n\n💡${this.funFact}` : content;
   }

@@ -129,8 +129,26 @@ export abstract class Hotspot {
   private drawDebug(): void {
     const geo = this.config.geometry;
     const color = this.debugColor();
-    this.hitGraphic.setStrokeStyle({ width: 2, color });
+    const fillAlpha = this.debugFillAlpha();
+    const strokeLayers = this.debugStrokeLayers();
 
+    if (fillAlpha > 0) {
+      this.drawDebugShape(geo);
+      this.hitGraphic.fill({ color, alpha: fillAlpha });
+    }
+
+    for (const layer of strokeLayers) {
+      this.hitGraphic.setStrokeStyle({
+        width: layer.width,
+        color,
+        alpha: layer.alpha,
+      });
+      this.drawDebugShape(geo);
+      this.hitGraphic.stroke();
+    }
+  }
+
+  private drawDebugShape(geo: HotspotGeometry): void {
     if (geo.shape === "rect") {
       this.hitGraphic.rect(0, 0, geo.w, geo.h);
     } else if (geo.shape === "circle") {
@@ -138,12 +156,18 @@ export abstract class Hotspot {
     } else if (geo.shape === "polygon") {
       this.hitGraphic.poly(geo.points);
     }
-    this.hitGraphic.fill({ color, alpha: 0.15 });
-    this.hitGraphic.stroke();
   }
 
   protected debugColor(): number {
     return 0xffffff;
+  }
+
+  protected debugFillAlpha(): number {
+    return 0.15;
+  }
+
+  protected debugStrokeLayers(): Array<{ width: number; alpha: number }> {
+    return [{ width: 2, alpha: 1 }];
   }
 
   abstract execute(): void;
