@@ -74,21 +74,22 @@
     .setup-title {
       font-family: Poppins, sans-serif;
       font-size: 28px;
-      color: #7ED957;
+      color: #114774;
       margin: 0;
     }
 
     .setup-subtitle {
       font-family: Nunito, sans-serif;
-      font-size: 14px;
-      color: #114774;
+      font-size: 17px;
+      color: #62748E;
       margin: -4px 0 8px;
     }
 
     .setup-label {
       font-family: Nunito, sans-serif;
-      font-size: 14px;
-      color: #2C3E50;
+      font-size: 17px;
+      font-weight: 900;
+      color: #16295c;
       align-self: flex-start;
       margin-bottom: -6px;
     }
@@ -102,7 +103,7 @@
 
     .slider-bound {
       font-family: Nunito, sans-serif;
-      font-size: 13px;
+      font-size: 17px;
       color: #114774;
       min-width: 18px;
       text-align: center;
@@ -110,14 +111,14 @@
 
     #grade-slider {
       flex: 1;
-      accent-color: #4a9a6e;
+      accent-color: #E0A800;
       cursor: pointer;
     }
 
     .grade-value {
       font-family: Nunito, sans-serif;
-      font-size: 15px;
-      font-weight: bold;
+      font-size: 17px;
+      font-weight: 1000;
       color: #114774;
       margin-top: -8px;
     }
@@ -125,7 +126,7 @@
     #interest-select {
       width: 100%;
       padding: 10px 12px;
-      border: 1px solid #3d6b55;
+      border: 1px solid #1E88E5;
       border-radius: 8px;
       background: #D9F2FF;
       color: #114774;
@@ -143,23 +144,27 @@
     #setup-start {
       margin-top: 8px;
       padding: 12px 32px;
-      border: none;
+      border: 1px solid #1565c0;
       border-radius: 10px;
-      background: #B9F6CA;
-      color: #114774;
+      background: #1E88E5;
+      color: #E6F4FF;
       font-family: Poppins, sans-serif;
       font-size: 15px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 3px 0 #0f4f99, 0 8px 16px rgba(11, 68, 122, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+      transition: background 0.2s, transform 0.1s, box-shadow 0.15s;
     }
 
     #setup-start:hover {
-      background: #acdae6;
+      background: #2a96f3;
+      box-shadow: 0 4px 0 #0f4f99, 0 10px 20px rgba(11, 68, 122, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
     }
 
     #setup-start:active {
-      transform: scale(0.97);
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #0f4f99, 0 4px 10px rgba(11, 68, 122, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
   </style>
 </head>
