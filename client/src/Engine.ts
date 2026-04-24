@@ -1,4 +1,4 @@
-import { Application } from "pixi.js";
+import { Application, Assets } from "pixi.js";
 import type { SceneConfig, MapConfig, QuizQuestion, StudentConfig } from "./types/schemas.ts";
 import { SceneManager } from "./core/SceneManager.ts";
 import { InputManager } from "./core/InputManager.ts";
@@ -26,6 +26,7 @@ export class Engine {
     sceneConfigs: SceneConfig[],
     mapConfig: MapConfig,
     studentConfig: StudentConfig,
+    genieLampAsset: string,
     startScene?: string,
   ): Promise<void> {
     await this.app.init({
@@ -68,7 +69,8 @@ export class Engine {
     this.app.stage.addChild(this.mapOverlay.mapButton);
 
     // Lamp button (bottom-right)
-    this.lampButton = new LampButton(questionsMap, this.genieQuiz, 960, 540);
+    const genieLampTexture = await Assets.load(genieLampAsset);
+    this.lampButton = new LampButton(questionsMap, this.genieQuiz, 960, 540, genieLampTexture);
     this.app.stage.addChild(this.lampButton.container);
 
     // When a scene is marked complete → update map icon

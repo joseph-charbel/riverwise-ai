@@ -5,6 +5,9 @@ student:
     grade_level: "4"
     interest: "Basketball"
 
+ui:
+    genie_lamp_asset: assets/sprites/genie_lamp_4-4.png
+
 map:
     background_asset: assets/map/map.png
     nodes:

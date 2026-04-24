@@ -105,11 +105,10 @@ export class InfoPanel {
       text: title,
       style: new TextStyle({
         fontFamily: "Poppins, sans-serif",
-        align: 'center',
+        align: "center",
         fontSize: 20,
         fill: 0x1E88E5,
         fontWeight: "bold",
-        align: 'center', 
       }),
     });
 
