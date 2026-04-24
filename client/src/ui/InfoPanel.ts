@@ -90,7 +90,7 @@ export class InfoPanel {
     // Panel card
     const card = new Graphics();
     card.roundRect(x, y, PANEL_W, panelH, 12);
-    card.fill({ color: 0xEEF7FF, alpha: 1 });
+    card.fill({ color: 0xE6F4FF, alpha: 1 });
     card.setStrokeStyle({ width: 2, color: 0xD9F2FF });
     card.stroke();
     // Subtle inner highlight line at top
@@ -107,7 +107,7 @@ export class InfoPanel {
         fontFamily: "Poppins, sans-serif",
         align: 'center',
         fontSize: 20,
-        fill: 0x7ED957,
+        fill: 0x1E88E5,
         fontWeight: "bold",
         align: 'center', 
       }),
@@ -122,7 +122,7 @@ export class InfoPanel {
     const divider = new Graphics();
     divider.moveTo(x + 24, y + 56);
     divider.lineTo(x + PANEL_W - 24, y + 56);
-    divider.setStrokeStyle({ width: 1, color: 0x3d6b55 });
+    divider.setStrokeStyle({ width: 1, color: 0xE0A800 });
     divider.stroke();
     divider.eventMode = "none";
     this.container.addChild(divider);
@@ -136,7 +136,7 @@ export class InfoPanel {
     const closeBtn = new Graphics();
     closeBtn.circle(0, 0, 14);
     closeBtn.fill({ color: 0xD9F2FF, alpha: 0.9 });
-    closeBtn.setStrokeStyle({ width: 1.5, color: 0x2C3E50 });
+    closeBtn.setStrokeStyle({ width: 1.5, color: 0xE0A800 });
     closeBtn.stroke();
     closeBtn.position.set(x + PANEL_W - 20, y + 20);
     closeBtn.eventMode = "static";
@@ -148,7 +148,7 @@ export class InfoPanel {
 
     const xIcon = new Text({
       text: "✕",
-      style: new TextStyle({ fontFamily: "Poppins, sans-serif", fontSize: 13, fill: 0x2C3E50 }),
+      style: new TextStyle({ fontFamily: "Poppins, sans-serif", fontSize: 13, fill: 0xE0A800 }),
     });
     xIcon.anchor.set(0.5);
     xIcon.position.set(x + PANEL_W - 20, y + 20);
