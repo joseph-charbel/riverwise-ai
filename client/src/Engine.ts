@@ -26,25 +26,30 @@ export class Engine {
     sceneConfigs: SceneConfig[],
     mapConfig: MapConfig,
     studentConfig: StudentConfig,
-    genieLampAsset: string,
+    genieLampFrames: string[],
     startScene?: string,
   ): Promise<void> {
+    const dpr = Math.min(2, globalThis.devicePixelRatio ?? 1);
     await this.app.init({
       width: 960,
       height: 540,
       backgroundColor: 0x1a1a2e,
       resizeTo: undefined,
+      resolution: dpr,
+      autoDensity: true,
     });
 
     container.appendChild(this.app.canvas);
     this.app.stage.sortableChildren = true;
 
-    // Build questions lookup map
+    // Build questions lookup map and info-hotspot count map
     const questionsMap = new Map<string, QuizQuestion[]>();
+    const infoCountMap = new Map<string, number>();
     for (const sc of sceneConfigs) {
       if (sc.questions && sc.questions.length > 0) {
         questionsMap.set(sc.node_id, sc.questions);
       }
+      infoCountMap.set(sc.node_id, sc.hotspots.filter((h) => h.type === "info").length);
     }
 
     // Info panel
@@ -68,9 +73,13 @@ export class Engine {
     this.app.stage.addChild(this.mapOverlay.container);
     this.app.stage.addChild(this.mapOverlay.mapButton);
 
-    // Lamp button (bottom-right)
-    const genieLampTexture = await Assets.load(genieLampAsset);
-    this.lampButton = new LampButton(questionsMap, this.genieQuiz, 960, 540, genieLampTexture);
+    // Lamp button (bottom-right) — no mipmaps + aniso off = sharper when scaled
+    const genieLampTextures = await Promise.all(genieLampFrames.map((f) => Assets.load(f)));
+    for (const t of genieLampTextures) {
+      t.source.autoGenerateMipmaps = false;
+      t.source.maxAnisotropy = 1;
+    }
+    this.lampButton = new LampButton(questionsMap, this.genieQuiz, 960, 540, genieLampTextures, infoCountMap);
     this.app.stage.addChild(this.lampButton.container);
 
     // When a scene is marked complete → update map icon

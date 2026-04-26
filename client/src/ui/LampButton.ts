@@ -10,7 +10,11 @@ export class LampButton {
   private completedScenes = new Set<string>();
   private questionsMap: Map<string, QuizQuestion[]>;
   private quiz: GenieQuiz;
-  private lampTexture: Texture;
+  private lampTextures: Texture[];
+  private infoCountMap: Map<string, number>;
+  private viewedIds = new Set<string>();
+  private iconSprite: Sprite | null = null;
+  private isActive = false;
   private pulseFrameId = 0;
   private pulseDir = 1;
   private pulseScale = 1;
@@ -20,18 +24,28 @@ export class LampButton {
     quiz: GenieQuiz,
     canvasWidth: number,
     canvasHeight: number,
-    lampTexture: Texture
+    lampTextures: Texture[],
+    infoCountMap: Map<string, number>
   ) {
     this.questionsMap = questionsMap;
     this.quiz = quiz;
-    this.lampTexture = lampTexture;
+    this.lampTextures = lampTextures;
+    this.infoCountMap = infoCountMap;
 
     this.container = new Container();
     this.container.zIndex = 999;
     this.container.eventMode = "static";
-    this.container.position.set(canvasWidth - 52, canvasHeight - 52);
+    this.container.position.set(Math.round(canvasWidth - 70), Math.round(canvasHeight - 70));
 
     this.drawLamp(false);
+
+    eventBus.on("info:viewed", (data: unknown) => {
+      const { sceneId, hotspotId } = data as { sceneId: string; hotspotId: string };
+      if (sceneId === this.currentSceneId && !this.isActive) {
+        this.viewedIds.add(hotspotId);
+        this.updateIconFrame();
+      }
+    });
 
     eventBus.on("scene:infos:complete", (sceneId: unknown) => {
       if (sceneId === this.currentSceneId && !this.completedScenes.has(sceneId as string)) {
@@ -41,6 +55,7 @@ export class LampButton {
 
     eventBus.on("scene:ready", (sceneId: unknown) => {
       this.currentSceneId = sceneId as string;
+      this.viewedIds.clear();
       this.setActive(false);
     });
 
@@ -51,6 +66,7 @@ export class LampButton {
   }
 
   private setActive(active: boolean): void {
+    this.isActive = active;
     this.drawLamp(active);
 
     if (active) {
@@ -60,35 +76,80 @@ export class LampButton {
     }
   }
 
+  /** 5 textures 0..4. N=4: 0→1→2→3→4. N=3: 0→1→3→4 (skip frame 2). */
+  private getFrameIndex(viewed: number, total: number): number {
+    if (total === 0) return 0;
+    if (viewed === 0) return 0;
+    if (viewed >= total) return 4;
+
+    if (total === 3) {
+      if (viewed === 1) return 1;
+      if (viewed === 2) return 3;
+    }
+    if (total === 4) {
+      return viewed; // 1,2,3
+    }
+    if (total === 2) {
+      if (viewed === 1) return 2; // 0 → 2 → 4
+    }
+    if (total > 4) {
+      return Math.min(3, Math.ceil((viewed * 3) / (total - 1)));
+    }
+    return 0;
+  }
+
+  private updateIconFrame(): void {
+    if (!this.iconSprite) return;
+    const total = this.infoCountMap.get(this.currentSceneId) ?? 0;
+    const frameIdx = this.getFrameIndex(this.viewedIds.size, total);
+    const tex = this.lampTextures[frameIdx] ?? this.lampTextures[0]!;
+    this.iconSprite.texture = tex;
+  }
+
   private drawLamp(active: boolean): void {
     this.container.removeChildren();
+    this.iconSprite = null;
 
-    const icon = new Sprite(this.lampTexture);
+    const total = this.infoCountMap.get(this.currentSceneId) ?? 0;
+    const frameIdx = active ? 4 : this.getFrameIndex(this.viewedIds.size, total);
+    const texture = this.lampTextures[frameIdx] ?? this.lampTextures[0]!;
+
+    const icon = new Sprite(texture);
+    icon.roundPixels = true;
     icon.anchor.set(0.5);
-    const maxPx = 40;
-    const scale = maxPx / Math.max(icon.texture.width, icon.texture.height);
+    const maxPx = 58;
+    const s = maxPx / Math.max(icon.texture.width, icon.texture.height);
+    const scale = Math.round(s * 10000) / 10000;
     icon.scale.set(scale);
-    icon.alpha = active ? 1 : 0.55;
+    icon.alpha = active ? 1 : 0.75 + 0.12 * (frameIdx / 4);
     icon.eventMode = "none";
     this.container.addChild(icon);
+    this.iconSprite = icon;
 
     const label = new Text({
       text: active ? "READY!" : "LAMP",
       style: new TextStyle({
-        fontFamily: "Arial",
-        fontSize: 7,
-        fill: active ? 0xffd700 : 0x666677,
-        fontWeight: active ? "bold" : "normal",
+        fontFamily: "Arial, sans-serif",
+        fontSize: 11,
+        fill: active ? 0xffe082 : 0xc8d0e0,
+        fontWeight: "bold",
+        letterSpacing: 0.4,
+        dropShadow: {
+          color: 0x000000,
+          alpha: 0.45,
+          blur: 0,
+          distance: 1,
+        },
+        stroke: { color: 0x0a0a12, width: 1, join: "round" },
       }),
     });
     label.anchor.set(0.5);
-    label.position.set(0, 24);
+    label.position.set(0, 36);
     label.eventMode = "none";
     this.container.addChild(label);
 
-    // Invisible hit area
     const hit = new Graphics();
-    hit.rect(-20, -20, 40, 40);
+    hit.rect(-34, -34, 68, 68);
     hit.fill({ color: 0x000000, alpha: 0 });
     hit.eventMode = "static";
     if (active) {

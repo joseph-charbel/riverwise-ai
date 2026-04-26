@@ -7,10 +7,16 @@ interface GameConfig {
   map: MapConfig;
   scenes: SceneConfig[];
   student?: StudentConfig;
-  ui?: { genie_lamp_asset?: string };
+  ui?: { genie_lamp_frames?: string[] };
 }
 
-const DEFAULT_GENIE_LAMP_ASSET = "assets/sprites/genie_lamp.png";
+const DEFAULT_GENIE_LAMP_FRAMES = [
+  "assets/sprites/genie_lamp_0-4.png",
+  "assets/sprites/genie_lamp_1-4.png",
+  "assets/sprites/genie_lamp_2-4.png",
+  "assets/sprites/genie_lamp_3-4.png",
+  "assets/sprites/genie_lamp_4-4.png",
+];
 
 const configs = import.meta.glob("./config/*.yaml", {
   eager: true,
@@ -30,7 +36,7 @@ if (!cfg) {
 }
 
 const { map: mapData, scenes: scenesData } = cfg;
-const genieLampAsset = cfg.ui?.genie_lamp_asset ?? DEFAULT_GENIE_LAMP_ASSET;
+const genieLampFrames = cfg.ui?.genie_lamp_frames ?? DEFAULT_GENIE_LAMP_FRAMES;
 const container = document.getElementById("app")!;
 
 const studentOptions = loadStudentOptions();
@@ -38,7 +44,7 @@ const studentConfig = await showStudentSetup(container, studentOptions);
 
 const engine = new Engine();
 engine
-  .start(container, scenesData, mapData, studentConfig, genieLampAsset)
+  .start(container, scenesData, mapData, studentConfig, genieLampFrames)
   .then(() => {
     console.log("[Riverwise] Engine started. Select a scene from the map.");
   })

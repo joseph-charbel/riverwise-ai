@@ -6,7 +6,12 @@ student:
     interest: "Basketball"
 
 ui:
-    genie_lamp_asset: assets/sprites/genie_lamp_4-4.png
+    genie_lamp_frames:
+        - assets/sprites/genie_lamp_0-4.png
+        - assets/sprites/genie_lamp_1-4.png
+        - assets/sprites/genie_lamp_2-4.png
+        - assets/sprites/genie_lamp_3-4.png
+        - assets/sprites/genie_lamp_4-4.png
 
 map:
     background_asset: assets/map/map.png
