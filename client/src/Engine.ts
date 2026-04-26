@@ -53,7 +53,7 @@ export class Engine {
     }
 
     // Info panel
-    this.infoPanel = new InfoPanel();
+    this.infoPanel = new InfoPanel(studentConfig.translate_to_nepali ? "ne-NP" : "en-AU");
     this.app.stage.addChild(this.infoPanel.container);
 
     // Genie quiz (above info panel)
