@@ -72,7 +72,7 @@ async def explain_information_card_with_optional_translation(
                 return response
 
         logger.info("Translating AI response to Nepali")
-        return await translate(response.content, grade_level=grade_level)
+        return await translate(response.content)
 
 
 def _should_translate_to_nepali(override: bool | None) -> bool:

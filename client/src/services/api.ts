@@ -24,6 +24,7 @@ export async function invokePrompt(
       interest: studentConfig.interest,
       target_mechanic: targetMechanic,
       include_example: includeExample,
+      translate_to_nepali: studentConfig.translate_to_nepali,
     }),
   });
   const data: { content: string } = await res.json();
@@ -41,6 +42,7 @@ export async function invokePromptsBatch(
       items,
       grade_level: studentConfig.grade_level,
       interest: studentConfig.interest,
+      translate_to_nepali: studentConfig.translate_to_nepali,
     }),
   });
   const data: { results: Record<string, string> } = await res.json();

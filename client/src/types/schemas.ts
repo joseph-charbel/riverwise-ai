@@ -1,6 +1,7 @@
 export interface StudentConfig {
   grade_level: string;
   interest: string;
+  translate_to_nepali: boolean;
 }
 
 export interface StudentOptions {

@@ -38,6 +38,14 @@ export function showStudentSetup(
           ${options.interests.map((i) => `<option value="${i}">${i}</option>`).join("")}
         </select>
 
+        <label class="setup-label" for="language-nepali">Language</label>
+        <div class="language-toggle" role="radiogroup" aria-label="Language">
+          <input id="language-english" type="radio" name="language" value="english" checked />
+          <label for="language-english">English</label>
+          <input id="language-nepali" type="radio" name="language" value="nepali" />
+          <label for="language-nepali">Nepali</label>
+        </div>
+
         <button id="setup-start" type="button">Start Exploring</button>
       </div>
     `;
@@ -47,6 +55,7 @@ export function showStudentSetup(
     const slider = overlay.querySelector<HTMLInputElement>("#grade-slider")!;
     const gradeLabel = overlay.querySelector<HTMLSpanElement>("#grade-value")!;
     const select = overlay.querySelector<HTMLSelectElement>("#interest-select")!;
+    const nepaliOption = overlay.querySelector<HTMLInputElement>("#language-nepali")!;
     const startBtn = overlay.querySelector<HTMLButtonElement>("#setup-start")!;
 
     slider.addEventListener("input", () => {
@@ -57,6 +66,7 @@ export function showStudentSetup(
       const config: StudentConfig = {
         grade_level: slider.value,
         interest: select.value,
+        translate_to_nepali: nepaliOption.checked,
       };
       overlay.classList.add("fade-out");
       overlay.addEventListener("animationend", () => {

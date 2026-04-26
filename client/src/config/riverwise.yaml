@@ -4,6 +4,7 @@
 student:
     grade_level: "4"
     interest: "Basketball"
+    translate_to_nepali: false
 
 ui:
     genie_lamp_frames:
