@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Riverwise AI Debug</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f2ec;
+        --panel: #ffffff;
+        --ink: #1b2421;
+        --muted: #66736d;
+        --line: #d8ded7;
+        --field: #fbfcfa;
+        --green: #1f7a5b;
+        --green-dark: #155c44;
+        --amber: #b7791f;
+        --red: #b42318;
+        --code: #121916;
+        --var-bg: #fff4bf;
+        --var-border: #e0b739;
+        --var-ink: #473606;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        line-height: 1.45;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      .shell {
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(12px);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+
+      .topbar {
+        max-width: 1480px;
+        margin: 0 auto;
+        padding: 14px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: grid;
+        gap: 2px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 760;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status {
+        min-height: 28px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--line);
+      }
+
+      .status.ready .status-dot {
+        background: var(--green);
+      }
+
+      .status.busy .status-dot {
+        background: var(--amber);
+      }
+
+      .status.error .status-dot {
+        background: var(--red);
+      }
+
+      main {
+        max-width: 1480px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 18px 22px 22px;
+        display: grid;
+        grid-template-columns: 360px minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        min-width: 0;
+        box-shadow: 0 10px 32px rgba(31, 45, 39, 0.08);
+      }
+
+      .controls {
+        padding: 0;
+        display: grid;
+        gap: 0;
+        align-self: start;
+        position: sticky;
+        top: 86px;
+        max-height: calc(100vh - 108px);
+        overflow: hidden;
+      }
+
+      .sidebar-scroll {
+        max-height: inherit;
+        overflow: auto;
+      }
+
+      .section {
+        padding: 16px;
+        display: grid;
+        gap: 13px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .section:last-child {
+        border-bottom: 0;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 22px;
+      }
+
+      .section-title strong {
+        color: #1f2d28;
+        font-size: 13px;
+        font-weight: 790;
+      }
+
+      .section-title span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .field label {
+        color: #2c3934;
+        font-size: 13px;
+        font-weight: 680;
+      }
+
+      textarea,
+      input,
+      select {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: var(--field);
+        color: var(--ink);
+        border-radius: 6px;
+        outline: none;
+      }
+
+      textarea:focus,
+      input:focus,
+      select:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(31, 122, 91, 0.14);
+      }
+
+      textarea {
+        min-height: 220px;
+        resize: vertical;
+        padding: 12px;
+      }
+
+      input,
+      select {
+        min-height: 42px;
+        padding: 9px 10px;
+      }
+
+      input[type="range"] {
+        min-height: 28px;
+        padding: 0;
+        accent-color: var(--green);
+      }
+
+      .slider-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .value-pill {
+        min-width: 72px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #f8faf7;
+        color: var(--green-dark);
+        padding: 5px 9px;
+        font-size: 13px;
+        font-weight: 780;
+        text-align: center;
+      }
+
+      .toggle {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #f8faf7;
+        padding: 4px;
+      }
+
+      .toggle input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .toggle-option {
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 760;
+        cursor: pointer;
+      }
+
+      #languageNepali:checked ~ .nepali,
+      #languageEnglish:checked ~ .english {
+        background: var(--green);
+        color: #fff;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .check-row {
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #2c3934;
+        font-size: 14px;
+      }
+
+      .check-row input {
+        width: 18px;
+        height: 18px;
+        min-height: 18px;
+        accent-color: var(--green);
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn {
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--ink);
+        padding: 9px 13px;
+        font-weight: 720;
+        cursor: pointer;
+      }
+
+      .btn.secondary {
+        background: #f8faf7;
+      }
+
+      .btn:hover {
+        border-color: #aeb9b0;
+        background: #f8faf7;
+      }
+
+      .btn.primary {
+        background: var(--green);
+        border-color: var(--green);
+        color: #fff;
+      }
+
+      .btn.primary:hover {
+        background: var(--green-dark);
+        border-color: var(--green-dark);
+      }
+
+      .btn:disabled {
+        cursor: wait;
+        opacity: 0.62;
+      }
+
+      .workspace {
+        min-height: calc(100vh - 106px);
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        overflow: hidden;
+      }
+
+      .runtime-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fbfcfa;
+      }
+
+      .runtime-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .runtime-chip {
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border: 1px solid var(--var-border);
+        border-radius: 999px;
+        background: var(--var-bg);
+        color: var(--var-ink);
+        padding: 4px 9px;
+        font-size: 12px;
+        font-weight: 740;
+      }
+
+      .tabs {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px;
+        border-bottom: 1px solid var(--line);
+        overflow-x: auto;
+      }
+
+      .tab {
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        padding: 9px 12px;
+        min-height: 38px;
+        font-size: 13px;
+        font-weight: 760;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .tab.active {
+        background: #dfeee7;
+        color: var(--green-dark);
+      }
+
+      .viewer {
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .viewer-head {
+        min-height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #ffffff;
+      }
+
+      .viewer-title {
+        display: grid;
+        gap: 2px;
+      }
+
+      .viewer-title strong {
+        font-size: 14px;
+      }
+
+      .viewer-title span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .content-view {
+        margin: 0;
+        min-height: 0;
+        overflow: auto;
+        padding: 16px;
+        background: var(--code);
+        color: #e8f4ed;
+        word-break: break-word;
+      }
+
+      .output-empty {
+        color: #b7c6bd;
+      }
+
+      .markdown-body {
+        max-width: 920px;
+        font-size: 14px;
+        line-height: 1.58;
+      }
+
+      .markdown-body h1,
+      .markdown-body h2,
+      .markdown-body h3 {
+        color: #f3fbf5;
+        letter-spacing: 0;
+        line-height: 1.25;
+        margin: 18px 0 8px;
+      }
+
+      .markdown-body h1:first-child,
+      .markdown-body h2:first-child,
+      .markdown-body h3:first-child,
+      .markdown-body p:first-child,
+      .markdown-body ul:first-child,
+      .markdown-body ol:first-child {
+        margin-top: 0;
+      }
+
+      .markdown-body h1 {
+        font-size: 22px;
+      }
+
+      .markdown-body h2 {
+        font-size: 18px;
+      }
+
+      .markdown-body h3 {
+        font-size: 15px;
+      }
+
+      .markdown-body p {
+        margin: 9px 0;
+      }
+
+      .markdown-body ul,
+      .markdown-body ol {
+        margin: 8px 0 12px;
+        padding-left: 22px;
+      }
+
+      .markdown-body li {
+        margin: 5px 0;
+      }
+
+      .markdown-body strong {
+        color: #ffffff;
+        font-weight: 760;
+      }
+
+      .markdown-body code {
+        border: 1px solid rgba(232, 244, 237, 0.16);
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 1px 5px;
+        font:
+          12px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", monospace;
+      }
+
+      .message-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .pipeline {
+        display: grid;
+        gap: 10px;
+      }
+
+      .pipeline + .pipeline {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(232, 244, 237, 0.18);
+      }
+
+      .pipeline-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        color: #f3fbf5;
+        font-size: 13px;
+        font-weight: 790;
+      }
+
+      .pipeline-badge {
+        border: 1px solid rgba(232, 244, 237, 0.18);
+        border-radius: 999px;
+        color: #b7c6bd;
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: 720;
+      }
+
+      .message-card {
+        border: 1px solid rgba(232, 244, 237, 0.16);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.045);
+        overflow: hidden;
+      }
+
+      .message-role {
+        display: flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 7px 10px;
+        border-bottom: 1px solid rgba(232, 244, 237, 0.12);
+        color: #f3fbf5;
+        font-size: 12px;
+        font-weight: 780;
+        text-transform: uppercase;
+      }
+
+      .message-card .markdown-body {
+        padding: 12px;
+      }
+
+      .dynamic-var {
+        display: inline;
+        border: 1px solid var(--var-border);
+        border-radius: 4px;
+        background: var(--var-bg);
+        color: var(--var-ink);
+        padding: 0 4px;
+        font-weight: 760;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+      }
+
+      .copy {
+        min-height: 34px;
+        padding: 7px 10px;
+        font-size: 12px;
+      }
+
+      @media (max-width: 920px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          position: static;
+          max-height: none;
+        }
+
+        .sidebar-scroll {
+          max-height: none;
+        }
+
+        .workspace {
+          min-height: 70vh;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        main {
+          padding: 14px;
+        }
+
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+
+        .runtime-chip {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div class="topbar">
+          <div class="brand">
+            <h1>Riverwise AI Debug</h1>
+            <p class="subtitle">Build prompt, inspect messages, run model.</p>
+          </div>
+          <div id="status" class="status ready">
+            <span class="status-dot"></span>
+            <span id="statusText">Ready</span>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <aside class="panel controls" aria-label="Debug inputs">
+          <form id="debugForm" class="sidebar-scroll">
+            <div class="section">
+              <div class="section-title">
+                <strong>Language</strong>
+                <span id="languageHint">Output mode</span>
+              </div>
+              <div class="field">
+                <label>Language</label>
+                <div class="toggle" role="radiogroup" aria-label="Language">
+                  <input id="languageEnglish" type="radio" name="language" value="english" checked />
+                  <input id="languageNepali" type="radio" name="language" value="nepali" />
+                  <label class="toggle-option english" for="languageEnglish">English</label>
+                  <label class="toggle-option nepali" for="languageNepali">Nepali</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">
+                <strong id="cardTitle">Card</strong>
+                <span id="cardHint">Source text</span>
+              </div>
+              <div class="field">
+                <label for="prompt">Information card</label>
+                <textarea id="prompt" name="prompt" spellcheck="true"></textarea>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">
+                <strong id="studentTitle">Student</strong>
+                <span id="studentHint">Adaptation inputs</span>
+              </div>
+              <div class="field">
+                <label for="grade">Grade level</label>
+                <div class="slider-row">
+                  <input id="grade" name="grade_level" type="range" min="4" max="12" value="4" step="1" />
+                  <output id="gradeValue" class="value-pill" for="grade">Grade 4</output>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="interest">Interest</label>
+                <select id="interest" name="interest"></select>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">
+                <strong id="promptTitle">Prompt</strong>
+                <span id="promptHint">Adaptation options</span>
+              </div>
+              <div class="field">
+                <label for="targetMechanic">Target mechanic</label>
+                <input
+                  id="targetMechanic"
+                  name="target_mechanic"
+                  value="Pollution dilution"
+                />
+              </div>
+
+              <label class="check-row">
+                <input id="includeExample" name="include_example" type="checkbox" checked />
+                Include example prompt
+              </label>
+            </div>
+
+            <div class="section">
+              <div class="actions">
+                <button class="btn primary" type="button" id="invokeBtn">Run LLM</button>
+                <button class="btn secondary" type="button" id="previewBtn">Refresh preview</button>
+                <button class="btn" type="button" id="resetBtn">Reset sample</button>
+              </div>
+            </div>
+          </form>
+        </aside>
+
+        <section class="panel workspace">
+          <div id="runtimeBar" class="runtime-bar"></div>
+          <nav class="tabs" aria-label="Debug views">
+            <button class="tab active" type="button" data-tab="messages">Messages</button>
+            <button class="tab" type="button" data-tab="system">Prompt</button>
+            <button class="tab" type="button" data-tab="output">Output</button>
+          </nav>
+
+          <div class="viewer">
+            <div class="viewer-head">
+              <div class="viewer-title">
+                <strong id="viewerTitle">System prompt</strong>
+                <span id="viewerMeta">Generated from current selections</span>
+              </div>
+              <button class="btn copy" type="button" id="copyBtn">Copy</button>
+            </div>
+            <div id="viewerContent" class="content-view"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const samplePrompt = `When pollutants enter rivers, the water can become cloudy, dark, or have a strange smell.
+In Nepal, rivers near cities and industrial areas, such as parts of the Bagmati River, have become polluted due to untreated waste. Poor water quality can harm ecosystems and make water unsafe for daily use.`;
+
+      const state = {
+        activeTab: "messages",
+        preview: null,
+        output: "",
+        timer: null,
+      };
+
+      const form = document.querySelector("#debugForm");
+      const statusEl = document.querySelector("#status");
+      const statusText = document.querySelector("#statusText");
+      const viewerTitle = document.querySelector("#viewerTitle");
+      const viewerMeta = document.querySelector("#viewerMeta");
+      const viewerContent = document.querySelector("#viewerContent");
+      const runtimeBar = document.querySelector("#runtimeBar");
+      const languageHint = document.querySelector("#languageHint");
+      const cardTitle = document.querySelector("#cardTitle");
+      const cardHint = document.querySelector("#cardHint");
+      const studentTitle = document.querySelector("#studentTitle");
+      const studentHint = document.querySelector("#studentHint");
+      const promptTitle = document.querySelector("#promptTitle");
+      const promptHint = document.querySelector("#promptHint");
+      const copyBtn = document.querySelector("#copyBtn");
+      const previewBtn = document.querySelector("#previewBtn");
+      const invokeBtn = document.querySelector("#invokeBtn");
+      const resetBtn = document.querySelector("#resetBtn");
+      const inputs = {
+        prompt: document.querySelector("#prompt"),
+        grade: document.querySelector("#grade"),
+        gradeValue: document.querySelector("#gradeValue"),
+        languageEnglish: document.querySelector("#languageEnglish"),
+        languageNepali: document.querySelector("#languageNepali"),
+        interest: document.querySelector("#interest"),
+        targetMechanic: document.querySelector("#targetMechanic"),
+        includeExample: document.querySelector("#includeExample"),
+      };
+
+      const fallbackOptions = {
+        interests: ["General", "Basketball", "Space", "Dance", "Video Games", "Cooking"],
+        grade: { min: 4, max: 12, default: 4 },
+      };
+
+      function setStatus(kind, text) {
+        statusEl.className = `status ${kind}`;
+        statusText.textContent = text;
+      }
+
+      function payload() {
+        return {
+          prompt: inputs.prompt.value.trim(),
+          grade_level: inputs.grade.value,
+          interest: inputs.interest.value.trim() || "General",
+          target_mechanic: inputs.targetMechanic.value.trim(),
+          include_example: inputs.includeExample.checked,
+          language: inputs.languageNepali.checked ? "nepali" : "english",
+        };
+      }
+
+      function updateGradeLabel() {
+        inputs.gradeValue.textContent = `Grade ${inputs.grade.value}`;
+      }
+
+      async function loadOptions() {
+        let options = fallbackOptions;
+        try {
+          const res = await fetch("/debug/ai/options");
+          if (res.ok) options = await res.json();
+        } catch (_) {
+          options = fallbackOptions;
+        }
+
+        const grade = options.grade || fallbackOptions.grade;
+        inputs.grade.min = grade.min;
+        inputs.grade.max = grade.max;
+        inputs.grade.value = grade.default;
+        inputs.grade.defaultValue = grade.default;
+        updateGradeLabel();
+
+        const interests = options.interests?.length ? options.interests : fallbackOptions.interests;
+        inputs.interest.innerHTML = interests
+          .map((interest) => `<option value="${escapeHtml(interest)}">${escapeHtml(interest)}</option>`)
+          .join("");
+      }
+
+      async function postJson(url, body) {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const detail = data.detail ? JSON.stringify(data.detail, null, 2) : res.statusText;
+          throw new Error(detail);
+        }
+        return data;
+      }
+
+      function titleFor(tab) {
+        if (tab === "messages") return "Messages";
+        if (tab === "output") return "Output";
+        return payload().language === "nepali" ? "System Prompts" : "System Prompt";
+      }
+
+      function contentFor(tab) {
+        if (!state.preview) return "";
+        if (tab === "messages") {
+          return JSON.stringify(
+            {
+              adaptation_pipeline: state.preview.messages,
+              translation_pipeline: state.preview.translation_messages || [],
+            },
+            null,
+            2,
+          );
+        }
+        if (tab === "output") {
+          return state.output || "No LLM output yet.";
+        }
+        if (state.preview.translation_system_prompt) {
+          return [
+            "# Translation system prompt",
+            state.preview.translation_system_prompt,
+            "# Adaptation system prompt",
+            state.preview.system_prompt,
+          ].join("\n\n");
+        }
+        return state.preview.system_prompt;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function escapeRegExp(value) {
+        return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+
+      function inlineMarkdown(line) {
+        return escapeHtml(line)
+          .replace(/`([^`]+)`/g, "<code>$1</code>")
+          .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      }
+
+      function markdownToHtml(markdown) {
+        const lines = String(markdown || "").split(/\r?\n/);
+        const html = [];
+        let listType = null;
+        let paragraph = [];
+
+        function closeParagraph() {
+          if (!paragraph.length) return;
+          html.push(`<p>${paragraph.join("<br>")}</p>`);
+          paragraph = [];
+        }
+
+        function closeList() {
+          if (!listType) return;
+          html.push(`</${listType}>`);
+          listType = null;
+        }
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          const heading = /^(#{1,3})\s+(.+)$/.exec(trimmed);
+          const unordered = /^[-*]\s+(.+)$/.exec(trimmed);
+          const ordered = /^\d+\.\s+(.+)$/.exec(trimmed);
+
+          if (!trimmed) {
+            closeParagraph();
+            closeList();
+            continue;
+          }
+
+          if (heading) {
+            closeParagraph();
+            closeList();
+            const level = heading[1].length;
+            html.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`);
+            continue;
+          }
+
+          if (unordered || ordered) {
+            closeParagraph();
+            const nextType = unordered ? "ul" : "ol";
+            if (listType !== nextType) {
+              closeList();
+              listType = nextType;
+              html.push(`<${listType}>`);
+            }
+            html.push(`<li>${inlineMarkdown((unordered || ordered)[1])}</li>`);
+            continue;
+          }
+
+          closeList();
+          paragraph.push(inlineMarkdown(trimmed));
+        }
+
+        closeParagraph();
+        closeList();
+        return html.join("");
+      }
+
+      function dynamicValues() {
+        const body = payload();
+        const gradeLabel = `Grade ${body.grade_level}`;
+        return [
+          body.prompt,
+          body.target_mechanic,
+          body.interest,
+          gradeLabel,
+          body.grade_level,
+          body.language === "nepali" ? "Nepali" : "English",
+        ]
+          .map((value) => String(value || "").trim())
+          .filter((value, index, values) => value && values.indexOf(value) === index)
+          .sort((a, b) => b.length - a.length);
+      }
+
+      function runtimeItems() {
+        const body = payload();
+        const gradeLabel = `Grade ${body.grade_level}`;
+        const cardText = body.prompt
+          ? body.prompt.length > 58
+            ? `${body.prompt.slice(0, 58)}...`
+            : body.prompt
+          : "Empty card";
+        return [
+          ["Grade", gradeLabel],
+          ["Interest", body.interest],
+          ["Language", body.language === "nepali" ? "Nepali" : "English"],
+          ["Mechanic", body.target_mechanic || "None"],
+          ["Example", body.include_example ? "On" : "Off"],
+          ["Card", cardText],
+        ];
+      }
+
+      function renderRuntimeBar() {
+        const chips = runtimeItems()
+          .map(([label, value]) => {
+            return `<span class="runtime-chip"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</span>`;
+          })
+          .join("");
+        runtimeBar.innerHTML = `<span class="runtime-label">Variables</span>${chips}`;
+      }
+
+      function syncModeLabels() {
+        const nepali = inputs.languageNepali.checked;
+        languageHint.textContent = nepali ? "Translate after adaptation" : "Adapt only";
+        cardTitle.textContent = nepali ? "English Card" : "Card";
+        cardHint.textContent = nepali ? "Adapt first, then translate" : "Source text";
+        studentTitle.textContent = nepali ? "Adaptation Student" : "Student";
+        studentHint.textContent = nepali ? "Used before translation" : "Adaptation inputs";
+        promptTitle.textContent = nepali ? "Adaptation Prompt" : "Prompt";
+        promptHint.textContent = nepali ? "Translation prompt auto-added" : "Adaptation options";
+        invokeBtn.textContent = nepali ? "Run + Translate" : "Run LLM";
+      }
+
+      function highlightDynamic(html) {
+        let rendered = html;
+        for (const value of dynamicValues()) {
+          const escaped = escapeHtml(value);
+          if (!escaped) continue;
+          rendered = rendered.replace(
+            new RegExp(escapeRegExp(escaped), "g"),
+            `<span class="dynamic-var">${escaped}</span>`,
+          );
+        }
+        return rendered;
+      }
+
+      function renderMarkdown(markdown) {
+        return `<div class="markdown-body">${highlightDynamic(markdownToHtml(markdown))}</div>`;
+      }
+
+      function renderMessages() {
+        if (!state.preview) return "";
+        const renderCards = (messages) =>
+          messages
+          .map((message) => {
+            return `<article class="message-card">
+              <div class="message-role">${escapeHtml(message.role)}</div>
+              ${renderMarkdown(message.content)}
+            </article>`;
+          })
+          .join("");
+        const translationMessages = state.preview.translation_messages || [];
+        return `<div class="message-list">
+          <section class="pipeline">
+            <div class="pipeline-title">
+              <span>Adaptation pipeline</span>
+              <span class="pipeline-badge">${state.preview.messages.length} messages</span>
+            </div>
+            ${renderCards(state.preview.messages)}
+          </section>
+          ${
+            translationMessages.length
+              ? `<section class="pipeline">
+                  <div class="pipeline-title">
+                    <span>Translation pipeline</span>
+                    <span class="pipeline-badge">${translationMessages.length} messages</span>
+                  </div>
+                  ${renderCards(translationMessages)}
+                </section>`
+              : ""
+          }
+        </div>`;
+      }
+
+      function viewHtmlFor(tab) {
+        if (!state.preview) {
+          return '<div class="markdown-body output-empty">Waiting for preview.</div>';
+        }
+        if (tab === "messages") return renderMessages();
+        if (tab === "output") return renderMarkdown(state.output || "No LLM output yet.");
+        if (state.preview.translation_system_prompt) {
+          return `<div class="message-list">
+            <section class="pipeline">
+              <div class="pipeline-title">
+                <span>Translation system prompt</span>
+                <span class="pipeline-badge">Pipeline 2</span>
+              </div>
+              ${renderMarkdown(state.preview.translation_system_prompt)}
+            </section>
+            <section class="pipeline">
+              <div class="pipeline-title">
+                <span>Adaptation system prompt</span>
+                <span class="pipeline-badge">Pipeline 1</span>
+              </div>
+              ${renderMarkdown(state.preview.system_prompt)}
+            </section>
+          </div>`;
+        }
+        return renderMarkdown(state.preview.system_prompt);
+      }
+
+      function metaFor(tab) {
+        if (!state.preview) return "Waiting for preview";
+        if (tab === "messages") {
+          return state.preview.translate_to_nepali
+            ? "Adaptation + translation pipelines"
+            : "Adaptation pipeline";
+        }
+        if (tab === "output") {
+          return state.preview.translate_to_nepali ? "Nepali response" : "English response";
+        }
+        return state.preview.translate_to_nepali
+          ? "Adaptation and translation prompts"
+          : "Adaptation prompt";
+      }
+
+      function render() {
+        syncModeLabels();
+        renderRuntimeBar();
+        viewerTitle.textContent = titleFor(state.activeTab);
+        viewerMeta.textContent = metaFor(state.activeTab);
+        viewerContent.innerHTML = viewHtmlFor(state.activeTab);
+        viewerContent.classList.toggle(
+          "output-empty",
+          state.activeTab === "output" && !state.output,
+        );
+
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.classList.toggle("active", tab.dataset.tab === state.activeTab);
+        });
+      }
+
+      async function preview(silent = false) {
+        const body = payload();
+        if (!body.prompt) {
+          setStatus("error", "Information card required");
+          return;
+        }
+        if (!silent) setStatus("busy", "Building preview");
+        previewBtn.disabled = true;
+        try {
+          state.preview = await postJson("/debug/ai/preview", body);
+          setStatus("ready", "Preview current");
+          render();
+        } catch (err) {
+          setStatus("error", err.message);
+        } finally {
+          previewBtn.disabled = false;
+        }
+      }
+
+      async function invoke() {
+        const body = payload();
+        if (!body.prompt) {
+          setStatus("error", "Information card required");
+          return;
+        }
+        setStatus("busy", "Invoking LLM");
+        invokeBtn.disabled = true;
+        previewBtn.disabled = true;
+        state.output = "";
+        try {
+          const data = await postJson("/debug/ai/invoke", body);
+          state.preview = {
+            system_prompt: data.system_prompt,
+            messages: data.messages,
+            translate_to_nepali: data.translate_to_nepali,
+            translation_system_prompt: data.translation_system_prompt,
+            translation_messages: data.translation_messages,
+          };
+          state.output = data.output;
+          state.activeTab = "output";
+          setStatus("ready", "LLM output ready");
+          render();
+        } catch (err) {
+          setStatus("error", err.message);
+        } finally {
+          invokeBtn.disabled = false;
+          previewBtn.disabled = false;
+        }
+      }
+
+      function schedulePreview() {
+        updateGradeLabel();
+        syncModeLabels();
+        renderRuntimeBar();
+        clearTimeout(state.timer);
+        state.timer = setTimeout(() => preview(true), 350);
+      }
+
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          state.activeTab = tab.dataset.tab;
+          render();
+        });
+      });
+
+      form.addEventListener("input", schedulePreview);
+      previewBtn.addEventListener("click", () => preview(false));
+      invokeBtn.addEventListener("click", invoke);
+      resetBtn.addEventListener("click", () => {
+        inputs.prompt.value = samplePrompt;
+        inputs.grade.value = inputs.grade.defaultValue || "4";
+        inputs.languageEnglish.checked = true;
+        inputs.interest.value = "General";
+        inputs.targetMechanic.value = "Pollution dilution";
+        inputs.includeExample.checked = true;
+        state.output = "";
+        updateGradeLabel();
+        preview(false);
+      });
+      copyBtn.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(contentFor(state.activeTab));
+        setStatus("ready", "Copied");
+      });
+
+      inputs.prompt.value = samplePrompt;
+      loadOptions().then(() => preview(true));
+      render();
+    </script>
+  </body>
+</html>

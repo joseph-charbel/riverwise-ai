@@ -141,6 +141,27 @@ async def explain_information_card(
         Future AI tasks should follow this shape: create a function named for the
         task, build its prompt locally, then call `_invoke(messages)`.
         """
+        system_prompt, _, messages = build_information_card_messages(
+                prompt,
+                grade_level=grade_level,
+                student_interest=student_interest,
+                target_mechanic=target_mechanic,
+                include_example=include_example,
+        )
+        logger.info("SYSTEM PROMPT:\n%s", system_prompt)
+        logger.debug("Sending %d messages to chat model", len(messages))
+        return await _invoke(messages)
+
+
+def build_information_card_messages(
+        prompt: str,
+        *,
+        grade_level: str,
+        student_interest: str,
+        target_mechanic: str | None = None,
+        include_example: bool = True,
+) -> tuple[str, str, list[BaseMessage]]:
+        """Build prompt artifacts for debug preview or LLM invocation."""
         system_prompt_template, example_prompt_template = _get_prompt_templates()
         vars_dict = {
                 "grade_level": grade_level,
@@ -151,7 +172,6 @@ async def explain_information_card(
         if include_example and example_prompt_template:
                 system_prompt = f"{system_prompt}\n\n{example_prompt_template}"
         system_prompt = _append_grade_rules(system_prompt, vars_dict["grade_level"])
-        logger.info("SYSTEM PROMPT:\n%s", system_prompt)
 
         if target_mechanic:
                 human_content = f"**Target Mechanic:** {target_mechanic}\n\n{prompt}"
@@ -162,21 +182,25 @@ async def explain_information_card(
                 SystemMessage(content=system_prompt),
                 HumanMessage(content=human_content),
         ]
-        logger.debug("Sending %d messages to chat model", len(messages))
-        return await _invoke(messages)
+        return system_prompt, human_content, messages
 
 
 async def translate(text: str) -> AIMessage:
         """
         Translate English text to Nepali while preserving content, intent.
         """
+        messages = build_translate_messages(text)
+        logger.debug("Sending %d translation messages to chat model", len(messages))
+        return await _invoke(messages)
+
+
+def build_translate_messages(text: str) -> list[BaseMessage]:
+        """Build translation prompt artifacts for debug preview or LLM invocation."""
         human_content = f"**Text to translate:**\n{text}"
-        messages = [
+        return [
                 SystemMessage(content=_get_translate_prompt_template()),
                 HumanMessage(content=human_content),
         ]
-        logger.debug("Sending %d translation messages to chat model", len(messages))
-        return await _invoke(messages)
 
 
 async def _invoke(messages: list[BaseMessage]) -> AIMessage:
