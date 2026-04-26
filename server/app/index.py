@@ -1,23 +1,13 @@
 import asyncio
 from textwrap import dedent
 from typing import Dict, List
-from app.ai.model import Model
+from app.ai.model import explain_information_card
 from app.config.base_config import ConfigManager
 from app.logging_config import get_logger
 from app.types.requests import DummyInvokeBatchItem
 from langchain_core.messages import AIMessage
 
 logger = get_logger(__name__)
-
-# Shared model instance — keeps cache alive across requests
-_model: Model | None = None
-
-
-def _get_model() -> Model:
-        global _model
-        if _model is None:
-                _model = Model()
-        return _model
 
 
 _TEST_INFORMATION_CARD = {
@@ -39,24 +29,7 @@ async def dummy_invokes(items: List[DummyInvokeBatchItem]):
         return {item.id: result for item, result in zip(items, results)}
 
 
-async def ai_invoke(
-        prompt: str,
-        *,
-        grade_level: str,
-        interest: str,
-        target_mechanic: str,
-        include_example: bool = True,
-) -> AIMessage:
-        return await _get_model().invoke(
-                prompt=prompt,
-                grade_level=grade_level,
-                student_interest=interest,
-                target_mechanic=target_mechanic,
-                include_example=include_example,
-        )
-
-
-async def ai_invokes(
+async def explain_information_cards(
         items: List[DummyInvokeBatchItem],
         *,
         grade_level: str,
@@ -64,10 +37,10 @@ async def ai_invokes(
 ) -> Dict[str, AIMessage]:
         results = await asyncio.gather(
                 *[
-                        ai_invoke(
-                                item.prompt,
+                        explain_information_card(
+                                prompt=item.prompt,
                                 grade_level=grade_level,
-                                interest=interest,
+                                student_interest=interest,
                                 target_mechanic=item.target_mechanic,
                                 include_example=item.include_example,
                         )
@@ -95,10 +68,10 @@ async def invoke(
                 target_mechanic,
                 include_example,
         )
-        return await ai_invoke(
-                prompt,
+        return await explain_information_card(
+                prompt=prompt,
                 grade_level=grade_level,
-                interest=interest,
+                student_interest=interest,
                 target_mechanic=target_mechanic,
                 include_example=include_example,
         )
@@ -119,13 +92,17 @@ async def invokes(
                 grade_level,
                 interest,
         )
-        return await ai_invokes(items, grade_level=grade_level, interest=interest)
+        return await explain_information_cards(
+                items,
+                grade_level=grade_level,
+                interest=interest,
+        )
 
 
 async def test() -> None:
         logger.info("Initializing model")
         logger.info("Invoking model")
-        response = await _get_model().invoke(
+        response = await explain_information_card(
                 prompt=_TEST_INFORMATION_CARD["prompt"],
                 grade_level="4",
                 student_interest="Dance",

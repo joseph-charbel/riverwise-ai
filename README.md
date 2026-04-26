@@ -20,9 +20,9 @@ capstone/
 │   ├── public/assets/    # SVG sprites, backgrounds, map icons
 │   ├── Dockerfile
 │   └── nginx.conf
-├── server/               # FastAPI back-end + AI model wrapper
+├── server/               # FastAPI back-end + task-specific AI functions
 │   ├── app/
-│   │   ├── ai/           # Model class, ChatGroq wrapper
+│   │   ├── ai/           # Prompt builders, shared LangChain caller
 │   │   └── config/       # ConfigManager, Pydantic config models
 │   ├── config/
 │   │   └── config.yaml   # LLM model selection and system prompt

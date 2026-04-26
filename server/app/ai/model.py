@@ -10,6 +10,11 @@ from app.logging_config import get_logger
 
 logger = get_logger(__name__)
 
+_llm: BaseChatModel | None = None
+_cache: CacheService | None = None
+_system_prompt_template: str | None = None
+_example_prompt_template: str | None = None
+
 
 def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
         """Substitute template vars into the core prompt. Does not append grade rules."""
@@ -62,108 +67,105 @@ def _make_llm(chat_config: ChatConfig) -> BaseChatModel:
                 raise ValueError(f"Unsupported provider: {provider}")
 
 
-class Model:
-        def __init__(self):
-                self.config = ConfigManager()
-                chat_config = self.config.chat_model_config()
-                api_key = chat_config.api_key.get_secret_value()
-                llm_kwargs = dict(chat_config.kwargs)
-                if api_key:
-                        llm_kwargs.setdefault("api_key", api_key)
-
-                self.llm: BaseChatModel = _make_llm(chat_config)
+def _get_llm() -> BaseChatModel:
+        global _llm
+        if _llm is None:
+                chat_config = ConfigManager().chat_model_config()
+                _llm = _make_llm(chat_config)
                 logger.info(
                         "Chat model initialized with provider=%s model=%s",
                         chat_config.provider,
                         chat_config.model,
                 )
+        return _llm
 
-                prompt_config = self.config.prompt_config()
-                self._system_prompt_template = prompt_config.system_prompt
-                self._example_prompt_template = prompt_config.example_prompt
+
+def _get_prompt_templates() -> tuple[str, str]:
+        global _system_prompt_template, _example_prompt_template
+        if _system_prompt_template is None or _example_prompt_template is None:
+                prompt_config = ConfigManager().prompt_config()
+                _system_prompt_template = prompt_config.system_prompt
+                _example_prompt_template = prompt_config.example_prompt
                 logger.info(
                         "System prompt template loaded with length %d characters",
-                        len(self._system_prompt_template),
+                        len(_system_prompt_template),
                 )
                 logger.info(
                         "Example prompt template loaded with length %d characters",
-                        len(self._example_prompt_template),
+                        len(_example_prompt_template),
                 )
+        return _system_prompt_template, _example_prompt_template
 
-                self._cache = CacheService(
-                        config=self.config.cache_config(),
+
+def _get_cache() -> CacheService:
+        global _cache
+        if _cache is None:
+                config = ConfigManager()
+                _cache = CacheService(
+                        config=config.cache_config(),
                         provider=InMemoryCacheProvider(),
                 )
-                logger.info(
-                        f"Cache initialized with config: {self.config.cache_config()}"
-                )
+                logger.info("Cache initialized with config: %s", config.cache_config())
+        return _cache
 
-        async def invoke(
-                self,
-                prompt: str,
-                *,
-                grade_level: str | None = None,
-                student_interest: str | None = None,
-                target_mechanic: str | None = None,
-                include_example: bool = True,
-                **variables: Any,
-        ) -> AIMessage:
-                """
-                Invoke the LLM with the given prompt.
 
-                Dynamic variables (e.g. grade_level, student_interest, target_mechanic) are substituted
-                into the system prompt template. Pass as keyword args or via **variables.
+async def explain_information_card(
+        prompt: str,
+        *,
+        grade_level: str,
+        student_interest: str,
+        target_mechanic: str | None = None,
+        include_example: bool = True,
+) -> AIMessage:
+        """
+        Build the tutor prompt for a hotspot information card, then invoke the LLM.
 
-                include_example: when True, appends the example/analogy prompt block between the
-                core prompt and the grade-specific rules. Set False to omit the target-mechanic
-                analogy instruction (note: target_mechanic is only meaningful when this is True).
-                """
-                vars_dict: dict[str, Any] = dict(variables)
-                if grade_level is not None:
-                        vars_dict["grade_level"] = grade_level
-                if student_interest is not None:
-                        vars_dict["student_interest"] = student_interest
+        Future AI tasks should follow this shape: create a function named for the
+        task, build its prompt locally, then call `_invoke(messages)`.
+        """
+        system_prompt_template, example_prompt_template = _get_prompt_templates()
+        vars_dict = {
+                "grade_level": grade_level,
+                "student_interest": student_interest,
+        }
 
-                system_prompt = _render_system_prompt(
-                        self._system_prompt_template, vars_dict
-                )
-                if include_example and self._example_prompt_template:
-                        system_prompt = f"{system_prompt}\n\n{self._example_prompt_template}"
-                system_prompt = _append_grade_rules(system_prompt, vars_dict.get("grade_level"))
-                logger.info("SYSTEM PROMPT:\n%s", system_prompt)
+        system_prompt = _render_system_prompt(system_prompt_template, vars_dict)
+        if include_example and example_prompt_template:
+                system_prompt = f"{system_prompt}\n\n{example_prompt_template}"
+        system_prompt = _append_grade_rules(system_prompt, vars_dict["grade_level"])
+        logger.info("SYSTEM PROMPT:\n%s", system_prompt)
 
-                if target_mechanic:
-                        human_content = (
-                                f"**Target Mechanic:** {target_mechanic}\n\n{prompt}"
-                        )
-                else:
-                        human_content = prompt
+        if target_mechanic:
+                human_content = f"**Target Mechanic:** {target_mechanic}\n\n{prompt}"
+        else:
+                human_content = prompt
 
-                messages = [
-                        SystemMessage(content=system_prompt),
-                        HumanMessage(content=human_content),
-                ]
-                logger.debug("Sending %d messages to chat model", len(messages))
-                res = await self._invoke(messages)
-                return res
+        messages = [
+                SystemMessage(content=system_prompt),
+                HumanMessage(content=human_content),
+        ]
+        logger.debug("Sending %d messages to chat model", len(messages))
+        return await _invoke(messages)
 
-        async def _invoke(self, messages: list[BaseMessage]) -> AIMessage:
-                cache_key = self._cache.make_key(messages)
-                cached = await self._cache.get(cache_key)
-                if cached is not None:
-                        logger.info("Cache hit key=%s", cache_key[:12])
-                        return cached
 
-                logger.debug("Cache miss key=%s — invoking LLM", cache_key[:12])
-                res = await self.llm.ainvoke(messages)
-                await self._cache.set(cache_key, res)
-                return res
+async def _invoke(messages: list[BaseMessage]) -> AIMessage:
+        cache = _get_cache()
+        cache_key = cache.make_key(messages)
+        cached = await cache.get(cache_key)
+        if cached is not None:
+                logger.info("Cache hit key=%s", cache_key[:12])
+                return cached
+
+        logger.debug("Cache miss key=%s — invoking LLM", cache_key[:12])
+        res = await _get_llm().ainvoke(messages)
+        await cache.set(cache_key, res)
+        return res
 
 
 if __name__ == "__main__":
         vars_dict = {"grade_level": "1", "student_interest": "space"}
-        model = Model()
-        core = _render_system_prompt(model._system_prompt_template, vars_dict)
-        with_example = f"{core}\n\n{model._example_prompt_template}" if model._example_prompt_template else core
+        system_template, example_template = _get_prompt_templates()
+        core = _render_system_prompt(system_template, vars_dict)
+        with_example = f"{core}\n\n{example_template}" if example_template else core
         full_prompt = _append_grade_rules(with_example, vars_dict["grade_level"])
         print(full_prompt)
