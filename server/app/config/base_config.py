@@ -45,6 +45,7 @@ class ServerConfig(BaseModel):
         use_dummy: bool = True
         default_grade_level: str = "8"
         default_interest: str = "General"
+        translate_to_nepali: bool = False
 
 
 class PromptConfig(BaseModel):
@@ -139,6 +140,9 @@ class ConfigManager:
                         ),
                         default_interest=str(
                                 server_data.get("default_interest", "General")
+                        ),
+                        translate_to_nepali=bool(
+                                server_data.get("translate_to_nepali", False)
                         ),
                 )
 

@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage
@@ -10,10 +11,13 @@ from app.logging_config import get_logger
 
 logger = get_logger(__name__)
 
+_SERVER_ROOT = Path(__file__).resolve().parents[2]
+
 _llm: BaseChatModel | None = None
 _cache: CacheService | None = None
 _system_prompt_template: str | None = None
 _example_prompt_template: str | None = None
+_translate_prompt_template: str | None = None
 
 
 def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
@@ -97,6 +101,20 @@ def _get_prompt_templates() -> tuple[str, str]:
         return _system_prompt_template, _example_prompt_template
 
 
+def _get_translate_prompt_template() -> str:
+        global _translate_prompt_template
+        if _translate_prompt_template is None:
+                prompt_path = _SERVER_ROOT / "prompts" / "translate.md"
+                _translate_prompt_template = prompt_path.read_text(
+                        encoding="utf-8"
+                ).strip()
+                logger.info(
+                        "Translate prompt template loaded with length %d characters",
+                        len(_translate_prompt_template),
+                )
+        return _translate_prompt_template
+
+
 def _get_cache() -> CacheService:
         global _cache
         if _cache is None:
@@ -148,6 +166,19 @@ async def explain_information_card(
         return await _invoke(messages)
 
 
+async def translate(text: str) -> AIMessage:
+        """
+        Translate English text to Nepali while preserving content, intent.
+        """
+        human_content = f"**Text to translate:**\n{text}"
+        messages = [
+                SystemMessage(content=_get_translate_prompt_template()),
+                HumanMessage(content=human_content),
+        ]
+        logger.debug("Sending %d translation messages to chat model", len(messages))
+        return await _invoke(messages)
+
+
 async def _invoke(messages: list[BaseMessage]) -> AIMessage:
         cache = _get_cache()
         cache_key = cache.make_key(messages)
@@ -162,10 +193,21 @@ async def _invoke(messages: list[BaseMessage]) -> AIMessage:
         return res
 
 
+async def test():
+        from textwrap import dedent
+
+        _TEST_INFORMATION_CARD = {
+                "prompt": dedent("""
+                        When pollutants enter rivers, the water can become cloudy, dark, or have a strange smell.
+                        In Nepal, rivers near cities and industrial areas—such as parts of the Bagmati River—have become polluted due to untreated waste. Poor water quality can harm ecosystems and make water unsafe for daily use.
+                """),
+                "target_mechanic": "Pollution dilution",
+        }
+        translated = await translate(_TEST_INFORMATION_CARD["prompt"])
+        print(translated.content)
+
+
 if __name__ == "__main__":
-        vars_dict = {"grade_level": "1", "student_interest": "space"}
-        system_template, example_template = _get_prompt_templates()
-        core = _render_system_prompt(system_template, vars_dict)
-        with_example = f"{core}\n\n{example_template}" if example_template else core
-        full_prompt = _append_grade_rules(with_example, vars_dict["grade_level"])
-        print(full_prompt)
+        import asyncio
+
+        asyncio.run(test())

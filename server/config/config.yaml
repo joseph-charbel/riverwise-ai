@@ -2,6 +2,7 @@ server_config:
     use_dummy: false # set to false to use the real AI model
     default_grade_level: "8"
     default_interest: "General"
+    translate_to_nepali: false # set true to translate final AI responses to Nepali
 
 cache_config:
     enabled: true

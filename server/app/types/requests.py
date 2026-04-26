@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -10,6 +10,7 @@ class DummyInvokeRequest(BaseModel):
     interest: str = "General"
     target_mechanic: str = ""
     include_example: bool = True
+    translate_to_nepali: Optional[bool] = None
 
 
 class DummyInvokeBatchItem(BaseModel):
@@ -23,3 +24,4 @@ class DummyInvokesRequest(BaseModel):
     items: List[DummyInvokeBatchItem]
     grade_level: str = "8"
     interest: str = "General"
+    translate_to_nepali: Optional[bool] = None

@@ -40,6 +40,7 @@ async def api_dummy_invoke(request: DummyInvokeRequest):
         interest=request.interest,
         target_mechanic=request.target_mechanic,
         include_example=request.include_example,
+        translate_to_nepali=request.translate_to_nepali,
     )
     return DummyInvokeResponse(content=response.content)
 
@@ -50,6 +51,7 @@ async def api_dummy_invokes(request: DummyInvokesRequest):
         request.items,
         grade_level=request.grade_level,
         interest=request.interest,
+        translate_to_nepali=request.translate_to_nepali,
     )
     return DummyInvokesResponse(results={key: msg.content for key, msg in responses.items()})
 

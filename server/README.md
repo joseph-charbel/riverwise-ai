@@ -79,7 +79,12 @@ Accepts a text prompt and returns a response. Currently returns a stub that echo
 
 **Request body:**
 ```json
-{ "prompt": "<information card body text>" }
+{
+  "prompt": "<information card body text>",
+  "grade_level": "8",
+  "interest": "General",
+  "translate_to_nepali": false
+}
 ```
 
 **Response `200 OK`:**
@@ -141,7 +146,9 @@ The FastAPI application. Reads `CORS_ORIGINS` from the environment and configure
 
 The AI module exposes task-specific functions instead of a model class. For example, `explain_information_card(...)` builds the tutor prompt for hotspot content, then calls private `_invoke(messages)` to handle caching and the LangChain model call.
 
-Future AI tasks should follow this pattern: add a function named for the task, build that task's prompt locally, then call `_invoke(messages)`. For example, a future English-to-Nepali feature should be a `translate(...)` function, not another generic model wrapper.
+Translation follows the same pattern: `translate(...)` builds an English-to-Nepali prompt that preserves content, intent, formatting, and grade level, then calls `_invoke(messages)`.
+
+Future AI tasks should follow this pattern: add a function named for the task, build that task's prompt locally, then call `_invoke(messages)`.
 
 ### `app/config/base_config.py`
 
@@ -183,6 +190,10 @@ Provides `get_logger(name)`, which every module calls instead of `logging.getLog
 All tunable LLM parameters live in `config/config.yaml`. No code changes are needed to adjust the model or the system prompt.
 
 ```yaml
+server_config:
+  use_dummy: false
+  translate_to_nepali: false     # set true to translate final AI responses
+
 chat_model_config:
   provider: groq
   model: llama-3.1-8b-instant   # ← change model here
@@ -224,6 +235,21 @@ The current prompt instructs the model to act as an adaptive private tutor for c
 ## Real LLM mode
 
 Set `server_config.use_dummy: false` in `config/config.yaml` and provide `GROQ_API_KEY` in `.env`. The API route calls `app.index.invoke(...)`, which routes hotspot content to `explain_information_card(...)`.
+
+### Nepali translation
+
+Set `server_config.translate_to_nepali: true` to translate final AI responses to Nepali after the information-card explanation is generated.
+
+Each API request may override the config default with `translate_to_nepali`:
+
+```json
+{
+  "prompt": "<information card body text>",
+  "grade_level": "4",
+  "interest": "Dance",
+  "translate_to_nepali": true
+}
+```
 
 ---
 
