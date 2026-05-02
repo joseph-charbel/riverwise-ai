@@ -86,28 +86,28 @@ export class MapOverlay {
     this.container.addChild(bg);
 
     // Close button (top-right)
-    const closeBtn = new Graphics();
-    closeBtn.roundRect(-22, -22, 44, 44, 6);
-    closeBtn.fill({ color: 0x1a2e25, alpha: 0.8 });
-    closeBtn.setStrokeStyle({ width: 1.5, color: 0x4a7a5a });
-    closeBtn.stroke();
-    closeBtn.eventMode = "static";
-    closeBtn.cursor = "pointer";
-    closeBtn.hitArea = { contains: (x: number, y: number) => x >= -22 && x <= 22 && y >= -22 && y <= 22 };
-    closeBtn.position.set(this.canvasW - 38, 38);
-    closeBtn.on("pointerdown", () => this.toggle());
-    closeBtn.on("pointerover", () => closeBtn.scale.set(1.1));
-    closeBtn.on("pointerout", () => closeBtn.scale.set(1));
-    this.container.addChild(closeBtn);
+    // const closeBtn = new Graphics();
+    // closeBtn.roundRect(-22, -22, 44, 44, 6);
+    // closeBtn.fill({ color: 0x1a2e25, alpha: 0.8 });
+    // closeBtn.setStrokeStyle({ width: 1.5, color: 0x4a7a5a });
+    // closeBtn.stroke();
+    // closeBtn.eventMode = "static";
+    // closeBtn.cursor = "pointer";
+    // closeBtn.hitArea = { contains: (x: number, y: number) => x >= -22 && x <= 22 && y >= -22 && y <= 22 };
+    // closeBtn.position.set(this.canvasW - 38, 38);
+    // closeBtn.on("pointerdown", () => this.toggle());
+    // closeBtn.on("pointerover", () => closeBtn.scale.set(1.1));
+    // closeBtn.on("pointerout", () => closeBtn.scale.set(1));
+    // this.container.addChild(closeBtn);
 
-    const xLabel = new Text({
-      text: "✕",
-      style: new TextStyle({ fontFamily: "Arial", fontSize: 18, fill: 0x8ec9a6 }),
-    });
-    xLabel.anchor.set(0.5);
-    xLabel.position.set(this.canvasW - 38, 38);
-    xLabel.eventMode = "none";
-    this.container.addChild(xLabel);
+    // const xLabel = new Text({
+    //   text: "✕",
+    //   style: new TextStyle({ fontFamily: "Arial", fontSize: 18, fill: 0x8ec9a6 }),
+    // });
+    // xLabel.anchor.set(0.5);
+    // xLabel.position.set(this.canvasW - 38, 38);
+    // xLabel.eventMode = "none";
+    // this.container.addChild(xLabel);
 
     // Node markers with completion state icons
     const labelStyle = new TextStyle({
