@@ -103,12 +103,16 @@ export interface SceneConfig {
 export interface MapNodeConfig {
   node_id: string;
   label: string;
+  /** 0-based position in linear unlock sequence */
+  order: number;
   x: number;
   y: number;
   w: number;
   h: number;
   icon_incomplete: string;
   icon_complete: string;
+  /** Optional: override sprite when location is locked (otherwise tint incomplete icon) */
+  icon_locked?: string;
 }
 
 export interface MapConfig {

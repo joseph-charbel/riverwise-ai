@@ -12,8 +12,13 @@ import { eventBus } from "../core/EventBus.ts";
 interface NodeEntry {
   config: MapNodeConfig;
   iconSprite: Sprite;
+  label: Text;
   completed: boolean;
+  baseW: number;
+  baseH: number;
 }
+
+const LOCKED_TINT = 0x888888;
 
 export class MapOverlay {
   readonly container: Container;
@@ -76,6 +81,71 @@ export class MapOverlay {
     });
   }
 
+  /** Every location with a lower `order` must be completed first. */
+  private isNodeUnlocked(entry: NodeEntry): boolean {
+    return this.nodeEntries.every(
+      (o) => o.config.order >= entry.config.order || o.completed,
+    );
+  }
+
+  /** Locked locations cannot be entered; completed ones stay replayable. */
+  private canVisit(entry: NodeEntry): boolean {
+    return this.isNodeUnlocked(entry) || entry.completed;
+  }
+
+  private async applyNodeState(entry: NodeEntry): Promise<void> {
+    const unlocked = this.isNodeUnlocked(entry);
+    const showLocked = !unlocked && !entry.completed;
+    const visitable = this.canVisit(entry);
+
+    let asset: string;
+    if (entry.completed) {
+      asset = entry.config.icon_complete;
+    } else if (showLocked && entry.config.icon_locked) {
+      asset = entry.config.icon_locked;
+    } else {
+      asset = entry.config.icon_incomplete;
+    }
+    entry.iconSprite.texture = await Assets.load(asset);
+
+    if (showLocked && !entry.config.icon_locked) {
+      entry.iconSprite.tint = LOCKED_TINT;
+    } else {
+      entry.iconSprite.tint = 0xffffff;
+    }
+
+    entry.label.alpha = showLocked ? 0.45 : 1;
+
+    entry.iconSprite.removeAllListeners();
+
+    if (visitable) {
+      entry.iconSprite.eventMode = "static";
+      entry.iconSprite.cursor = "pointer";
+      const { baseW, baseH } = entry;
+      entry.iconSprite.on("pointerdown", () => {
+        this.toggle();
+        eventBus.emit("scene:load", entry.config.node_id);
+      });
+      entry.iconSprite.on("pointerover", () => {
+        entry.iconSprite.width = baseW * 1.2;
+        entry.iconSprite.height = baseH * 1.2;
+      });
+      entry.iconSprite.on("pointerout", () => {
+        entry.iconSprite.width = baseW;
+        entry.iconSprite.height = baseH;
+      });
+    } else {
+      entry.iconSprite.eventMode = "none";
+      entry.iconSprite.cursor = "default";
+      entry.iconSprite.width = entry.baseW;
+      entry.iconSprite.height = entry.baseH;
+    }
+  }
+
+  private async refreshAllNodes(): Promise<void> {
+    await Promise.all(this.nodeEntries.map((e) => this.applyNodeState(e)));
+  }
+
   async init(): Promise<void> {
     // Full-screen background — blocks clicks reaching the scene below
     const bgTex = await Assets.load(this.config.background_asset);
@@ -84,30 +154,6 @@ export class MapOverlay {
     bg.height = this.canvasH;
     bg.eventMode = "static";
     this.container.addChild(bg);
-
-    // Close button (top-right)
-    // const closeBtn = new Graphics();
-    // closeBtn.roundRect(-22, -22, 44, 44, 6);
-    // closeBtn.fill({ color: 0x1a2e25, alpha: 0.8 });
-    // closeBtn.setStrokeStyle({ width: 1.5, color: 0x4a7a5a });
-    // closeBtn.stroke();
-    // closeBtn.eventMode = "static";
-    // closeBtn.cursor = "pointer";
-    // closeBtn.hitArea = { contains: (x: number, y: number) => x >= -22 && x <= 22 && y >= -22 && y <= 22 };
-    // closeBtn.position.set(this.canvasW - 38, 38);
-    // closeBtn.on("pointerdown", () => this.toggle());
-    // closeBtn.on("pointerover", () => closeBtn.scale.set(1.1));
-    // closeBtn.on("pointerout", () => closeBtn.scale.set(1));
-    // this.container.addChild(closeBtn);
-
-    // const xLabel = new Text({
-    //   text: "✕",
-    //   style: new TextStyle({ fontFamily: "Arial", fontSize: 18, fill: 0x8ec9a6 }),
-    // });
-    // xLabel.anchor.set(0.5);
-    // xLabel.position.set(this.canvasW - 38, 38);
-    // xLabel.eventMode = "none";
-    // this.container.addChild(xLabel);
 
     // Node markers with completion state icons
     const labelStyle = new TextStyle({
@@ -124,43 +170,35 @@ export class MapOverlay {
       iconSprite.width = node.w;
       iconSprite.height = node.h;
       iconSprite.position.set(node.x, node.y);
-      iconSprite.eventMode = "static";
-      iconSprite.cursor = "pointer";
-
-      const entry: NodeEntry = { config: node, iconSprite, completed: false };
-      this.nodeEntries.push(entry);
-
-      iconSprite.on("pointerdown", () => {
-        this.toggle();
-        eventBus.emit("scene:load", node.node_id);
-      });
-      const baseW = node.w;
-      const baseH = node.h;
-      iconSprite.on("pointerover", () => {
-        iconSprite.width = baseW * 1.2;
-        iconSprite.height = baseH * 1.2;
-      });
-      iconSprite.on("pointerout", () => {
-        iconSprite.width = baseW;
-        iconSprite.height = baseH;
-      });
 
       const label = new Text({ text: node.label, style: labelStyle });
       label.anchor.set(0.5, 0);
       label.position.set(node.x, node.y + 32);
       label.eventMode = "none";
 
+      const entry: NodeEntry = {
+        config: node,
+        iconSprite,
+        label,
+        completed: false,
+        baseW: node.w,
+        baseH: node.h,
+      };
+      this.nodeEntries.push(entry);
+
       this.container.addChild(iconSprite);
       this.container.addChild(label);
     }
+
+    this.nodeEntries.sort((a, b) => a.config.order - b.config.order);
+    await this.refreshAllNodes();
   }
 
   async setCompleted(nodeId: string, completed: boolean): Promise<void> {
     const entry = this.nodeEntries.find((e) => e.config.node_id === nodeId);
     if (!entry || entry.completed === completed) return;
     entry.completed = completed;
-    const asset = completed ? entry.config.icon_complete : entry.config.icon_incomplete;
-    entry.iconSprite.texture = await Assets.load(asset);
+    await this.refreshAllNodes();
   }
 
   open(): void {
