@@ -1,4 +1,4 @@
-import { Container, Graphics, Text, TextStyle } from "pixi.js";
+import { Container, Graphics, Sprite, Text, TextStyle, type Texture } from "pixi.js";
 import { TextToSpeechReader } from "../services/textToSpeech.ts";
 import type { SpeechReaderState } from "../services/textToSpeech.ts";
 
@@ -20,6 +20,7 @@ function clamp(value: number, min: number, max: number): number {
 
 export class InfoPanel {
   readonly container: Container;
+  private readonly panelTexture: Texture;
   private visible = false;
   private targetAlpha = 0;
   private animFrameId = 0;
@@ -29,7 +30,8 @@ export class InfoPanel {
   private voiceAvailable = false;
   private reader: TextToSpeechReader;
 
-  constructor(speechLanguage = "en-AU") {
+  constructor(panelTexture: Texture, speechLanguage = "en-AU") {
+    this.panelTexture = panelTexture;
     this.reader = new TextToSpeechReader(speechLanguage);
     this.voiceAvailable = this.reader.hasVoiceForLanguage;
     this.reader.onChange((state) => {
@@ -120,18 +122,12 @@ export class InfoPanel {
     cardShadow.fill({ color: 0x000000, alpha: 0.2 });
     this.container.addChild(cardShadow);
 
-    // Panel card
-    const card = new Graphics();
-    card.roundRect(x, y, PANEL_W, panelH, 12);
-    card.fill({ color: 0xE6F4FF, alpha: 1 });
-    card.setStrokeStyle({ width: 2, color: 0xD9F2FF });
-    card.stroke();
-    // Subtle inner highlight line at top
-    card.setStrokeStyle({ width: 1, color: 0x6ec99a, alpha: 0.3 });
-    card.moveTo(x + 16, y + 1);
-    card.lineTo(x + PANEL_W - 16, y + 1);
-    card.stroke();
-    this.container.addChild(card);
+    const cardSprite = new Sprite(this.panelTexture);
+    cardSprite.position.set(x, y);
+    cardSprite.width = PANEL_W;
+    cardSprite.height = panelH;
+    cardSprite.eventMode = "none";
+    this.container.addChild(cardSprite);
 
     // Title
     const titleText = new Text({

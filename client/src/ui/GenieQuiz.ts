@@ -1,4 +1,4 @@
-import { Container, Graphics, Text, TextStyle } from "pixi.js";
+import { Container, Graphics, Sprite, Text, TextStyle, type Texture } from "pixi.js";
 import type { QuizQuestion } from "../types/schemas.ts";
 import { eventBus } from "../core/EventBus.ts";
 
@@ -11,6 +11,8 @@ const FADE_SPEED = 0.14;
 export class GenieQuiz {
   readonly container: Container;
 
+  private readonly panelTexture: Texture;
+
   private currentSceneId = "";
   private questions: QuizQuestion[] = [];
   private currentIndex = 0;
@@ -19,7 +21,8 @@ export class GenieQuiz {
   private targetAlpha = 0;
   private animFrameId = 0;
 
-  constructor() {
+  constructor(panelTexture: Texture) {
+    this.panelTexture = panelTexture;
     this.container = new Container();
     this.container.zIndex = 2500;
     this.container.visible = false;
@@ -52,13 +55,12 @@ export class GenieQuiz {
     blocker.eventMode = "static";
     this.container.addChild(blocker);
 
-    // Panel card
-    const card = new Graphics();
-    card.roundRect(panelX, panelY, PANEL_W, PANEL_H, 14);
-    card.fill({ color: 0xE6F4FF, alpha: 0.97 });
-    card.setStrokeStyle({ width: 2, color: 0xD9F2FF });
-    card.stroke();
-    this.container.addChild(card);
+    const cardSprite = new Sprite(this.panelTexture);
+    cardSprite.position.set(panelX, panelY);
+    cardSprite.width = PANEL_W;
+    cardSprite.height = PANEL_H;
+    cardSprite.eventMode = "none";
+    this.container.addChild(cardSprite);
 
     // Genie graphic (drawn with Pixi Graphics)
     this.drawGenie(panelX + PANEL_W / 2, panelY + 52);
@@ -66,7 +68,7 @@ export class GenieQuiz {
     // Progress indicator
     const progress = new Text({
       text: `Question ${this.currentIndex + 1} / ${this.questions.length}`,
-      style: new TextStyle({ fontFamily: "Arial", fontSize: 12, fill: 0x8a9a8a, letterSpacing: 1 }),
+      style: new TextStyle({ fontFamily: "Arial", fontSize: 12, fill: 0x4a6070, letterSpacing: 1 }),
     });
     progress.anchor.set(1, 0);
     progress.position.set(panelX + PANEL_W - 20, panelY + 14);
@@ -119,7 +121,7 @@ export class GenieQuiz {
   ): void {
     const btn = new Graphics();
     const fillColor = state === "correct" ? 0xc6e1b6 : state === "wrong" ? 0xfde0e0 : 0x1a3a2a;
-    const strokeColor = state === "correct" ? 0x0a5b48 : state === "wrong" ? 0xE54C38: 0x4a8060;
+    const strokeColor = state === "correct" ? 0x0a5b48 : state === "wrong" ? 0xE54C38 : 0x4a8060;
 
     btn.roundRect(0, 0, w, h, 8);
     btn.fill({ color: fillColor, alpha: 0.9 });
@@ -146,7 +148,7 @@ export class GenieQuiz {
       style: new TextStyle({
         fontFamily: "Arial, sans-serif",
         fontSize: 13,
-        fill: state === "correct" ? 0xa5d6a7 : state === "wrong" ? 0xef9a9a : 0xd0e8d0,
+        fill: state === "correct" ? 0x1b5e20 : state === "wrong" ? 0xb71c1c : 0x1a3350,
         wordWrap: true,
         wordWrapWidth: w - 20,
         align: "center",
@@ -269,13 +271,12 @@ export class GenieQuiz {
     blocker.eventMode = "static";
     this.container.addChild(blocker);
 
-    // Card
-    const card = new Graphics();
-    card.roundRect(panelX, panelY, PANEL_W, PANEL_H, 14);
-    card.fill({ color: 0x0a200f, alpha: 0.97 });
-    card.setStrokeStyle({ width: 2.5, color: 0x66bb6a });
-    card.stroke();
-    this.container.addChild(card);
+    const cardSprite = new Sprite(this.panelTexture);
+    cardSprite.position.set(panelX, panelY);
+    cardSprite.width = PANEL_W;
+    cardSprite.height = PANEL_H;
+    cardSprite.eventMode = "none";
+    this.container.addChild(cardSprite);
 
     // Star burst decoration
     const stars = new Graphics();
@@ -309,7 +310,7 @@ export class GenieQuiz {
       style: new TextStyle({
         fontFamily: "Georgia, serif",
         fontSize: 26,
-        fill: 0xa5d6a7,
+        fill: 0x1b5e20,
         fontWeight: "bold",
       }),
     });
@@ -323,7 +324,7 @@ export class GenieQuiz {
       style: new TextStyle({
         fontFamily: "Arial",
         fontSize: 14,
-        fill: 0x81c784,
+        fill: 0x388e3c,
         align: "center",
         wordWrap: true,
         wordWrapWidth: PANEL_W - 80,
