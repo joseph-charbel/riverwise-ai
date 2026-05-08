@@ -55,8 +55,8 @@ export class GenieQuiz {
     // Panel card
     const card = new Graphics();
     card.roundRect(panelX, panelY, PANEL_W, PANEL_H, 14);
-    card.fill({ color: 0x0a1f15, alpha: 0.97 });
-    card.setStrokeStyle({ width: 2, color: 0xd4a843 });
+    card.fill({ color: 0xE6F4FF, alpha: 0.97 });
+    card.setStrokeStyle({ width: 2, color: 0xD9F2FF });
     card.stroke();
     this.container.addChild(card);
 
@@ -77,9 +77,10 @@ export class GenieQuiz {
     const questionText = new Text({
       text: q.question,
       style: new TextStyle({
-        fontFamily: "Georgia, serif",
-        fontSize: 16,
-        fill: 0xf0e6c8,
+        fontFamily: "Poppins, sans-serif",
+        fontWeight: "bold",
+        fontSize: 20,
+        fill: 0x1E88E5,
         wordWrap: true,
         wordWrapWidth: PANEL_W - 60,
         align: "center",
@@ -117,8 +118,8 @@ export class GenieQuiz {
     state: "correct" | "wrong" | null
   ): void {
     const btn = new Graphics();
-    const fillColor = state === "correct" ? 0x1b5e20 : state === "wrong" ? 0x7f0000 : 0x1a3a2a;
-    const strokeColor = state === "correct" ? 0x66bb6a : state === "wrong" ? 0xef5350 : 0x4a8060;
+    const fillColor = state === "correct" ? 0xc6e1b6 : state === "wrong" ? 0xfde0e0 : 0x1a3a2a;
+    const strokeColor = state === "correct" ? 0x0a5b48 : state === "wrong" ? 0xE54C38: 0x4a8060;
 
     btn.roundRect(0, 0, w, h, 8);
     btn.fill({ color: fillColor, alpha: 0.9 });

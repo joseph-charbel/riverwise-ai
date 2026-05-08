@@ -204,22 +204,22 @@ export class InfoPanel {
     this.drawStopIcon(stopButton);
     this.container.addChild(stopButton);
 
-    const label = new Text({
-      text: this.audioStatusLabel(enabled, isLoading),
-      style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
-        fontSize: 12,
-        fill: enabled ? 0x2c638f : 0x7a8a96,
-        fontWeight: "bold",
-        wordWrap: true,
-        wordWrapWidth: width - 86,
-        lineHeight: 16,
-      }),
-    });
-    label.anchor.set(0, 0.5);
-    label.position.set(x + 82, y);
-    label.eventMode = "none";
-    this.container.addChild(label);
+  const label = new Text({
+    text: this.audioStatusLabel(enabled, isLoading),
+    style: new TextStyle({
+      fontFamily: "Nunito, sans-serif",
+      fontSize: 14,
+      fill: enabled ? 0x5f6f85 : 0x91a7b7,
+      fontWeight: "700",
+      wordWrap: true,
+      wordWrapWidth: width - 92,
+      lineHeight: 18,
+    }),
+  });
+  label.anchor.set(0, 0.5);
+  label.position.set(x + 96, y);
+  label.eventMode = "none";
+  this.container.addChild(label);
   }
 
   private drawAudioButton(x: number, y: number, enabled: boolean, onPress: () => void): Container {
@@ -228,19 +228,29 @@ export class InfoPanel {
     button.alpha = enabled ? 1 : 0.42;
 
     const bg = new Graphics();
-    bg.circle(0, 0, 15);
-    bg.fill({ color: enabled ? 0xffffff : 0xd4e4ee, alpha: 0.95 });
-    bg.setStrokeStyle({ width: 1.5, color: enabled ? 0x1e88e5 : 0x91a7b7 });
+
+    // outer white ring
+    bg.circle(0, 0, 24);
+    bg.fill({ color: 0xffffff, alpha: 1 });
+
+    // main button
+    bg.circle(0, 0, 19);
+    bg.fill({ color: enabled ? 0x2f80ed : 0xd9e9ff, alpha: 1 });
+
+    // blue outline
+    bg.setStrokeStyle({ width: 2, color: enabled ? 0x5dbbff : 0x91a7b7 });
     bg.stroke();
+
     bg.eventMode = "static";
     bg.cursor = enabled ? "pointer" : "default";
+
     if (enabled) {
       bg.on("pointerdown", onPress);
       bg.on("pointerover", () => button.scale.set(1.08));
       bg.on("pointerout", () => button.scale.set(1));
     }
-    button.addChild(bg);
 
+    button.addChild(bg);
     return button;
   }
 
@@ -249,24 +259,39 @@ export class InfoPanel {
     icon.eventMode = "none";
 
     if (isPause) {
-      icon.roundRect(-5, -7, 4, 14, 1);
-      icon.roundRect(3, -7, 4, 14, 1);
-      icon.fill({ color: 0x1e88e5 });
+      icon.roundRect(-6, -8, 5, 16, 2);
+      icon.roundRect(3, -8, 5, 16, 2);
+      icon.fill({ color: 0xffffff });
     } else {
-      icon.poly([-4, -8, -4, 8, 8, 0]);
-      icon.fill({ color: 0x1e88e5 });
+      icon.poly([-5, -9, -5, 9, 10, 0]);
+      icon.fill({ color: 0xffffff });
     }
 
     button.addChild(icon);
   }
 
   private drawStopIcon(button: Container): void {
-    const icon = new Graphics();
-    icon.roundRect(-6, -6, 12, 12, 2);
-    icon.fill({ color: 0xe0a800 });
-    icon.eventMode = "none";
-    button.addChild(icon);
-  }
+  const icon = new Graphics();
+
+  // Gold stop button style
+  const bg = button.children[0] as Graphics;
+  bg.clear();
+
+  bg.circle(0, 0, 24);
+  bg.fill({ color: 0xffffff, alpha: 1 });
+
+  bg.circle(0, 0, 19);
+  bg.fill({ color: 0xffc857, alpha: 1 });
+
+  bg.setStrokeStyle({ width: 2, color: 0xe0a800 });
+  bg.stroke();
+
+  icon.roundRect(-6, -6, 12, 12, 2);
+  icon.fill({ color: 0x0d1b3d });
+
+  icon.eventMode = "none";
+  button.addChild(icon);
+}
 
   private toggleSpeech(): void {
     if (!this.shouldShowAudioControls() || this.currentBody.trim().toLowerCase() === "loading...") return;
