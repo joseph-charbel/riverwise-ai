@@ -1,4 +1,4 @@
-import type { Application } from "pixi.js";
+import { Rectangle, type Application } from "pixi.js";
 import { eventBus } from "./EventBus.ts";
 
 export class InputManager {
@@ -7,7 +7,7 @@ export class InputManager {
 
   constructor(app: Application) {
     app.stage.eventMode = "static";
-    app.stage.hitArea = app.screen;
+    app.stage.hitArea = new Rectangle(0, 0, 960, 540);
 
     app.stage.on("pointermove", (e) => {
       this.cursorX = e.globalX;

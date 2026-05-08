@@ -8,6 +8,10 @@ import { GenieQuiz } from "./ui/GenieQuiz.ts";
 import { LampButton } from "./ui/LampButton.ts";
 import { eventBus } from "./core/EventBus.ts";
 
+/** Fixed design resolution; stage scales uniformly to fill the viewport. */
+const DESIGN_W = 960;
+const DESIGN_H = 540;
+
 export class Engine {
   private app: Application;
   private sceneManager!: SceneManager;
@@ -31,8 +35,8 @@ export class Engine {
   ): Promise<void> {
     const dpr = Math.min(2, globalThis.devicePixelRatio ?? 1);
     await this.app.init({
-      width: 960,
-      height: 540,
+      width: DESIGN_W,
+      height: DESIGN_H,
       backgroundColor: 0x1a1a2e,
       resizeTo: undefined,
       resolution: dpr,
@@ -72,7 +76,7 @@ export class Engine {
     this.sceneManager = new SceneManager(this.app, sceneConfigs, this.infoPanel, studentConfig);
 
     // Map overlay + button
-    this.mapOverlay = new MapOverlay(mapConfig, 960, 540);
+    this.mapOverlay = new MapOverlay(mapConfig, DESIGN_W, DESIGN_H);
     await this.mapOverlay.init();
     this.app.stage.addChild(this.mapOverlay.container);
     this.app.stage.addChild(this.mapOverlay.mapButton);
@@ -83,7 +87,7 @@ export class Engine {
       t.source.autoGenerateMipmaps = false;
       t.source.maxAnisotropy = 1;
     }
-    this.lampButton = new LampButton(questionsMap, this.genieQuiz, 960, 540, genieLampTextures, infoCountMap);
+    this.lampButton = new LampButton(questionsMap, this.genieQuiz, DESIGN_W, DESIGN_H, genieLampTextures, infoCountMap);
     this.app.stage.addChild(this.lampButton.container);
 
     // When a scene is marked complete → update map icon
@@ -98,6 +102,23 @@ export class Engine {
       this.mapOverlay.open();
     }
 
+    this.applyResponsiveLayout(container);
+    const resizeObserver = new ResizeObserver(() => this.applyResponsiveLayout(container));
+    resizeObserver.observe(container);
+
     void this.inputManager;
+  }
+
+  private applyResponsiveLayout(container: HTMLElement): void {
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    if (w === 0 || h === 0) return;
+    const scale = Math.min(w / DESIGN_W, h / DESIGN_H);
+    this.app.renderer.resize(w, h);
+    this.app.stage.scale.set(scale);
+    this.app.stage.position.set(
+      Math.round((w - DESIGN_W * scale) / 2),
+      Math.round((h - DESIGN_H * scale) / 2),
+    );
   }
 }
