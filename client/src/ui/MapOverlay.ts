@@ -2,7 +2,7 @@ import {
   Container,
   Sprite,
   Assets,
-  Graphics,
+  Rectangle,
   Text,
   TextStyle,
 } from "pixi.js";
@@ -19,6 +19,7 @@ interface NodeEntry {
 }
 
 const LOCKED_TINT = 0x888888;
+const MAP_BTN_SIZE = 64;
 
 export class MapOverlay {
   readonly container: Container;
@@ -40,41 +41,17 @@ export class MapOverlay {
     this.container.zIndex = 1000;
     this.container.eventMode = "static"; // ensures children receive events
 
-    // --- Persistent map button at bottom center ---
+    // --- Persistent map button at bottom-left (sprite added in init) ---
     this.mapButton = new Container();
     this.mapButton.zIndex = 999;
     this.mapButton.eventMode = "static";
-    this.mapButton.position.set(canvasWidth / 2, canvasHeight - 30);
-
-    const btnBg = new Graphics();
-    btnBg.roundRect(-28, -18, 56, 36, 8);
-    btnBg.fill({ color: 0x2a2a4a, alpha: 0.85 });
-    btnBg.setStrokeStyle({ width: 2, color: 0x6c7bb3 });
-    btnBg.stroke();
-    btnBg.eventMode = "static";
-    btnBg.cursor = "pointer";
-    btnBg.hitArea = { contains: (x: number, y: number) => x >= -28 && x <= 28 && y >= -18 && y <= 18 };
-    btnBg.on("pointerdown", () => this.toggle());
-    btnBg.on("pointerover", () => this.mapButton.scale.set(1.1));
-    btnBg.on("pointerout", () => this.mapButton.scale.set(1));
-    this.mapButton.addChild(btnBg);
-
-    const icon = new Graphics();
-    icon.circle(0, -2, 10);
-    icon.fill({ color: 0x6c7bb3 });
-    icon.circle(0, -2, 4);
-    icon.fill({ color: 0xffffff });
-    icon.eventMode = "none"; // decorative only — don't intercept events
-    this.mapButton.addChild(icon);
-
-    const btnLabel = new Text({
-      text: "MAP",
-      style: new TextStyle({ fontFamily: "Arial", fontSize: 8, fill: 0xaabbdd, fontWeight: "bold" }),
-    });
-    btnLabel.anchor.set(0.5);
-    btnLabel.position.set(0, 13);
-    btnLabel.eventMode = "none";
-    this.mapButton.addChild(btnLabel);
+    this.mapButton.cursor = "pointer";
+    const half = MAP_BTN_SIZE / 2;
+    this.mapButton.hitArea = new Rectangle(-half, -half, MAP_BTN_SIZE, MAP_BTN_SIZE);
+    this.mapButton.position.set(50, canvasHeight - 50);
+    this.mapButton.on("pointerdown", () => this.toggle());
+    this.mapButton.on("pointerover", () => this.mapButton.scale.set(1.1));
+    this.mapButton.on("pointerout", () => this.mapButton.scale.set(1));
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "m" || e.key === "M") this.toggle();
@@ -147,6 +124,14 @@ export class MapOverlay {
   }
 
   async init(): Promise<void> {
+    const mapTex = await Assets.load("assets/sprites/map icon.png");
+    const mapSprite = new Sprite(mapTex);
+    mapSprite.anchor.set(0.5);
+    mapSprite.width = MAP_BTN_SIZE;
+    mapSprite.height = MAP_BTN_SIZE;
+    mapSprite.eventMode = "none";
+    this.mapButton.addChild(mapSprite);
+
     // Full-screen background — blocks clicks reaching the scene below
     const bgTex = await Assets.load(this.config.background_asset);
     const bg = new Sprite(bgTex);
