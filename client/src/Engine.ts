@@ -59,13 +59,16 @@ export class Engine {
     const panelBgTexture = await Assets.load("assets/panel/panel-background.png");
     panelBgTexture.source.autoGenerateMipmaps = false;
     panelBgTexture.source.maxAnisotropy = 1;
+    const waterDropIconTexture = await Assets.load("assets/panel/water-drop-icon.png");
+    waterDropIconTexture.source.autoGenerateMipmaps = false;
+    waterDropIconTexture.source.maxAnisotropy = 1;
 
     // Info panel
     this.infoPanel = new InfoPanel(panelBgTexture, studentConfig.translate_to_nepali ? "ne-NP" : "en-AU");
     this.app.stage.addChild(this.infoPanel.container);
 
     // Genie quiz (above info panel)
-    this.genieQuiz = new GenieQuiz(panelBgTexture);
+    this.genieQuiz = new GenieQuiz(panelBgTexture, waterDropIconTexture);
     this.app.stage.addChild(this.genieQuiz.container);
 
     // Dismiss info panel on scene navigation

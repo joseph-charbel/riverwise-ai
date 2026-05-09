@@ -12,6 +12,7 @@ export class GenieQuiz {
   readonly container: Container;
 
   private readonly panelTexture: Texture;
+  private readonly waterDropIconTexture: Texture;
 
   private currentSceneId = "";
   private questions: QuizQuestion[] = [];
@@ -21,8 +22,9 @@ export class GenieQuiz {
   private targetAlpha = 0;
   private animFrameId = 0;
 
-  constructor(panelTexture: Texture) {
+  constructor(panelTexture: Texture, waterDropIconTexture: Texture) {
     this.panelTexture = panelTexture;
+    this.waterDropIconTexture = waterDropIconTexture;
     this.container = new Container();
     this.container.zIndex = 2500;
     this.container.visible = false;
@@ -62,8 +64,7 @@ export class GenieQuiz {
     cardSprite.eventMode = "none";
     this.container.addChild(cardSprite);
 
-    // Genie graphic (drawn with Pixi Graphics)
-    this.drawGenie(panelX + PANEL_W / 2, panelY + 52);
+    this.drawWaterDropIcon(panelX + PANEL_W / 2, panelY + 52);
 
     // Progress indicator
     const progress = new Text({
@@ -82,9 +83,9 @@ export class GenieQuiz {
         fontFamily: "Poppins, sans-serif",
         fontWeight: "bold",
         fontSize: 20,
-        fill: 0x1E88E5,
+        fill: 0x0D47A1,
         wordWrap: true,
-        wordWrapWidth: PANEL_W - 60,
+        wordWrapWidth: PANEL_W - 100,
         align: "center",
         lineHeight: 24,
       }),
@@ -95,15 +96,16 @@ export class GenieQuiz {
     this.container.addChild(questionText);
 
     // Option buttons
-    const optionStartY = panelY + 210;
-    const optionW = (PANEL_W - 60) / 2;
+    const optionStartY = panelY + 195;
+    const optionW = (PANEL_W - 100) / 2;
     const optionH = 52;
     const gap = 12;
+    const optionGroupX = panelX + (PANEL_W - optionW * 2 - gap) / 2;
 
     q.options.forEach((option, i) => {
       const col = i % 2;
       const row = Math.floor(i / 2);
-      const ox = panelX + 30 + col * (optionW + gap);
+      const ox = optionGroupX + col * (optionW + gap);
       const oy = optionStartY + row * (optionH + gap);
 
       this.buildOptionButton(option, i, ox, oy, optionW, optionH, null);
@@ -120,12 +122,12 @@ export class GenieQuiz {
     state: "correct" | "wrong" | null
   ): void {
     const btn = new Graphics();
-    const fillColor = state === "correct" ? 0xc6e1b6 : state === "wrong" ? 0xfde0e0 : 0x1a3a2a;
-    const strokeColor = state === "correct" ? 0x0a5b48 : state === "wrong" ? 0xE54C38 : 0x4a8060;
+    const fillColor = state === "correct" ? 0xc6e1b6 : state === "wrong" ? 0xfde0e0 : 0x1e93ee;
+    const strokeColor = state === "correct" ? 0x0a5b48 : state === "wrong" ? 0xE54C38 : 0x5dbbff;
 
-    btn.roundRect(0, 0, w, h, 8);
-    btn.fill({ color: fillColor, alpha: 0.9 });
-    btn.setStrokeStyle({ width: state ? 2.5 : 1.5, color: strokeColor });
+    btn.roundRect(0, 0, w, h, 10);
+    btn.fill({ color: fillColor, alpha: 0.96 });
+    btn.setStrokeStyle({ width: state ? 2.5 : 3, color: strokeColor });
     btn.stroke();
     btn.position.set(x, y);
 
@@ -146,13 +148,14 @@ export class GenieQuiz {
     const label = new Text({
       text,
       style: new TextStyle({
-        fontFamily: "Arial, sans-serif",
-        fontSize: 13,
-        fill: state === "correct" ? 0x1b5e20 : state === "wrong" ? 0xb71c1c : 0x1a3350,
+        fontFamily: "Poppins, sans-serif",
+        fontSize: 12,
+        fontWeight: "bold",
+        fill: state === "correct" ? 0x1b5e20 : state === "wrong" ? 0xb71c1c : 0xffffff,
         wordWrap: true,
-        wordWrapWidth: w - 20,
+        wordWrapWidth: w - 36,
         align: "center",
-        lineHeight: 18,
+        lineHeight: 16,
       }),
     });
     label.anchor.set(0.5, 0.5);
@@ -171,12 +174,13 @@ export class GenieQuiz {
     // Rebuild buttons with feedback colours
     const panelX = (CANVAS_W - PANEL_W) / 2;
     const panelY = (CANVAS_H - PANEL_H) / 2;
-    const optionStartY = panelY + 210;
-    const optionW = (PANEL_W - 60) / 2;
+    const optionStartY = panelY + 195;
+    const optionW = (PANEL_W - 100) / 2;
     const optionH = 52;
     const gap = 12;
+    const optionGroupX = panelX + (PANEL_W - optionW * 2 - gap) / 2;
 
-    // Remove existing option buttons (everything after genie + progress + question = first 4 children after card)
+    // Remove existing option buttons.
     // Simpler: just re-render options in-place by removing last N children
     const childCount = this.container.children.length;
     const optionChildrenStart = childCount - q.options.length * 2;
@@ -187,7 +191,7 @@ export class GenieQuiz {
     q.options.forEach((option, i) => {
       const col = i % 2;
       const row = Math.floor(i / 2);
-      const ox = panelX + 30 + col * (optionW + gap);
+      const ox = optionGroupX + col * (optionW + gap);
       const oy = optionStartY + row * (optionH + gap);
 
       let state: "correct" | "wrong" | null = null;
@@ -214,48 +218,6 @@ export class GenieQuiz {
         this.renderQuestion();
       }, 1000);
     }
-  }
-
-  private drawGenie(cx: number, cy: number): void {
-    const g = new Graphics();
-
-    // Smoke/wisp base
-    g.ellipse(cx, cy + 8, 28, 14);
-    g.fill({ color: 0x8b6914, alpha: 0.35 });
-
-    // Body (robe)
-    g.ellipse(cx, cy - 4, 18, 22);
-    g.fill({ color: 0xd4a843, alpha: 0.9 });
-
-    // Head
-    g.circle(cx, cy - 28, 16);
-    g.fill({ color: 0xf5d785 });
-
-    // Turban
-    g.ellipse(cx, cy - 40, 18, 8);
-    g.fill({ color: 0x6b3fa0 });
-    g.circle(cx, cy - 44, 5);
-    g.fill({ color: 0xd4a843 });
-
-    // Eyes
-    g.circle(cx - 5, cy - 30, 2.5);
-    g.fill({ color: 0x1a0a3a });
-    g.circle(cx + 5, cy - 30, 2.5);
-    g.fill({ color: 0x1a0a3a });
-
-    // Smile
-    g.setStrokeStyle({ width: 1.5, color: 0x8b5e1a });
-    g.arc(cx, cy - 25, 6, 0.2, Math.PI - 0.2);
-    g.stroke();
-
-    // Stars
-    for (const [sx, sy] of [[-22, -35], [24, -20], [-28, -10], [30, -38]] as [number, number][]) {
-      g.circle(cx + sx, cy + sy, 2);
-      g.fill({ color: 0xffd700, alpha: 0.7 });
-    }
-
-    g.eventMode = "none";
-    this.container.addChild(g);
   }
 
   private showCompletion(): void {
@@ -291,8 +253,7 @@ export class GenieQuiz {
     stars.eventMode = "none";
     this.container.addChild(stars);
 
-    // Genie (happy)
-    this.drawGenie(panelX + PANEL_W / 2, panelY + 100);
+    this.drawWaterDropIcon(panelX + PANEL_W / 2, panelY + 100);
 
     // Checkmark
     const check = new Text({
@@ -308,9 +269,9 @@ export class GenieQuiz {
     const title = new Text({
       text: "Scene Complete!",
       style: new TextStyle({
-        fontFamily: "Georgia, serif",
+        fontFamily: "Poppins, sans-serif",
         fontSize: 26,
-        fill: 0x1b5e20,
+        fill: 0x0D47A1,
         fontWeight: "bold",
       }),
     });
@@ -322,9 +283,9 @@ export class GenieQuiz {
     const sub = new Text({
       text: "Your knowledge has restored balance to this area.",
       style: new TextStyle({
-        fontFamily: "Arial",
+        fontFamily: "Poppins, sans-serif",
         fontSize: 14,
-        fill: 0x388e3c,
+        fill: 0x1E88E5,
         align: "center",
         wordWrap: true,
         wordWrapWidth: PANEL_W - 80,
@@ -342,6 +303,16 @@ export class GenieQuiz {
       this.targetAlpha = 0;
       this.startFade();
     }, 2800);
+  }
+
+  private drawWaterDropIcon(cx: number, cy: number): void {
+    const icon = new Sprite(this.waterDropIconTexture);
+    icon.anchor.set(0.5);
+    icon.width = 190;
+    icon.height = 127;
+    icon.position.set(cx, cy);
+    icon.eventMode = "none";
+    this.container.addChild(icon);
   }
 
   private startFade(): void {
