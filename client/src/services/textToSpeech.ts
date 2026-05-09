@@ -2,6 +2,11 @@ export type SpeechReaderState = "idle" | "speaking" | "paused";
 
 type SpeechReaderListener = (state: SpeechReaderState) => void;
 type VoiceAvailabilityListener = (available: boolean) => void;
+type SpeechProgressListener = (progress: number) => void;
+
+function clampProgress(progress: number): number {
+  return Math.min(Math.max(progress, 0), 1);
+}
 
 function cleanSpeechText(text: string): string {
   return text
@@ -15,6 +20,7 @@ export class TextToSpeechReader {
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private listeners = new Set<SpeechReaderListener>();
   private voiceAvailabilityListeners = new Set<VoiceAvailabilityListener>();
+  private progressListeners = new Set<SpeechProgressListener>();
   private state: SpeechReaderState = "idle";
   private language: string;
   private matchingVoice: SpeechSynthesisVoice | null = null;
@@ -57,6 +63,11 @@ export class TextToSpeechReader {
     return () => this.voiceAvailabilityListeners.delete(listener);
   }
 
+  onProgress(listener: SpeechProgressListener): () => void {
+    this.progressListeners.add(listener);
+    return () => this.progressListeners.delete(listener);
+  }
+
   speak(text: string): void {
     if (!this.isSupported || !this.synth || !this.matchingVoice) return;
 
@@ -72,9 +83,18 @@ export class TextToSpeechReader {
 
     utterance.voice = this.matchingVoice;
 
+    this.setProgress(0);
+
+    utterance.onboundary = (event) => {
+      if (this.currentUtterance !== utterance) return;
+      const spokenChars = event.charIndex + (event.charLength || 0);
+      this.setProgress(spokenChars / speechText.length);
+    };
+
     utterance.onend = () => {
       if (this.currentUtterance === utterance) {
         this.currentUtterance = null;
+        this.setProgress(1);
         this.setState("idle");
       }
     };
@@ -82,6 +102,7 @@ export class TextToSpeechReader {
     utterance.onerror = () => {
       if (this.currentUtterance === utterance) {
         this.currentUtterance = null;
+        this.setProgress(0);
         this.setState("idle");
       }
     };
@@ -107,6 +128,7 @@ export class TextToSpeechReader {
     if (!this.synth) return;
     this.currentUtterance = null;
     this.synth.cancel();
+    this.setProgress(0);
     this.setState("idle");
   }
 
@@ -140,6 +162,13 @@ export class TextToSpeechReader {
     this.state = nextState;
     for (const listener of this.listeners) {
       listener(this.state);
+    }
+  }
+
+  private setProgress(progress: number): void {
+    const nextProgress = clampProgress(progress);
+    for (const listener of this.progressListeners) {
+      listener(nextProgress);
     }
   }
 }

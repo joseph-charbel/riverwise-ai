@@ -2,17 +2,20 @@ import { Container, Graphics, Sprite, Text, TextStyle, type Texture } from "pixi
 import { TextToSpeechReader } from "../services/textToSpeech.ts";
 import type { SpeechReaderState } from "../services/textToSpeech.ts";
 
-const PANEL_W = 420;
+const PANEL_W = 480;
 const CANVAS_W = 960;
 const CANVAS_H = 540;
 const FADE_SPEED = 0.12;
 
 const BODY_TOP = 68;
 const BODY_TOP_WITH_AUDIO = 112;
-const BOTTOM_PAD = 24;
+const BOTTOM_PAD = 56;
 const MIN_PANEL_H = 160;
 const MAX_PANEL_H = 460;
 const AUDIO_Y_OFFSET = 74;
+const AUDIO_BLUE = 0x2f80ed;
+const AUDIO_MUTED_BLUE = 0xa9cfee;
+const AUDIO_ACTIVE_GOLD = 0xffc857;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -27,6 +30,7 @@ export class InfoPanel {
   private currentTitle = "";
   private currentBody = "";
   private speechState: SpeechReaderState = "idle";
+  private audioProgress = 0;
   private voiceAvailable = false;
   private reader: TextToSpeechReader;
 
@@ -45,6 +49,12 @@ export class InfoPanel {
       if (!available) {
         this.reader.stop();
       }
+      if (this.visible) {
+        this.redraw(this.currentTitle, this.currentBody);
+      }
+    });
+    this.reader.onProgress((progress) => {
+      this.audioProgress = progress;
       if (this.visible) {
         this.redraw(this.currentTitle, this.currentBody);
       }
@@ -96,7 +106,7 @@ export class InfoPanel {
         fontSize: 14, 
         fill: 0x2C3E50,
         wordWrap: true,
-        wordWrapWidth: PANEL_W - 48,
+        wordWrapWidth: PANEL_W - 60,
         lineHeight: 22,
       }),
     });
@@ -136,7 +146,7 @@ export class InfoPanel {
         fontFamily: "Poppins, sans-serif",
         align: "center",
         fontSize: 20,
-        fill: 0x1E88E5,
+        fill: 0x0D47A1,
         fontWeight: "bold",
       }),
     });
@@ -156,21 +166,21 @@ export class InfoPanel {
     this.container.addChild(divider);
 
     if (hasAudioControls) {
-      this.drawAudioControls(x + 24, y + AUDIO_Y_OFFSET, PANEL_W - 48);
+      this.drawAudioControls(x + 48, y + AUDIO_Y_OFFSET + 12);
     }
 
     // Body text
-    bodyText.position.set(x + 24, y + bodyTop);
+    bodyText.position.set(x + 30, y + bodyTop);
     bodyText.eventMode = "none";
     this.container.addChild(bodyText);
 
-    // Close button (top-right of card)
+        // Close button (top-right of card)
     const closeBtn = new Graphics();
     closeBtn.circle(0, 0, 14);
     closeBtn.fill({ color: 0xD9F2FF, alpha: 0.9 });
     closeBtn.setStrokeStyle({ width: 1.5, color: 0xE0A800 });
     closeBtn.stroke();
-    closeBtn.position.set(x + PANEL_W - 20, y + 20);
+    closeBtn.position.set(x + PANEL_W - 28, y + 28);
     closeBtn.eventMode = "static";
     closeBtn.cursor = "pointer";
     closeBtn.on("pointerdown", () => this.hide());
@@ -183,58 +193,63 @@ export class InfoPanel {
       style: new TextStyle({ fontFamily: "Poppins, sans-serif", fontSize: 13, fill: 0xE0A800 }),
     });
     xIcon.anchor.set(0.5);
-    xIcon.position.set(x + PANEL_W - 20, y + 20);
+    xIcon.position.set(x + PANEL_W - 28, y + 28);
     xIcon.eventMode = "none";
     this.container.addChild(xIcon);
   }
 
-  private drawAudioControls(x: number, y: number, width: number): void {
+  private drawAudioControls(x: number, y: number): void {
     const isLoading = this.currentBody.trim().toLowerCase() === "loading...";
     const enabled = !isLoading;
+    const isActive = this.speechState === "speaking";
 
-    const playButton = this.drawAudioButton(x, y, enabled, () => this.toggleSpeech());
-    this.drawPlayPauseIcon(playButton, this.speechState === "speaking");
-    this.container.addChild(playButton);
+    const audioButton = this.drawAudioButton(x, y, enabled, isActive, () => this.toggleSpeech());
+    this.drawAudioIcon(audioButton, isActive);
+    this.container.addChild(audioButton);
 
-    const stopButton = this.drawAudioButton(x + 38, y, enabled && this.speechState !== "idle", () => this.reader.stop());
-    this.drawStopIcon(stopButton);
-    this.container.addChild(stopButton);
-
-  const label = new Text({
-    text: this.audioStatusLabel(enabled, isLoading),
-    style: new TextStyle({
-      fontFamily: "Nunito, sans-serif",
-      fontSize: 14,
-      fill: enabled ? 0x5f6f85 : 0x91a7b7,
-      fontWeight: "700",
-      wordWrap: true,
-      wordWrapWidth: width - 92,
-      lineHeight: 18,
-    }),
-  });
-  label.anchor.set(0, 0.5);
-  label.position.set(x + 96, y);
-  label.eventMode = "none";
-  this.container.addChild(label);
+    this.drawVoiceLines(x + 26, y, enabled ? this.audioProgress : 0);
   }
 
-  private drawAudioButton(x: number, y: number, enabled: boolean, onPress: () => void): Container {
+  private drawVoiceLines(x: number, y: number, progress: number): void {
+    const barHeights = [2, 2, 2, 7, 17, 24, 24, 18, 9, 12, 22, 10, 14, 15, 15, 15, 13, 20, 23, 9, 17, 14, 12, 6, 2, 2, 2];
+    const barW = 3;
+    const gap = 4;
+    const clampedProgress = clamp(progress, 0, 1);
+
+    barHeights.forEach((height, index) => {
+      const barX = x + index * (barW + gap);
+      const barY = y - height / 2;
+      const segmentStart = index / barHeights.length;
+      const segmentEnd = (index + 1) / barHeights.length;
+      const fillAmount = clamp((clampedProgress - segmentStart) / (segmentEnd - segmentStart), 0, 1);
+
+      const mutedBar = new Graphics();
+      mutedBar.roundRect(barX, barY, barW, height, barW / 2);
+      mutedBar.fill({ color: AUDIO_MUTED_BLUE, alpha: 0.65 });
+      mutedBar.eventMode = "none";
+      this.container.addChild(mutedBar);
+
+      if (fillAmount <= 0) return;
+
+      const activeBar = new Graphics();
+      activeBar.roundRect(barX, barY, barW * fillAmount, height, Math.min(barW * fillAmount, barW) / 2);
+      activeBar.fill({ color: AUDIO_BLUE, alpha: 1 });
+      activeBar.eventMode = "none";
+      this.container.addChild(activeBar);
+    });
+  }
+
+  private drawAudioButton(x: number, y: number, enabled: boolean, active: boolean, onPress: () => void): Container {
     const button = new Container();
     button.position.set(x, y);
     button.alpha = enabled ? 1 : 0.42;
 
     const bg = new Graphics();
 
-    // outer white ring
-    bg.circle(0, 0, 24);
-    bg.fill({ color: 0xffffff, alpha: 1 });
+    bg.circle(0, 0, 14);
+    bg.fill({ color: active ? AUDIO_ACTIVE_GOLD : enabled ? AUDIO_BLUE : 0xd9e9ff, alpha: 1 });
 
-    // main button
-    bg.circle(0, 0, 19);
-    bg.fill({ color: enabled ? 0x2f80ed : 0xd9e9ff, alpha: 1 });
-
-    // blue outline
-    bg.setStrokeStyle({ width: 2, color: enabled ? 0x5dbbff : 0x91a7b7 });
+    bg.setStrokeStyle({ width: 2, color: active ? 0xe0a800 : enabled ? 0x5dbbff : 0x91a7b7 });
     bg.stroke();
 
     bg.eventMode = "static";
@@ -250,44 +265,20 @@ export class InfoPanel {
     return button;
   }
 
-  private drawPlayPauseIcon(button: Container, isPause: boolean): void {
+  private drawAudioIcon(button: Container, active: boolean): void {
     const icon = new Graphics();
     icon.eventMode = "none";
 
-    if (isPause) {
-      icon.roundRect(-6, -8, 5, 16, 2);
-      icon.roundRect(3, -8, 5, 16, 2);
-      icon.fill({ color: 0xffffff });
+    if (active) {
+      icon.roundRect(-4, -4, 8, 8, 2);
+      icon.fill({ color: 0x0d1b3d });
     } else {
-      icon.poly([-5, -9, -5, 9, 10, 0]);
+      icon.poly([-4, -6, -4, 6, 7, 0]);
       icon.fill({ color: 0xffffff });
     }
 
     button.addChild(icon);
   }
-
-  private drawStopIcon(button: Container): void {
-  const icon = new Graphics();
-
-  // Gold stop button style
-  const bg = button.children[0] as Graphics;
-  bg.clear();
-
-  bg.circle(0, 0, 24);
-  bg.fill({ color: 0xffffff, alpha: 1 });
-
-  bg.circle(0, 0, 19);
-  bg.fill({ color: 0xffc857, alpha: 1 });
-
-  bg.setStrokeStyle({ width: 2, color: 0xe0a800 });
-  bg.stroke();
-
-  icon.roundRect(-6, -6, 12, 12, 2);
-  icon.fill({ color: 0x0d1b3d });
-
-  icon.eventMode = "none";
-  button.addChild(icon);
-}
 
   private toggleSpeech(): void {
     if (!this.shouldShowAudioControls() || this.currentBody.trim().toLowerCase() === "loading...") return;
@@ -303,14 +294,6 @@ export class InfoPanel {
     }
 
     this.reader.speak(`${this.currentTitle}. ${this.currentBody}`);
-  }
-
-  private audioStatusLabel(enabled: boolean, isLoading: boolean): string {
-    if (isLoading) return "Audio ready after content loads";
-    if (!enabled) return "Read aloud";
-    if (this.speechState === "speaking") return "Reading aloud";
-    if (this.speechState === "paused") return "Paused";
-    return "Read aloud";
   }
 
   private shouldShowAudioControls(): boolean {
