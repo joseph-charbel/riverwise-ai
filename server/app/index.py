@@ -155,5 +155,9 @@ async def test() -> None:
         print(f"\n\n{response.content}")
 
 
-if __name__ == "__main__":
+def main() -> None:
         asyncio.run(test())
+
+
+if __name__ == "__main__":
+        main()

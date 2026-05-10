@@ -40,10 +40,17 @@ class CacheService:
                         logger.debug("Cache hit key=%s", key[:12])
                 return result
 
-        async def set(self, key: str, value: AIMessage) -> None:
+        async def set(
+                self,
+                key: str,
+                value: AIMessage,
+                *,
+                ttl_override: int | None = None,
+        ) -> None:
                 if not self._config.enabled:
                         return
-                await self._provider.set(key, value, ttl=self._config.ttl)
+                ttl = self._config.ttl if ttl_override is None else ttl_override
+                await self._provider.set(key, value, ttl=ttl)
                 logger.debug("Cache stored key=%s", key[:12])
 
         async def clear(self) -> None:

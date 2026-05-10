@@ -61,6 +61,8 @@ class CacheConfig(BaseModel):
         enabled: bool = True
         ttl: int = 3600
         provider: str = "memory"
+        preload_file: Optional[str] = None
+        preload_enabled: bool = True
 
 
 class GradeRule(BaseModel):
@@ -165,7 +167,9 @@ class ConfigManager:
                 example_prompt_file = prompts_config.get("example_prompt_file")
                 if example_prompt_file:
                         example_path = _SERVER_ROOT / str(example_prompt_file)
-                        example_prompt = example_path.read_text(encoding="utf-8").strip()
+                        example_prompt = example_path.read_text(
+                                encoding="utf-8"
+                        ).strip()
                 else:
                         example_prompt = str(
                                 prompts_config.get("example_prompt", "")
@@ -183,10 +187,17 @@ class ConfigManager:
                         if isinstance(cache_raw, dict)
                         else {}
                 )
+                preload_raw: Any = cache_data.get("preload_file")
+                preload_file: Optional[str] = None
+                if preload_raw is not None:
+                        ps = str(preload_raw).strip()
+                        preload_file = ps if ps else None
                 self._cache_config = CacheConfig(
                         enabled=bool(cache_data.get("enabled", True)),
                         ttl=int(cache_data.get("ttl", 3600)),
                         provider=str(cache_data.get("provider", "memory")),
+                        preload_file=preload_file,
+                        preload_enabled=bool(cache_data.get("preload_enabled", True)),
                 )
 
                 # ---------------- GRADE RULES (rules + version from config/grade_rules.yaml via config_loader) ----------------

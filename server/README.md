@@ -269,8 +269,10 @@ The `LOG_LEVEL` environment variable controls verbosity. Set it to `DEBUG` durin
 
 The `Dockerfile` produces a minimal image containing only the application code and its runtime dependencies — no virtual environment, no dev tools, no secrets.
 
+From the repo root (the Dockerfile copies `server/`, client authoring YAML, and `tools/` paths required by `/debug/*` routes):
+
 ```bash
-docker build -t riverwise-server .
+docker build -f server/Dockerfile -t riverwise-server .
 docker run -p 8000:8000 \
   -e GROQ_API_KEY=your_key_here \
   -e CORS_ORIGINS=https://your-domain.com \
@@ -282,7 +284,7 @@ docker run -p 8000:8000 \
 1. Starts from `python:3.12-slim`.
 2. Installs `uv` via `pip`.
 3. Copies `pyproject.toml` and `uv.lock`; runs `uv sync --frozen --no-dev` — installs only production dependencies, locked to exact versions.
-4. Copies `app/` and `config/` directories.
+4. Copies server `app/`, `config/`, `prompts/`, client `*.yaml`, and `tools/preload-cache-editor.html`.
 5. Exposes port `8000`.
 
 `main.py` and `.env` are intentionally excluded from the image (see `.dockerignore`). Secrets must be injected at runtime via environment variables, either through `docker run -e`, Docker Compose `environment:` / `env_file:`, or a secrets manager.

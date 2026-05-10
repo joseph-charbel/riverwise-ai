@@ -26,3 +26,8 @@ class AiDebugPreviewResponse(BaseModel):
 
 class AiDebugInvokeResponse(AiDebugPreviewResponse):
     output: str
+
+
+class TranslatePreviewResponse(BaseModel):
+    cache_key: str
+    messages: list[AiDebugMessage]

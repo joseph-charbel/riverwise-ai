@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Riverwise preload cache editor</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f2ec;
+        --panel: #ffffff;
+        --ink: #1b2421;
+        --muted: #66736d;
+        --line: #d8ded7;
+        --field: #fbfcfa;
+        --green: #1f7a5b;
+        --green-dark: #155c44;
+        --code-bg: #121916;
+        --user: #e8f2fd;
+        --system: #eef7f0;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        line-height: 1.45;
+        font-size: 14px;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.92);
+        padding: 12px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      header h1 {
+        margin: 0 0 4px;
+        font-size: 18px;
+        font-weight: 650;
+      }
+      header p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .banner {
+        margin: 10px 20px 0;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+      }
+      .banner.err {
+        background: #fdecea;
+        border: 1px solid #e8a29e;
+        color: #7a231e;
+      }
+      .banner.ok {
+        background: #e8f5ef;
+        border: 1px solid #9cceb5;
+        color: var(--green-dark);
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(300px, 360px) minmax(320px, 1fr) minmax(300px, 380px);
+        gap: 14px;
+        padding: 16px 20px 24px;
+        align-items: start;
+      }
+      @media (max-width: 1100px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+      .pane {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 14px 16px;
+        min-height: 200px;
+      }
+      .pane h2 {
+        margin: 0 0 10px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      .field {
+        display: grid;
+        gap: 4px;
+        margin-bottom: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .field > span,
+      .field label {
+        font-weight: 600;
+      }
+      input[type="text"],
+      select,
+      textarea {
+        padding: 7px 9px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--field);
+        width: 100%;
+      }
+      textarea {
+        min-height: 88px;
+        resize: vertical;
+      }
+      #cardPrompt {
+        min-height: 120px;
+      }
+      .slider-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      input[type="range"] {
+        flex: 1;
+      }
+      .pill {
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--field);
+        border: 1px solid var(--line);
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .check-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+      .btn {
+        padding: 7px 12px;
+        border-radius: 6px;
+        border: none;
+        background: var(--green);
+        color: #fff;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .btn:hover {
+        background: var(--green-dark);
+      }
+      .btn.secondary {
+        background: #e8ebe6;
+        color: var(--ink);
+      }
+      .btn.secondary:hover {
+        background: #dde1da;
+      }
+      .btn.small {
+        padding: 4px 10px;
+        font-size: 12px;
+      }
+      .btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .card-stack {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+        max-height: min(52vh, 640px);
+        overflow: auto;
+      }
+      .msg-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .msg-card .role {
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .msg-card.system .role {
+        background: var(--system);
+      }
+      .msg-card.user .role {
+        background: var(--user);
+      }
+      .msg-card .body {
+        padding: 10px 12px;
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 240px;
+        overflow: auto;
+        font-family: ui-monospace, monospace;
+      }
+      .key-box {
+        margin-top: 12px;
+        padding: 10px 12px;
+        background: var(--field);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-family: ui-monospace, monospace;
+        font-size: 11px;
+        word-break: break-all;
+      }
+      .key-box strong {
+        font-family: ui-sans-serif, system-ui;
+        font-size: 11px;
+        display: block;
+        margin-bottom: 4px;
+        color: var(--muted);
+      }
+      .note {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 10px;
+        line-height: 1.4;
+      }
+      .mono {
+        font-family: ui-monospace, monospace;
+        font-size: 11px;
+      }
+      .vars-table {
+        width: 100%;
+        margin-bottom: 6px;
+      }
+      .vars-table td {
+        padding: 3px;
+      }
+      .vars-table input {
+        width: 100%;
+      }
+      .bottom {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px 32px;
+      }
+      .entries-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 6px;
+      }
+      .entries-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 8px 10px;
+        background: var(--field);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-size: 12px;
+      }
+      #importYaml,
+      #exportOut {
+        min-height: 140px;
+        font-family: ui-monospace, monospace;
+        font-size: 11px;
+      }
+      #exportOut {
+        min-height: 180px;
+      }
+      .translate-msg {
+        margin-top: 8px;
+        font-size: 11px;
+        max-height: 140px;
+        overflow: auto;
+        white-space: pre-wrap;
+        font-family: ui-monospace, monospace;
+        background: var(--field);
+        padding: 8px;
+        border-radius: 6px;
+      }
+      .section-title {
+        font-size: 12px;
+        font-weight: 700;
+        margin: 14px 0 6px;
+        color: var(--ink);
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Preload cache editor</h1>
+      <p>
+        Serve this page from <span class="mono">GET /debug/preload-cache-editor</span>, or open the file locally and
+        set <span class="mono">?api=http://localhost:8000</span>. YAML and preview calls go to that API origin.
+      </p>
+    </header>
+    <div id="banner"></div>
+
+    <div class="layout">
+      <aside class="pane" aria-label="Card and student variables">
+        <h2>Variables</h2>
+        <p class="note">Scene → info card from <code>riverwise.yaml</code>. Adaptation uses grade, interest, and prompt below.</p>
+
+        <div class="field">
+          <label for="sceneSelect">Scene</label>
+          <select id="sceneSelect" disabled>
+            <option value="">Loading…</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="infoSelect">Info card</label>
+          <select id="infoSelect" disabled>
+            <option value="">Select a scene first</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="cardPrompt">Prompt (card body)</label>
+          <textarea id="cardPrompt" spellcheck="true"></textarea>
+        </div>
+        <div class="field">
+          <label for="targetMechanic">Target mechanic</label>
+          <input type="text" id="targetMechanic" autocomplete="off" />
+        </div>
+        <label class="check-row">
+          <input type="checkbox" id="includeExample" checked />
+          Include example block
+        </label>
+
+        <div class="section-title">Student</div>
+        <div class="field">
+          <label for="gradeBand">Grade band</label>
+          <select id="gradeBand" disabled>
+            <option value="">Loading…</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="interest">Interest</label>
+          <select id="interest"></select>
+        </div>
+
+        <div class="section-title">Template vars</div>
+        <p class="note">Optional <code>{"{name}"}</code> placeholders in prompt or responses (Python <code>str.format</code>).</p>
+        <table class="vars-table">
+          <tbody id="varsTableBody"></tbody>
+        </table>
+        <button type="button" class="btn secondary small" id="addVarRow">Add var</button>
+      </aside>
+
+      <section class="pane" aria-label="Cache preview">
+        <h2>Adaptation messages & cache key</h2>
+        <p class="note">
+          Same path as
+          <span class="mono">server/app/cache/preload.py</span>: build messages (e.g. lines 125–131), then
+          <span class="mono">cache.make_key(messages)</span> — SHA-256 of concatenated message bodies.
+        </p>
+        <div class="btn-row">
+          <button type="button" class="btn" id="btnPreview">Refresh preview</button>
+          <button type="button" class="btn secondary" id="copyAdaptKey">Copy cache key</button>
+          <button type="button" class="btn secondary" id="copyMessages">Copy message bodies</button>
+        </div>
+        <div id="previewStatus" class="note" style="margin-top: 10px"></div>
+        <div id="adaptKey" class="key-box" hidden>
+          <strong>Adaptation cache key</strong>
+          <span id="adaptKeyHex"></span>
+        </div>
+        <div id="messageCards" class="card-stack"></div>
+      </section>
+
+      <aside class="pane" aria-label="Preload responses">
+        <h2>Injected responses</h2>
+        <p class="note">Paste the English tutor reply (exact <code>AIMessage.content</code> for this key). Optional Nepali adds a translate preload for the same English.</p>
+        <div class="field">
+          <label for="responseEn">English response</label>
+          <textarea id="responseEn" placeholder="Paste adaptation output…"></textarea>
+        </div>
+        <div class="field">
+          <label for="responseNe">Nepali (optional)</label>
+          <textarea id="responseNe" placeholder="Nepali translation of the English above"></textarea>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn secondary" id="btnTranslatePreview">Refresh translate cache key</button>
+        </div>
+        <div id="translateKeyBox" class="key-box" hidden>
+          <strong>Translate cache key</strong>
+          <span id="translateKeyHex"></span>
+        </div>
+        <pre id="translateMsgPreview" class="translate-msg" hidden></pre>
+        <div class="btn-row">
+          <button type="button" class="btn" id="btnAppendCard">Append information_card (+ optional translate)</button>
+        </div>
+
+        <div class="section-title">Standalone translate entry</div>
+        <div class="field">
+          <label for="trText">Exact English text</label>
+          <textarea id="trText" style="min-height: 72px"></textarea>
+        </div>
+        <div class="field">
+          <label for="trResponse">Nepali output</label>
+          <textarea id="trResponse" style="min-height: 72px"></textarea>
+        </div>
+        <button type="button" class="btn secondary" id="btnAppendTranslate">Append translate only</button>
+      </aside>
+    </div>
+
+    <div class="bottom pane">
+      <h2>Entries &amp; export</h2>
+      <ul class="entries-list" id="entriesList"></ul>
+      <div class="btn-row" style="margin: 12px 0">
+        <button type="button" class="btn secondary" id="clearEntries">Clear all</button>
+        <button type="button" class="btn secondary" id="refreshExport">Refresh YAML</button>
+        <button type="button" class="btn secondary" id="copyExport">Copy</button>
+        <button type="button" class="btn secondary" id="downloadExport">Download</button>
+      </div>
+      <div class="field">
+        <label for="importYaml">Import YAML (replaces <code>entries</code>)</label>
+        <textarea id="importYaml"></textarea>
+      </div>
+      <button type="button" class="btn secondary small" id="doImport">Replace from paste</button>
+      <div class="field" style="margin-top: 12px">
+        <label for="exportOut">preload_cache.yaml</label>
+        <textarea id="exportOut" readonly></textarea>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const PRELOAD_HEADER = `# Pre-seed the in-memory LLM cache (fake responses). Paths are relative to server root.
+# Keys match SHA256 of concatenated message bodies — prompt text, grade (use midpoint string for YAML bands),
+# optional variants[].grade_rules_range {start,end} must match preview when expanding band rules,
+# interest, include_example, target_mechanic, and prompt templates must match real requests.
+#
+# Disable: set cache_config.preload_enabled: false or cache_config.preload_file: null
+`;
+
+        function apiBaseUrl() {
+          var q = new URLSearchParams(window.location.search).get("api");
+          if (q) return String(q).replace(/\/+$/, "");
+          var path = window.location.pathname || "";
+          if (path.indexOf("/debug/preload-cache-editor") !== -1) return window.location.origin;
+          return "http://localhost:8000";
+        }
+
+        function apiUrl(relPath) {
+          var base = apiBaseUrl();
+          if (!relPath || relPath.charAt(0) !== "/") relPath = "/" + (relPath || "");
+          return base + relPath;
+        }
+
+        /** @type {any[]} */
+        let entries = [];
+        /** @type {any} */
+        let riverwiseData = null;
+        /** @type {{ preview: any | null, adaptKey: string }} */
+        let state = { preview: null, adaptKey: "" };
+        /** @type {ReturnType<typeof setTimeout> | null} */
+        let previewTimer = null;
+
+        const banner = document.getElementById("banner");
+        const sceneSelect = document.getElementById("sceneSelect");
+        const infoSelect = document.getElementById("infoSelect");
+        const cardPrompt = document.getElementById("cardPrompt");
+        const targetMechanic = document.getElementById("targetMechanic");
+        const includeExample = document.getElementById("includeExample");
+        const gradeBand = document.getElementById("gradeBand");
+        const interestSelect = document.getElementById("interest");
+        const varsTableBody = document.getElementById("varsTableBody");
+        const messageCards = document.getElementById("messageCards");
+        const previewStatus = document.getElementById("previewStatus");
+        const adaptKeyBox = document.getElementById("adaptKey");
+        const adaptKeyHex = document.getElementById("adaptKeyHex");
+        const responseEn = document.getElementById("responseEn");
+        const responseNe = document.getElementById("responseNe");
+        const translateKeyBox = document.getElementById("translateKeyBox");
+        const translateKeyHex = document.getElementById("translateKeyHex");
+        const translateMsgPreview = document.getElementById("translateMsgPreview");
+        const entriesList = document.getElementById("entriesList");
+        const importYaml = document.getElementById("importYaml");
+        const exportOut = document.getElementById("exportOut");
+
+        function setBanner(kind, message) {
+          banner.innerHTML = "";
+          if (!message) return;
+          const d = document.createElement("div");
+          d.className = "banner " + (kind === "err" ? "err" : "ok");
+          d.textContent = message;
+          banner.appendChild(d);
+        }
+
+        function mapLabels(data) {
+          const m = Object.create(null);
+          const nodes = data && data.map && data.map.nodes;
+          if (!Array.isArray(nodes)) return m;
+          for (const n of nodes) {
+            if (n && n.node_id) m[String(n.node_id)] = String(n.label || n.node_id);
+          }
+          return m;
+        }
+
+        function scenesList(data) {
+          const scenes = data && data.scenes;
+          if (!Array.isArray(scenes)) return [];
+          return scenes.filter(function (s) {
+            return s && typeof s === "object" && s.node_id;
+          });
+        }
+
+        function infoHotspotsForScene(nodeId) {
+          const scenes = scenesList(riverwiseData);
+          const scene = scenes.find(function (s) {
+            return String(s.node_id) === String(nodeId);
+          });
+          if (!scene || !Array.isArray(scene.hotspots)) return [];
+          return scene.hotspots.filter(function (h) {
+            return (
+              h &&
+              String(h.type || "").toLowerCase() === "info" &&
+              h.body != null &&
+              String(h.body).trim() !== ""
+            );
+          });
+        }
+
+        function renderSceneSelect() {
+          sceneSelect.innerHTML = "";
+          if (!riverwiseData) {
+            const o = document.createElement("option");
+            o.value = "";
+            o.textContent = "No config loaded";
+            sceneSelect.appendChild(o);
+            sceneSelect.disabled = true;
+            return;
+          }
+          const labels = mapLabels(riverwiseData);
+          const scenes = scenesList(riverwiseData);
+          sceneSelect.disabled = false;
+          const ph = document.createElement("option");
+          ph.value = "";
+          ph.textContent = "— Select scene —";
+          sceneSelect.appendChild(ph);
+          for (const s of scenes) {
+            const id = String(s.node_id);
+            const o = document.createElement("option");
+            o.value = id;
+            o.textContent = (labels[id] || id) + " (" + id + ")";
+            sceneSelect.appendChild(o);
+          }
+        }
+
+        function renderInfoSelect(nodeId) {
+          infoSelect.innerHTML = "";
+          if (!nodeId) {
+            const o = document.createElement("option");
+            o.value = "";
+            o.textContent = "Select a scene first";
+            infoSelect.appendChild(o);
+            infoSelect.disabled = true;
+            return;
+          }
+          const hotspots = infoHotspotsForScene(nodeId);
+          infoSelect.disabled = false;
+          const ph = document.createElement("option");
+          ph.value = "";
+          ph.textContent = hotspots.length ? "— Select info card —" : "No info cards in scene";
+          infoSelect.appendChild(ph);
+          for (const h of hotspots) {
+            const o = document.createElement("option");
+            o.value = String(h.id);
+            o.textContent = String(h.title || h.id);
+            o.dataset.hotspot = JSON.stringify({
+              body: String(h.body),
+              target_mechanic: h.target_mechanic != null ? String(h.target_mechanic) : "",
+              include_example: h.include_example !== false,
+            });
+            infoSelect.appendChild(o);
+          }
+        }
+
+        function applyHotspotSelection() {
+          const opt = infoSelect.selectedOptions[0];
+          if (!opt || !opt.dataset.hotspot) return;
+          try {
+            const h = JSON.parse(opt.dataset.hotspot);
+            cardPrompt.value = h.body;
+            targetMechanic.value = h.target_mechanic || "";
+            includeExample.checked = !!h.include_example;
+          } catch (_) {}
+        }
+
+        async function sha256HexFromString(s) {
+          const enc = new TextEncoder().encode(s);
+          const buf = await crypto.subtle.digest("SHA-256", enc);
+          return Array.from(new Uint8Array(buf))
+            .map(function (b) {
+              return b.toString(16).padStart(2, "0");
+            })
+            .join("");
+        }
+
+        async function adaptationKeyFromPreview(msgs) {
+          if (!msgs || msgs.length < 2) return "";
+          const raw = String(msgs[0].content || "") + String(msgs[1].content || "");
+          return sha256HexFromString(raw);
+        }
+
+        function parseYaml(text, label) {
+          try {
+            return jsyaml.load(text);
+          } catch (e) {
+            throw new Error(label + ": " + (e && e.message ? e.message : String(e)));
+          }
+        }
+
+        async function postJson(path, body) {
+          const res = await fetch(apiUrl(path), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json().catch(function () {
+            return {};
+          });
+          if (!res.ok) {
+            const detail = data.detail != null ? JSON.stringify(data.detail) : res.statusText;
+            throw new Error(detail);
+          }
+          return data;
+        }
+
+        function collectVars() {
+          const out = {};
+          varsTableBody.querySelectorAll("tr").forEach(function (tr) {
+            const k = tr.querySelector("input[data-k]");
+            const v = tr.querySelector("input[data-v]");
+            if (!k || !v) return;
+            const key = String(k.value || "").trim();
+            if (!key) return;
+            out[key] = v.value;
+          });
+          return out;
+        }
+
+        function applyFormat(template, ctx) {
+          if (!template) return "";
+          const s = String(template);
+          return s.replace(/\{([^}]+)\}/g, function (_m, key) {
+            const k = String(key).trim();
+            if (Object.prototype.hasOwnProperty.call(ctx, k)) return ctx[k] == null ? "" : String(ctx[k]);
+            throw new Error("Missing var {" + k + "}");
+          });
+        }
+
+        function addVarRow(key, val) {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td><input type=\"text\" data-k placeholder=\"name\" /></td>" +
+            "<td><input type=\"text\" data-v placeholder=\"value\" /></td>" +
+            "<td style=\"width:40px\"><button type=\"button\" class=\"btn secondary small\" data-rv>×</button></td>";
+          tr.querySelector("[data-k]").value = key != null ? key : "";
+          tr.querySelector("[data-v]").value = val != null ? val : "";
+          tr.querySelector("[data-rv]").addEventListener("click", function () {
+            tr.remove();
+          });
+          varsTableBody.appendChild(tr);
+        }
+
+        function renderMessageCards(msgs) {
+          messageCards.innerHTML = "";
+          if (!msgs || !msgs.length) return;
+          msgs.forEach(function (m) {
+            const role = String(m.role || "");
+            const div = document.createElement("div");
+            div.className = "msg-card " + (role === "user" ? "user" : "system");
+            div.innerHTML =
+              "<div class=\"role\">" +
+              escapeHtml(role) +
+              "</div><div class=\"body\">" +
+              escapeHtml(String(m.content || "")) +
+              "</div>";
+            messageCards.appendChild(div);
+          });
+        }
+
+        function escapeHtml(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function schedulePreview() {
+          clearTimeout(previewTimer);
+          previewTimer = setTimeout(function () {
+            void doPreview();
+          }, 350);
+        }
+
+        function getSelectedGradeBand() {
+          const opt = gradeBand.selectedOptions[0];
+          if (!opt || opt.dataset.start == null || opt.dataset.end == null) return null;
+          const start = parseInt(opt.dataset.start, 10);
+          const end = parseInt(opt.dataset.end, 10);
+          if (isNaN(start) || isNaN(end)) return null;
+          return { start: start, end: end };
+        }
+
+        function renderGradeBands(bands) {
+          gradeBand.innerHTML = "";
+          if (!Array.isArray(bands) || !bands.length) {
+            const o = document.createElement("option");
+            o.value = "";
+            o.textContent = "No grade_rule_bands from server";
+            gradeBand.appendChild(o);
+            gradeBand.disabled = true;
+            return;
+          }
+          gradeBand.disabled = false;
+          bands.forEach(function (b) {
+            const s = Number(b.start);
+            const e = Number(b.end);
+            if (isNaN(s) || isNaN(e)) return;
+            const o = document.createElement("option");
+            o.value = s + "-" + e;
+            o.textContent = "Grades " + s + "–" + e;
+            o.dataset.start = String(s);
+            o.dataset.end = String(e);
+            gradeBand.appendChild(o);
+          });
+        }
+
+        function selectBandForGrade(g) {
+          if (!gradeBand.options.length) return;
+          const gi = parseInt(String(g), 10);
+          if (!isNaN(gi)) {
+            for (let i = 0; i < gradeBand.options.length; i++) {
+              const o = gradeBand.options[i];
+              if (o.dataset.start == null) continue;
+              const s = parseInt(o.dataset.start, 10);
+              const e = parseInt(o.dataset.end, 10);
+              if (gi >= s && gi <= e) {
+                gradeBand.selectedIndex = i;
+                return;
+              }
+            }
+          }
+          gradeBand.selectedIndex = 0;
+        }
+
+        async function doPreview() {
+          previewStatus.textContent = "";
+          const prompt = cardPrompt.value.trim();
+          if (!prompt) {
+            previewStatus.textContent = "Enter or select a card prompt first.";
+            return;
+          }
+          const band = getSelectedGradeBand();
+          if (!band) {
+            previewStatus.textContent = "Grade band unavailable.";
+            return;
+          }
+          const mid = Math.floor((band.start + band.end) / 2);
+          const body = {
+            prompt: prompt,
+            grade_level: String(mid),
+            grade_rules_range: { start: band.start, end: band.end },
+            interest: String(interestSelect.value || "General").trim() || "General",
+            target_mechanic: String(targetMechanic.value || "").trim(),
+            include_example: includeExample.checked,
+            language: "english",
+          };
+          try {
+            previewStatus.textContent = "Loading…";
+            const preview = await postJson("/debug/ai/preview", body);
+            state.preview = preview;
+            const key = await adaptationKeyFromPreview(preview.messages);
+            state.adaptKey = key;
+            adaptKeyHex.textContent = key;
+            adaptKeyBox.hidden = false;
+            renderMessageCards(preview.messages);
+            previewStatus.textContent = "Preview OK.";
+          } catch (e) {
+            state.preview = null;
+            state.adaptKey = "";
+            adaptKeyBox.hidden = true;
+            messageCards.innerHTML = "";
+            previewStatus.textContent = "Preview failed: " + (e.message || String(e));
+          }
+        }
+
+        async function doTranslatePreview() {
+          const text = responseEn.value.trim();
+          translateKeyBox.hidden = true;
+          translateMsgPreview.hidden = true;
+          if (!text) {
+            alert("Paste English response first.");
+            return;
+          }
+          try {
+            const data = await postJson("/debug/ai/translate-preview", { text: text });
+            translateKeyHex.textContent = data.cache_key;
+            translateKeyBox.hidden = false;
+            const lines = (data.messages || []).map(function (m) {
+              return "[" + m.role + "]\n" + String(m.content || "");
+            });
+            translateMsgPreview.textContent = lines.join("\n\n---\n\n");
+            translateMsgPreview.hidden = false;
+          } catch (e) {
+            alert("Translate preview failed: " + (e.message || String(e)));
+          }
+        }
+
+        function renderEntriesList() {
+          entriesList.innerHTML = "";
+          entries.forEach(function (item, idx) {
+            const task = String(item.task || "information_card").toLowerCase();
+            let summary = "";
+            if (task === "translate") {
+              summary =
+                String(item.text || "").slice(0, 72) + (String(item.text || "").length > 72 ? "…" : "");
+            } else {
+              summary =
+                (String(item.prompt || "").slice(0, 48) || "(no prompt)") +
+                " · " +
+                (Array.isArray(item.variants) ? item.variants.length : 0) +
+                " variant(s)";
+            }
+            const li = document.createElement("li");
+            li.innerHTML =
+              "<div><strong>#" +
+              idx +
+              "</strong> <code>" +
+              escapeHtml(task) +
+              "</code> — " +
+              escapeHtml(summary) +
+              "</div>";
+            const rm = document.createElement("button");
+            rm.type = "button";
+            rm.className = "btn secondary small";
+            rm.textContent = "Remove";
+            rm.addEventListener("click", function () {
+              entries.splice(idx, 1);
+              renderEntriesList();
+              refreshExport();
+            });
+            li.appendChild(rm);
+            entriesList.appendChild(li);
+          });
+        }
+
+        function refreshExport() {
+          exportOut.value = PRELOAD_HEADER + "\n" + jsyaml.dump({ entries: entries }, { lineWidth: 120, indent: 2, noRefs: true }).trimEnd() + "\n";
+        }
+
+        async function init() {
+          setBanner("", "");
+          try {
+            const [rwRes, soRes, optRes] = await Promise.all([
+              fetch(apiUrl("/debug/authoring/riverwise.yaml")),
+              fetch(apiUrl("/debug/authoring/student-options.yaml")),
+              fetch(apiUrl("/debug/ai/options")),
+            ]);
+            if (!rwRes.ok) throw new Error("riverwise.yaml: " + rwRes.status);
+            if (!soRes.ok) throw new Error("student-options.yaml: " + soRes.status);
+            const rwText = await rwRes.text();
+            const soText = await soRes.text();
+            riverwiseData = parseYaml(rwText, "Riverwise");
+            parseYaml(soText, "Student options");
+            let options = {
+              interests: ["General"],
+              grade: { min: 4, max: 12, default: 4 },
+              grade_rule_bands: [],
+            };
+            if (optRes.ok) options = Object.assign({}, options, await optRes.json());
+            renderGradeBands(options.grade_rule_bands);
+            const g = options.grade || {};
+            const defGrade = g.default != null ? g.default : 4;
+            const interests = Array.isArray(options.interests) && options.interests.length ? options.interests : ["General"];
+            interestSelect.innerHTML = "";
+            interests.forEach(function (i) {
+              const opt = document.createElement("option");
+              opt.value = i;
+              opt.textContent = i;
+              interestSelect.appendChild(opt);
+            });
+            const st = riverwiseData && riverwiseData.student;
+            if (st) {
+              if (st.grade_level != null) selectBandForGrade(st.grade_level);
+              else selectBandForGrade(defGrade);
+              if (st.interest != null && interests.indexOf(String(st.interest)) >= 0) interestSelect.value = String(st.interest);
+            } else {
+              selectBandForGrade(defGrade);
+            }
+            renderSceneSelect();
+            renderInfoSelect("");
+            setBanner("ok", "Loaded riverwise + student-options from server at " + apiBaseUrl() + ".");
+            schedulePreview();
+          } catch (e) {
+            riverwiseData = null;
+            renderGradeBands([]);
+            renderSceneSelect();
+            setBanner(
+              "err",
+              "Could not reach the API authoring routes. Start the backend (python main.py --api on port 8000, or Docker), open http://localhost:8000/debug/preload-cache-editor, or open this file with ?api=http://localhost:8000 in the URL. — " +
+                (e.message || String(e)),
+            );
+          }
+        }
+
+        sceneSelect.addEventListener("change", function () {
+          renderInfoSelect(sceneSelect.value);
+          cardPrompt.value = "";
+          targetMechanic.value = "";
+          schedulePreview();
+        });
+
+        infoSelect.addEventListener("change", function () {
+          applyHotspotSelection();
+          schedulePreview();
+        });
+
+        document.getElementById("addVarRow").addEventListener("click", function () {
+          addVarRow("", "");
+          schedulePreview();
+        });
+
+        cardPrompt.addEventListener("input", schedulePreview);
+        targetMechanic.addEventListener("input", schedulePreview);
+        includeExample.addEventListener("change", schedulePreview);
+        gradeBand.addEventListener("change", schedulePreview);
+        interestSelect.addEventListener("change", schedulePreview);
+        varsTableBody.addEventListener("input", schedulePreview);
+
+        document.getElementById("btnPreview").addEventListener("click", function () {
+          clearTimeout(previewTimer);
+          previewTimer = null;
+          void doPreview();
+        });
+
+        document.getElementById("copyAdaptKey").addEventListener("click", async function () {
+          if (!state.adaptKey) {
+            alert("Run preview first.");
+            return;
+          }
+          try {
+            await navigator.clipboard.writeText(state.adaptKey);
+          } catch {
+            prompt("Cache key:", state.adaptKey);
+          }
+        });
+
+        document.getElementById("copyMessages").addEventListener("click", async function () {
+          if (!state.preview || !state.preview.messages) {
+            alert("Run preview first.");
+            return;
+          }
+          const t = state.preview.messages.map(function (m) {
+            return "[" + m.role + "]\n" + String(m.content || "");
+          }).join("\n\n---\n\n");
+          try {
+            await navigator.clipboard.writeText(t);
+          } catch {
+            prompt("Messages:", t);
+          }
+        });
+
+        document.getElementById("btnTranslatePreview").addEventListener("click", doTranslatePreview);
+
+        document.getElementById("btnAppendCard").addEventListener("click", function () {
+          const promptRaw = cardPrompt.value.trim();
+          const resp = responseEn.value.trim();
+          const bandAppend = getSelectedGradeBand();
+          if (!promptRaw || !resp) {
+            alert("Need prompt (left) and English response (right).");
+            return;
+          }
+          if (!bandAppend) {
+            alert("Grade band unavailable.");
+            return;
+          }
+          const vars = collectVars();
+          try {
+            applyFormat(promptRaw, vars);
+            applyFormat(resp, vars);
+            const ne = responseNe.value.trim();
+            if (ne) applyFormat(ne, vars);
+          } catch (ex) {
+            alert(ex.message || String(ex));
+            return;
+          }
+          const tmRaw = String(targetMechanic.value || "").trim();
+          const midAppend = Math.floor((bandAppend.start + bandAppend.end) / 2);
+          const vo = {
+            grade_level: String(midAppend),
+            grade_rules_range: { start: bandAppend.start, end: bandAppend.end },
+            student_interest: String(interestSelect.value || "General").trim() || "General",
+            response: String(responseEn.value),
+          };
+          if (responseNe.value.trim()) vo.nepali_response = String(responseNe.value);
+          const entry = {
+            task: "information_card",
+            prompt: promptRaw,
+            include_example: !!includeExample.checked,
+            variants: [vo],
+          };
+          if (tmRaw) entry.target_mechanic = tmRaw;
+          if (Object.keys(vars).length) entry.vars = vars;
+          entries.push(entry);
+          renderEntriesList();
+          refreshExport();
+        });
+
+        document.getElementById("btnAppendTranslate").addEventListener("click", function () {
+          const text = document.getElementById("trText").value.trim();
+          const response = document.getElementById("trResponse").value.trim();
+          if (!text || !response) {
+            alert("Both English text and Nepali response required.");
+            return;
+          }
+          entries.push({ task: "translate", text: text, response: response });
+          renderEntriesList();
+          refreshExport();
+        });
+
+        document.getElementById("clearEntries").addEventListener("click", function () {
+          if (!entries.length) return;
+          if (!confirm("Clear " + entries.length + " entries?")) return;
+          entries = [];
+          renderEntriesList();
+          refreshExport();
+        });
+
+        document.getElementById("doImport").addEventListener("click", function () {
+          const raw = importYaml.value.trim();
+          if (!raw) {
+            alert("Paste YAML first.");
+            return;
+          }
+          try {
+            const data = parseYaml(raw, "Import");
+            if (!data || typeof data !== "object" || !Array.isArray(data.entries)) {
+              throw new Error("Root object must contain entries array");
+            }
+            entries = data.entries;
+            renderEntriesList();
+            refreshExport();
+          } catch (e) {
+            alert(e.message || String(e));
+          }
+        });
+
+        document.getElementById("refreshExport").addEventListener("click", refreshExport);
+        document.getElementById("copyExport").addEventListener("click", async function () {
+          refreshExport();
+          try {
+            await navigator.clipboard.writeText(exportOut.value);
+          } catch {
+            exportOut.select();
+            document.execCommand("copy");
+          }
+        });
+        document.getElementById("downloadExport").addEventListener("click", function () {
+          refreshExport();
+          const blob = new Blob([exportOut.value], { type: "text/yaml;charset=utf-8" });
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "preload_cache.yaml";
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+
+        varsTableBody.innerHTML = "";
+        addVarRow("", "");
+        renderEntriesList();
+        refreshExport();
+        init();
+      })();
+    </script>
+  </body>
+</html>
