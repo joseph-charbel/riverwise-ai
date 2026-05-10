@@ -441,8 +441,8 @@
     <script>
       (function () {
         const PRELOAD_HEADER = `# Pre-seed the in-memory LLM cache (fake responses). Paths are relative to server root.
-# Keys match SHA256 of concatenated message bodies — prompt text, grade (use midpoint string for YAML bands),
-# optional variants[].grade_rules_range {start,end} must match preview when expanding band rules,
+# Keys match SHA256 of concatenated message bodies — prompt text, grade_level per student grade,
+# optional variants[].grade_rules_range {start,end} must match the app when seeding a band,
 # interest, include_example, target_mechanic, and prompt templates must match real requests.
 #
 # Disable: set cache_config.preload_enabled: false or cache_config.preload_file: null
@@ -1004,19 +1004,26 @@
             return;
           }
           const tmRaw = String(targetMechanic.value || "").trim();
-          const midAppend = Math.floor((bandAppend.start + bandAppend.end) / 2);
-          const vo = {
-            grade_level: String(midAppend),
-            grade_rules_range: { start: bandAppend.start, end: bandAppend.end },
-            student_interest: String(interestSelect.value || "General").trim() || "General",
-            response: String(responseEn.value),
-          };
-          if (responseNe.value.trim()) vo.nepali_response = String(responseNe.value);
+          const interestVal = String(interestSelect.value || "General").trim() || "General";
+          const respEn = String(responseEn.value);
+          const neTrim = responseNe.value.trim();
+          /** @type {any[]} */
+          const variantList = [];
+          for (let g = bandAppend.start; g <= bandAppend.end; g++) {
+            const vo = {
+              grade_level: String(g),
+              grade_rules_range: { start: bandAppend.start, end: bandAppend.end },
+              student_interest: interestVal,
+              response: respEn,
+            };
+            if (neTrim) vo.nepali_response = String(responseNe.value);
+            variantList.push(vo);
+          }
           const entry = {
             task: "information_card",
             prompt: promptRaw,
             include_example: !!includeExample.checked,
-            variants: [vo],
+            variants: variantList,
           };
           if (tmRaw) entry.target_mechanic = tmRaw;
           if (Object.keys(vars).length) entry.vars = vars;
