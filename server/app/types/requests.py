@@ -1,6 +1,6 @@
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 
 class DummyInvokeRequest(BaseModel):
@@ -27,6 +27,17 @@ class DummyInvokesRequest(BaseModel):
     translate_to_nepali: Optional[bool] = None
 
 
+class GradeRulesRangeModel(BaseModel):
+    start: int
+    end: int
+
+    @model_validator(mode="after")
+    def start_lte_end(self):
+        if self.start > self.end:
+            raise ValueError("grade_rules_range.start must be <= end")
+        return self
+
+
 class AiDebugRequest(BaseModel):
     prompt: str
     grade_level: str = "8"
@@ -34,3 +45,8 @@ class AiDebugRequest(BaseModel):
     target_mechanic: str = ""
     include_example: bool = True
     language: Literal["english", "nepali"] = "english"
+    grade_rules_range: Optional[GradeRulesRangeModel] = None
+
+
+class TranslatePreviewRequest(BaseModel):
+    text: str

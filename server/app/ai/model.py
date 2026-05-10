@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,23 @@ _cache: CacheService | None = None
 _system_prompt_template: str | None = None
 _example_prompt_template: str | None = None
 _translate_prompt_template: str | None = None
+
+_preload_lock = asyncio.Lock()
+_cache_preloaded = False
+
+
+async def _ensure_preload_cache() -> None:
+        """Load YAML preloads into cache once (first LLM/cache use)."""
+        global _cache_preloaded
+        if _cache_preloaded:
+                return
+        async with _preload_lock:
+                if _cache_preloaded:
+                        return
+                from app.cache.preload import seed_preload_cache
+
+                await seed_preload_cache(_get_cache())
+                _cache_preloaded = True
 
 
 def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
@@ -49,6 +67,33 @@ def _append_grade_rules(rendered: str, grade_raw: Any) -> str:
                 )
                 return rendered
         return f"{rendered}\n\n### Grade-Specific Rules\n{rules}"
+
+
+def _append_grade_rules_span(rendered: str, span_start: int, span_end: int) -> str:
+        """Append collapsed grade-band rules covering each integer grade in [span_start, span_end]."""
+        cm = ConfigManager()
+        out = rendered
+        g = span_start
+        while g <= span_end:
+                rules = cm.rules_for_grade(g)
+                if rules is None:
+                        logger.warning(
+                                "No grade_rules band for grade %s in range append; skipping",
+                                g,
+                        )
+                        g += 1
+                        continue
+                ga = g
+                gb = g
+                while gb + 1 <= span_end and cm.rules_for_grade(gb + 1) == rules:
+                        gb += 1
+                if ga == gb:
+                        header = f"### Grade-Specific Rules (Grade {ga})"
+                else:
+                        header = f"### Grade-Specific Rules (Grades {ga}–{gb})"
+                out = f"{out}\n\n{header}\n{rules}"
+                g = gb + 1
+        return out
 
 
 def _make_llm(chat_config: ChatConfig) -> BaseChatModel:
@@ -160,6 +205,7 @@ def build_information_card_messages(
         student_interest: str,
         target_mechanic: str | None = None,
         include_example: bool = True,
+        grade_rules_range: tuple[int, int] | None = None,
 ) -> tuple[str, str, list[BaseMessage]]:
         """Build prompt artifacts for debug preview or LLM invocation."""
         system_prompt_template, example_prompt_template = _get_prompt_templates()
@@ -171,7 +217,11 @@ def build_information_card_messages(
         system_prompt = _render_system_prompt(system_prompt_template, vars_dict)
         if include_example and example_prompt_template:
                 system_prompt = f"{system_prompt}\n\n{example_prompt_template}"
-        system_prompt = _append_grade_rules(system_prompt, vars_dict["grade_level"])
+        if grade_rules_range is not None:
+                lo, hi = grade_rules_range
+                system_prompt = _append_grade_rules_span(system_prompt, lo, hi)
+        else:
+                system_prompt = _append_grade_rules(system_prompt, vars_dict["grade_level"])
 
         if target_mechanic:
                 human_content = f"**Target Mechanic:** {target_mechanic}\n\n{prompt}"
@@ -204,6 +254,7 @@ def build_translate_messages(text: str) -> list[BaseMessage]:
 
 
 async def _invoke(messages: list[BaseMessage]) -> AIMessage:
+        await _ensure_preload_cache()
         cache = _get_cache()
         cache_key = cache.make_key(messages)
         cached = await cache.get(cache_key)
