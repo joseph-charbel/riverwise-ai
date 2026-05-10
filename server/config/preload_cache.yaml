@@ -1,10 +1,61 @@
 # Pre-seed the in-memory LLM cache (fake responses). Paths are relative to server root.
-# Keys match SHA256 of concatenated message bodies — prompt text, grade, interest,
-# include_example, target_mechanic, and prompt templates must match real requests.
+# Keys are SHA256 of concatenated message bodies, same as runtime: per-grade rules only
+# (variants[].grade_rules_range in older YAML is ignored for keying). Prompt text, each
+# variant's grade_level and student_interest, include_example, target_mechanic, and prompt
+# templates must match real requests.
 #
 # Disable: set cache_config.preload_enabled: false or cache_config.preload_file: null
 
 entries:
+  - task: information_card
+    prompt: >-
+      Farmers use fertilisers to help crops grow strong and healthy. However, when too much fertiliser is used, rain can
+      wash it off the soil.
+
+      This is called runoff. The fertiliser can flow into rivers, making the water dirty and unsafe.
+    include_example: false
+    variants:
+      - grade_level: '0'
+        student_interest: Basketball
+        response: test 0-4
+      - grade_level: '1'
+        student_interest: Basketball
+        response: test 0-4
+      - grade_level: '2'
+        student_interest: Basketball
+        response: test 0-4
+      - grade_level: '3'
+        student_interest: Basketball
+        response: test 0-4
+      - grade_level: '4'
+        student_interest: Basketball
+        response: test 0-4
+    target_mechanic: Nutrient pollution and algal bloom formation.
+  - task: information_card
+    prompt: >-
+      Farmers use fertilisers to help crops grow strong and healthy. However, when too much fertiliser is used, rain can
+      wash it off the soil.
+
+      This is called runoff. The fertiliser can flow into rivers, making the water dirty and unsafe.
+    include_example: false
+    variants:
+      - grade_level: '0'
+        student_interest: Space
+        response: test 0-4 space
+      - grade_level: '1'
+        student_interest: Space
+        response: test 0-4 space
+      - grade_level: '2'
+        student_interest: Space
+        response: test 0-4 space
+      - grade_level: '3'
+        student_interest: Space
+        response: test 0-4 space
+      - grade_level: '4'
+        student_interest: Space
+        response: test 0-4 space
+    target_mechanic: Nutrient pollution and algal bloom formation.
+
   # Example: one card text, different tutor replies per grade/interest.
   # Uncomment and edit to use.
   # - task: information_card

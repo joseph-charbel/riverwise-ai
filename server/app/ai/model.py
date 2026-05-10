@@ -179,6 +179,7 @@ async def explain_information_card(
         student_interest: str,
         target_mechanic: str | None = None,
         include_example: bool = True,
+        grade_rules_range: tuple[int, int] | None = None,
 ) -> AIMessage:
         """
         Build the tutor prompt for a hotspot information card, then invoke the LLM.
@@ -192,6 +193,7 @@ async def explain_information_card(
                 student_interest=student_interest,
                 target_mechanic=target_mechanic,
                 include_example=include_example,
+                grade_rules_range=grade_rules_range,
         )
         logger.info("SYSTEM PROMPT:\n%s", system_prompt)
         logger.debug("Sending %d messages to chat model", len(messages))

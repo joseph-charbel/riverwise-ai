@@ -39,21 +39,6 @@ def _normalize_target_mechanic(raw: Any) -> str | None:
         return s if s else None
 
 
-def _variant_grade_rules_range(variant: dict[str, Any]) -> tuple[int, int] | None:
-        """Optional expanded grade rules span (preload / editor preview parity)."""
-        raw = variant.get("grade_rules_range")
-        if not isinstance(raw, dict):
-                return None
-        try:
-                s = int(cast(Any, raw.get("start")))
-                e = int(cast(Any, raw.get("end")))
-        except (TypeError, ValueError):
-                return None
-        if s > e:
-                return None
-        return (s, e)
-
-
 async def _store_preload(cache: CacheService, key: str, msg: AIMessage) -> None:
         existing = await cache.get(key)
         if existing is not None:
@@ -137,14 +122,14 @@ async def _seed_information_card_group(
                         label=f"entries[{group_index}] variants[{vidx}] response",
                 )
 
-                grade_span = _variant_grade_rules_range(variant)
+                # Keys must match production: explain_information_card uses per-grade rules only
+                # (no grade_rules_range). YAML may still list grade_rules_range for humans.
                 _, _, messages = build_information_card_messages(
                         formatted_prompt,
                         grade_level=grade_level,
                         student_interest=student_interest,
                         target_mechanic=target_mechanic,
                         include_example=include_example,
-                        grade_rules_range=grade_span,
                 )
                 key = cache.make_key(messages)
                 await _store_preload(cache, key, AIMessage(content=english))

@@ -441,9 +441,10 @@
     <script>
       (function () {
         const PRELOAD_HEADER = `# Pre-seed the in-memory LLM cache (fake responses). Paths are relative to server root.
-# Keys match SHA256 of concatenated message bodies — prompt text, grade_level per student grade,
-# optional variants[].grade_rules_range {start,end} must match the app when seeding a band,
-# interest, include_example, target_mechanic, and prompt templates must match real requests.
+# Keys are SHA256 of concatenated message bodies, same as runtime: per-grade rules only
+# (variants[].grade_rules_range in older YAML is ignored for keying). Prompt text, each
+# variant's grade_level and student_interest, include_example, target_mechanic, and prompt
+# templates must match real requests.
 #
 # Disable: set cache_config.preload_enabled: false or cache_config.preload_file: null
 `;
@@ -778,7 +779,6 @@
           const body = {
             prompt: prompt,
             grade_level: String(mid),
-            grade_rules_range: { start: band.start, end: band.end },
             interest: String(interestSelect.value || "General").trim() || "General",
             target_mechanic: String(targetMechanic.value || "").trim(),
             include_example: includeExample.checked,
@@ -1012,7 +1012,6 @@
           for (let g = bandAppend.start; g <= bandAppend.end; g++) {
             const vo = {
               grade_level: String(g),
-              grade_rules_range: { start: bandAppend.start, end: bandAppend.end },
               student_interest: interestVal,
               response: respEn,
             };

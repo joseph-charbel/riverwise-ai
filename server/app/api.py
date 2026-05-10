@@ -182,12 +182,16 @@ def ai_debug_preview(request: AiDebugRequest):
 @app.post("/debug/ai/invoke", response_model=AiDebugInvokeResponse)
 async def ai_debug_invoke(request: AiDebugRequest):
     preview = _build_debug_preview(request)
+    gr: tuple[int, int] | None = None
+    if request.grade_rules_range is not None:
+        gr = (request.grade_rules_range.start, request.grade_rules_range.end)
     response = await explain_information_card(
         request.prompt,
         grade_level=request.grade_level,
         student_interest=request.interest,
         target_mechanic=request.target_mechanic,
         include_example=request.include_example,
+        grade_rules_range=gr,
     )
     output = response.content
     if request.language == "nepali":
