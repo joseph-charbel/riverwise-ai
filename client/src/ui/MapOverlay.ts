@@ -1,5 +1,6 @@
 import {
   Container,
+  Graphics,
   Sprite,
   Assets,
   Rectangle,
@@ -140,6 +141,8 @@ export class MapOverlay {
     bg.eventMode = "static";
     this.container.addChild(bg);
 
+    this.drawInstructionBox();
+
     // Node markers with completion state icons
     const labelStyle = new TextStyle({
       fontFamily: "Georgia, serif",
@@ -177,6 +180,50 @@ export class MapOverlay {
 
     this.nodeEntries.sort((a, b) => a.config.order - b.config.order);
     await this.refreshAllNodes();
+  }
+
+  private drawInstructionBox(): void {
+    const boxW = 300;
+    const boxH = 60;
+    const boxX = (this.canvasW - boxW) / 2;
+    const boxY = 8;
+
+    const box = new Graphics();
+    box.roundRect(boxX, boxY, boxW, boxH, 12);
+    box.fill({ color: 0xffffff, alpha: 0.82 });
+    box.setStrokeStyle({ width: 2.5, color: 0x0d47a1 });
+    box.stroke();
+    box.eventMode = "none";
+    this.container.addChild(box);
+
+    const title = new Text({
+      text: "Explore the landscape!",
+      style: new TextStyle({
+        fontFamily: "Poppins, sans-serif",
+        fontSize: 18,
+        fill: 0x0d47a1,
+        fontWeight: "bold",
+        align: "center",
+      }),
+    });
+    title.anchor.set(0.5, 0);
+    title.position.set(this.canvasW / 2, boxY + 11);
+    title.eventMode = "none";
+    this.container.addChild(title);
+
+    const subtitle = new Text({
+      text: "Click on an area to learn more.",
+      style: new TextStyle({
+        fontFamily: "Poppins, sans-serif",
+        fontSize: 13,
+        fill: 0x0d47a1,
+        align: "center",
+      }),
+    });
+    subtitle.anchor.set(0.5, 0);
+    subtitle.position.set(this.canvasW / 2, boxY + 36);
+    subtitle.eventMode = "none";
+    this.container.addChild(subtitle);
   }
 
   async setCompleted(nodeId: string, completed: boolean): Promise<void> {
