@@ -1,4 +1,5 @@
 import asyncio
+import time
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +23,43 @@ _translate_prompt_template: str | None = None
 
 _preload_lock = asyncio.Lock()
 _cache_preloaded = False
+
+_LOG_PREVIEW_MAX = 260
+
+
+def _stringify_message_content(content: Any) -> str:
+        if content is None:
+                return ""
+        if isinstance(content, str):
+                return content
+        if isinstance(content, list):
+                parts: list[str] = []
+                for block in content:
+                        if isinstance(block, str):
+                                parts.append(block)
+                        elif isinstance(block, dict) and isinstance(
+                                block.get("text"), str
+                        ):
+                                parts.append(block["text"])
+                        else:
+                                parts.append(str(block))
+                return "".join(parts)
+        return str(content)
+
+
+def _log_preview(text: str, limit: int = _LOG_PREVIEW_MAX) -> str:
+        one_line = " ".join(text.split())
+        if len(one_line) <= limit:
+                return one_line
+        return f"{one_line[: limit - 1]}…"
+
+
+def _human_text_from_messages(messages: list[BaseMessage]) -> str:
+        chunks: list[str] = []
+        for m in messages:
+                if isinstance(m, HumanMessage):
+                        chunks.append(_stringify_message_content(m.content))
+        return "\n".join(chunks)
 
 
 async def _ensure_preload_cache() -> None:
@@ -185,7 +223,7 @@ async def explain_information_card(
         Build the tutor prompt for a hotspot information card, then invoke the LLM.
 
         Future AI tasks should follow this shape: create a function named for the
-        task, build its prompt locally, then call `_invoke(messages)`.
+        task, build its prompt locally, then call `_invoke(messages, operation='task_name')`.
         """
         system_prompt, _, messages = build_information_card_messages(
                 prompt,
@@ -195,9 +233,12 @@ async def explain_information_card(
                 include_example=include_example,
                 grade_rules_range=grade_rules_range,
         )
-        logger.info("SYSTEM PROMPT:\n%s", system_prompt)
-        logger.debug("Sending %d messages to chat model", len(messages))
-        return await _invoke(messages)
+        logger.debug(
+                "Built information_card messages: system_prompt_chars=%d msg_count=%d",
+                len(system_prompt),
+                len(messages),
+        )
+        return await _invoke(messages, operation="information_card")
 
 
 def build_information_card_messages(
@@ -242,8 +283,7 @@ async def translate(text: str) -> AIMessage:
         Translate English text to Nepali while preserving content, intent.
         """
         messages = build_translate_messages(text)
-        logger.debug("Sending %d translation messages to chat model", len(messages))
-        return await _invoke(messages)
+        return await _invoke(messages, operation="translate")
 
 
 def build_translate_messages(text: str) -> list[BaseMessage]:
@@ -255,18 +295,52 @@ def build_translate_messages(text: str) -> list[BaseMessage]:
         ]
 
 
-async def _invoke(messages: list[BaseMessage]) -> AIMessage:
+async def _invoke(messages: list[BaseMessage], *, operation: str) -> AIMessage:
         await _ensure_preload_cache()
         cache = _get_cache()
         cache_key = cache.make_key(messages)
+        key_prefix = cache_key[:12]
+
+        human_text = _human_text_from_messages(messages)
+        human_chars = len(human_text)
+
         cached = await cache.get(cache_key)
         if cached is not None:
-                logger.info("Cache hit key=%s", cache_key[:12])
+                out = _stringify_message_content(cached.content)
+                logger.info(
+                        "LLM skipped (cache hit) operation=%s cache_key_prefix=%s "
+                        "human_chars=%d human_preview=%s response_chars=%d "
+                        "response_preview=%s",
+                        operation,
+                        key_prefix,
+                        human_chars,
+                        _log_preview(human_text),
+                        len(out),
+                        _log_preview(out),
+                )
                 return cached
 
-        logger.debug("Cache miss key=%s — invoking LLM", cache_key[:12])
+        logger.info(
+                "LLM request operation=%s cache_key_prefix=%s human_chars=%d "
+                "human_preview=%s",
+                operation,
+                key_prefix,
+                human_chars,
+                _log_preview(human_text),
+        )
+        t0 = time.perf_counter()
         res = await _get_llm().ainvoke(messages)
+        elapsed_ms = (time.perf_counter() - t0) * 1000
         await cache.set(cache_key, res)
+        out = _stringify_message_content(res.content)
+        logger.info(
+                "LLM response operation=%s response_chars=%d response_preview=%s "
+                "elapsed_ms=%.0f",
+                operation,
+                len(out),
+                _log_preview(out),
+                elapsed_ms,
+        )
         return res
 
 

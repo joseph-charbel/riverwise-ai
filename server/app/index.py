@@ -151,7 +151,20 @@ async def test() -> None:
                 target_mechanic=_TEST_INFORMATION_CARD["target_mechanic"],
                 include_example=True,
         )
-        logger.info(f"Model response received:\n{response}")
+        raw = (
+                response.content
+                if isinstance(response.content, str)
+                else str(response.content)
+        )
+        prev = " ".join(raw.split())
+        if len(prev) > 260:
+                prev = f"{prev[:259]}…"
+        logger.info(
+                "Model test summary chars=%d preview=%s",
+                len(raw),
+                prev,
+        )
+        logger.debug("Model test full raw response:\n%s", raw)
         print(f"\n\n{response.content}")
 
 
