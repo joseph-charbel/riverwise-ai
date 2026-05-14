@@ -343,83 +343,42 @@ scenes:
     - node_id: temple
       background_asset: assets/scenes/temple.png
       hotspots:
-          - id: temple_to_farm
-            type: navigation
-            geometry: { shape: circle, x: 50, y: 440, r: 40 }
-            target_node: farm
-
-          - id: temple_to_factories
-            type: navigation
-            geometry: { shape: circle, x: 900, y: 340, r: 50 }
-            target_node: factories
-
-          - id: info_temple_cultural
+          - id: info_temple_river_significance
             type: info
-            geometry: { shape: circle, x: 480, y: 130, r: 30 }
-            title: Cultural Significance
+            geometry: { shape: circle, x: 655, y: 500, r: 50 }
+            title: Rivers Are Life
             body: >-
-                For centuries, communities along this river have regarded it as
-                sacred. Rituals of gratitude for clean water reinforce a cultural
-                ethic of stewardship — a powerful motivator for conservation that
-                predates modern environmental science.
+                Rivers begin high in the mountains and flow through villages, farms, and cities.
+                They provide water for drinking, growing food, and daily life.
+                In Nepal, rivers support both people and nature, connecting communities along their journey.
+                Protecting rivers means protecting life itself.
+
             target_mechanic: Cultural stewardship and historical conservation ethics.
-            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
-          - id: info_temple_waterfall
+          - id: info_temple_everything_is_connected
             type: info
-            geometry: { shape: circle, x: 730, y: 230, r: 30 }
-            title: The Waterfall
+            geometry: { shape: circle, x: 862, y: 230, r: 44 }
+            title: Everything Is Connected
             body: >-
-                Waterfalls aerate the river, boosting dissolved oxygen levels.
-                This natural oxygenation supports fish and other aquatic life
-                downstream. Dams and weirs that flatten the flow can reduce this
-                effect, creating low-oxygen "dead zones."
+                What happens upstream affects everything downstream.
+                  Pollution from farms, factories, and villages can travel through the river and impact many communities. When we protect rivers in one place, we help protect people and nature everywhere along its path.
+
             target_mechanic: Natural aeration generating dissolved oxygen.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
-          - id: info_temple_offerings
+          - id: info_temple_our_role
             type: info
-            geometry: { shape: circle, x: 280, y: 330, r: 30 }
-            title: Eco-Friendly Offerings
+            geometry: { shape: circle, x: 285, y: 432, r: 52 }
+            title: Our Role in Protecting Rivers
             body: >-
-                Traditional offerings made from flowers and leaves are
-                biodegradable and harmless. However, modern substitutes —
-                plastic wrappings, synthetic dyes, chemical candles — can pollute
-                the river. Many temples now promote eco-friendly alternatives.
+                Every person can help keep rivers clean.
+                Simple actions—like disposing of waste properly, using water carefully, and keeping surroundings clean—make a difference. By working together, communities can protect rivers for future generations.
+
             target_mechanic: Environmental impact of biodegradable versus synthetic materials.
-            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
-            include_example: true
-            fun_fact: null
-
-          - id: info_temple_springs
-            type: info
-            geometry: { shape: circle, x: 180, y: 180, r: 30 }
-            title: Mountain Springs
-            body: >-
-                The river originates from mountain springs fed by snowmelt and
-                rainfall. Deforestation on the slopes accelerates erosion and
-                reduces the land's ability to absorb water, leading to flash
-                floods in the wet season and drought in the dry season.
-            target_mechanic: Deforestation altering upstream water cycles and flow rates.
-            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
-            include_example: true
-            fun_fact: null
-
-          - id: info_temple_forest
-            type: info
-            geometry: { shape: circle, x: 580, y: 410, r: 30 }
-            title: Sacred Groves
-            body: >-
-                Forests around the temple are protected by tradition. These
-                groves act as the river's lungs — their root systems anchor
-                soil, their canopy regulates temperature, and leaf litter feeds
-                a micro-ecosystem of decomposers that keeps the water clean.
-            target_mechanic: Forest micro-ecosystems acting as natural climate and soil regulators.
-            # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
             fun_fact: null
 
