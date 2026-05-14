@@ -76,7 +76,7 @@ export class InfoHotspot extends Hotspot {
   }
 
   private compose(content: string): string {
-    return this.funFact ? `${content}\n\n💡${this.funFact}` : content;
+    return this.funFact ? `${content}\n\n${this.funFact}` : content;
   }
 
   execute(): void {

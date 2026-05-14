@@ -174,8 +174,7 @@ scenes:
             target_mechanic:  Runoff transporting waste into waterways during rain events.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: false
-            fun_fact: >-
-                Did you know? Runoff is a major contributor to water pollution. It can carry harmful chemicals, bacteria, and other pollutants into rivers and streams.
+            fun_fact: 💡Did you know? Runoff is a major contributor to water pollution. It can carry harmful chemicals, bacteria, and other pollutants into rivers and streams.
 
           - id: info_village_waste
             type: info
