@@ -125,7 +125,7 @@ export class MapOverlay {
   }
 
   async init(): Promise<void> {
-    const mapTex = await Assets.load("assets/sprites/map icon.png");
+    const mapTex = await Assets.load("assets/sprites/map icon.webp");
     const mapSprite = new Sprite(mapTex);
     mapSprite.anchor.set(0.5);
     mapSprite.width = MAP_BTN_SIZE;

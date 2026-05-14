@@ -56,10 +56,10 @@ export class Engine {
       infoCountMap.set(sc.node_id, sc.hotspots.filter((h) => h.type === "info").length);
     }
 
-    const panelBgTexture = await Assets.load("assets/panel/panel-background.png");
+    const panelBgTexture = await Assets.load("assets/panel/panel-background.webp");
     panelBgTexture.source.autoGenerateMipmaps = false;
     panelBgTexture.source.maxAnisotropy = 1;
-    const waterDropIconTexture = await Assets.load("assets/panel/water-drop-icon.png");
+    const waterDropIconTexture = await Assets.load("assets/panel/water-drop-icon.webp");
     waterDropIconTexture.source.autoGenerateMipmaps = false;
     waterDropIconTexture.source.maxAnisotropy = 1;
 

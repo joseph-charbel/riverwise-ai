@@ -11,11 +11,11 @@ interface GameConfig {
 }
 
 const DEFAULT_GENIE_LAMP_FRAMES = [
-  "assets/sprites/genie_lamp_0-4.png",
-  "assets/sprites/genie_lamp_1-4.png",
-  "assets/sprites/genie_lamp_2-4.png",
-  "assets/sprites/genie_lamp_3-4.png",
-  "assets/sprites/genie_lamp_4-4.png",
+  "assets/sprites/genie_lamp_0-4.webp",
+  "assets/sprites/genie_lamp_1-4.webp",
+  "assets/sprites/genie_lamp_2-4.webp",
+  "assets/sprites/genie_lamp_3-4.webp",
+  "assets/sprites/genie_lamp_4-4.webp",
 ];
 
 const configs = import.meta.glob("./config/*.yaml", {
