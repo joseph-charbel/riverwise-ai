@@ -7,6 +7,9 @@ const CANVAS_H = 540;
 const PANEL_W = 620;
 const PANEL_H = 400;
 const FADE_SPEED = 0.14;
+const QUIZ_BLUE = 0x1e93ee;
+const QUIZ_DARK_BLUE = 0x0D47A1;
+const QUIZ_LIGHT_BLUE = 0x8fcfff;
 
 export class GenieQuiz {
   readonly container: Container;
@@ -69,12 +72,13 @@ export class GenieQuiz {
     // Progress indicator
     const progress = new Text({
       text: `Question ${this.currentIndex + 1} / ${this.questions.length}`,
-      style: new TextStyle({ fontFamily: "Arial", fontSize: 12, fill: 0x4a6070, letterSpacing: 1 }),
+      style: new TextStyle({ fontFamily: "Poppins, sans-serif", fontSize: 13, fill: QUIZ_DARK_BLUE, fontWeight: "bold" }),
     });
     progress.anchor.set(1, 0);
-    progress.position.set(panelX + PANEL_W - 20, panelY + 14);
+    progress.position.set(panelX + PANEL_W - 36, panelY + 22);
     progress.eventMode = "none";
     this.container.addChild(progress);
+    this.drawQuestionProgress(panelX + PANEL_W - 46, panelY + 56, this.currentIndex, this.questions.length);
 
     // Question text
     const questionText = new Text({
@@ -83,7 +87,7 @@ export class GenieQuiz {
         fontFamily: "Poppins, sans-serif",
         fontWeight: "bold",
         fontSize: 20,
-        fill: 0x0D47A1,
+        fill: QUIZ_DARK_BLUE,
         wordWrap: true,
         wordWrapWidth: PANEL_W - 100,
         align: "center",
@@ -122,7 +126,7 @@ export class GenieQuiz {
     state: "correct" | "wrong" | null
   ): void {
     const btn = new Graphics();
-    const fillColor = state === "correct" ? 0xc6e1b6 : state === "wrong" ? 0xfde0e0 : 0x1e93ee;
+    const fillColor = state === "correct" ? 0xc6e1b6 : state === "wrong" ? 0xfde0e0 : QUIZ_BLUE;
     const strokeColor = state === "correct" ? 0x0a5b48 : state === "wrong" ? 0xE54C38 : 0x5dbbff;
 
     btn.roundRect(0, 0, w, h, 10);
@@ -217,6 +221,37 @@ export class GenieQuiz {
         this.locked = false;
         this.renderQuestion();
       }, 1000);
+    }
+  }
+
+  private drawQuestionProgress(rightX: number, y: number, activeCount: number, total: number): void {
+    const radius = 5;
+    const spacing = 30;
+    const width = (total - 1) * spacing + radius * 2;
+    const startX = rightX - width + radius;
+    const active = Math.min(activeCount, total);
+
+    const line = new Graphics();
+    line.moveTo(startX, y);
+    line.lineTo(startX + (total - 1) * spacing, y);
+    line.setStrokeStyle({ width: 2, color: QUIZ_LIGHT_BLUE, alpha: 1 });
+    line.stroke();
+    line.eventMode = "none";
+    this.container.addChild(line);
+
+    for (let i = 0; i < total; i++) {
+      const x = startX + i * spacing;
+      const circle = new Graphics();
+      circle.circle(x, y, radius);
+      if (i < active) {
+        circle.fill({ color: QUIZ_BLUE, alpha: 1 });
+      } else {
+        circle.fill({ color: 0xffffff, alpha: 0.85 });
+      }
+      circle.setStrokeStyle({ width: 2, color: QUIZ_BLUE, alpha: 1 });
+      circle.stroke();
+      circle.eventMode = "none";
+      this.container.addChild(circle);
     }
   }
 
