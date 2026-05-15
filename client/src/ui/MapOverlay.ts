@@ -71,6 +71,22 @@ export class MapOverlay {
     return this.isNodeUnlocked(entry) || entry.completed;
   }
 
+  private fitNodeIcon(entry: NodeEntry, scale = 1): void {
+    const { width, height } = entry.iconSprite.texture;
+    const maxW = entry.baseW * scale;
+    const maxH = entry.baseH * scale;
+
+    if (width === 0 || height === 0) {
+      entry.iconSprite.width = maxW;
+      entry.iconSprite.height = maxH;
+      return;
+    }
+
+    const fitScale = Math.min(maxW / width, maxH / height);
+    entry.iconSprite.width = width * fitScale;
+    entry.iconSprite.height = height * fitScale;
+  }
+
   private async applyNodeState(entry: NodeEntry): Promise<void> {
     const unlocked = this.isNodeUnlocked(entry);
     const showLocked = !unlocked && !entry.completed;
@@ -85,6 +101,7 @@ export class MapOverlay {
       asset = entry.config.icon_incomplete;
     }
     entry.iconSprite.texture = await Assets.load(asset);
+    this.fitNodeIcon(entry);
 
     if (showLocked && !entry.config.icon_locked) {
       entry.iconSprite.tint = LOCKED_TINT;
@@ -99,24 +116,20 @@ export class MapOverlay {
     if (visitable) {
       entry.iconSprite.eventMode = "static";
       entry.iconSprite.cursor = "pointer";
-      const { baseW, baseH } = entry;
       entry.iconSprite.on("pointerdown", () => {
         this.toggle();
         eventBus.emit("scene:load", entry.config.node_id);
       });
       entry.iconSprite.on("pointerover", () => {
-        entry.iconSprite.width = baseW * 1.2;
-        entry.iconSprite.height = baseH * 1.2;
+        this.fitNodeIcon(entry, 1.2);
       });
       entry.iconSprite.on("pointerout", () => {
-        entry.iconSprite.width = baseW;
-        entry.iconSprite.height = baseH;
+        this.fitNodeIcon(entry);
       });
     } else {
       entry.iconSprite.eventMode = "none";
       entry.iconSprite.cursor = "default";
-      entry.iconSprite.width = entry.baseW;
-      entry.iconSprite.height = entry.baseH;
+      this.fitNodeIcon(entry);
     }
   }
 
@@ -155,13 +168,11 @@ export class MapOverlay {
       const tex = await Assets.load(node.icon_incomplete);
       const iconSprite = new Sprite(tex);
       iconSprite.anchor.set(0.5);
-      iconSprite.width = node.w;
-      iconSprite.height = node.h;
       iconSprite.position.set(node.x, node.y);
 
       const label = new Text({ text: node.label, style: labelStyle });
       label.anchor.set(0.5, 0);
-      label.position.set(node.x, node.y + 32);
+      label.position.set(node.x, node.y + node.h / 2 + 6);
       label.eventMode = "none";
 
       const entry: NodeEntry = {
@@ -172,6 +183,7 @@ export class MapOverlay {
         baseW: node.w,
         baseH: node.h,
       };
+      this.fitNodeIcon(entry);
       this.nodeEntries.push(entry);
 
       this.container.addChild(iconSprite);
