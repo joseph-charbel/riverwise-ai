@@ -11,6 +11,7 @@ from app.ai.model import (
         build_information_card_messages,
         build_translate_messages,
         explain_information_card,
+        message_content_to_text,
         translate,
 )
 from app.config.base_config import ConfigManager
@@ -207,10 +208,10 @@ async def ai_debug_invoke(request: AiDebugRequest):
                 include_example=request.include_example,
                 grade_rules_range=gr,
         )
-        output = response.content
+        output = message_content_to_text(response.content)
         if request.language == "nepali":
                 translated = await translate(output)
-                output = translated.content
+                output = message_content_to_text(translated.content)
 
         return AiDebugInvokeResponse(
                 system_prompt=preview.system_prompt,
@@ -232,7 +233,7 @@ async def api_dummy_invoke(request: DummyInvokeRequest):
                 include_example=request.include_example,
                 translate_to_nepali=request.translate_to_nepali,
         )
-        return DummyInvokeResponse(content=response.content)
+        return DummyInvokeResponse(content=message_content_to_text(response.content))
 
 
 @app.post("/api/dummy-invokes", response_model=DummyInvokesResponse)
@@ -244,7 +245,10 @@ async def api_dummy_invokes(request: DummyInvokesRequest):
                 translate_to_nepali=request.translate_to_nepali,
         )
         return DummyInvokesResponse(
-                results={key: msg.content for key, msg in responses.items()}
+                results={
+                        key: message_content_to_text(msg.content)
+                        for key, msg in responses.items()
+                }
         )
 
 

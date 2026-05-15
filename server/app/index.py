@@ -1,7 +1,7 @@
 import asyncio
 from textwrap import dedent
 from typing import Dict, List
-from app.ai.model import explain_information_card, translate
+from app.ai.model import explain_information_card, message_content_to_text, translate
 from app.config.base_config import ConfigManager
 from app.logging_config import get_logger
 from app.types.requests import DummyInvokeBatchItem
@@ -72,7 +72,7 @@ async def explain_information_card_with_optional_translation(
                 return response
 
         logger.info("Translating AI response to Nepali")
-        return await translate(response.content)
+        return await translate(message_content_to_text(response.content))
 
 
 def _should_translate_to_nepali(override: bool | None) -> bool:
@@ -152,9 +152,7 @@ async def test() -> None:
                 include_example=True,
         )
         raw = (
-                response.content
-                if isinstance(response.content, str)
-                else str(response.content)
+                message_content_to_text(response.content)
         )
         prev = " ".join(raw.split())
         if len(prev) > 260:
