@@ -67,7 +67,7 @@ export class GenieQuiz {
     cardSprite.eventMode = "none";
     this.container.addChild(cardSprite);
 
-    this.drawWaterDropIcon(panelX + PANEL_W / 2, panelY + 52);
+    this.drawWaterDropIcon(panelX + PANEL_W / 2, panelY + 39);
 
     // Progress indicator
     const progress = new Text({
@@ -368,7 +368,7 @@ export class GenieQuiz {
   private drawWaterDropIcon(cx: number, cy: number): void {
     const icon = new Sprite(this.waterDropIconTexture);
     icon.anchor.set(0.5);
-    icon.width = 190;
+    icon.width = 99;
     icon.height = 127;
     icon.position.set(cx, cy);
     icon.eventMode = "none";
