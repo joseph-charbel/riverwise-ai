@@ -81,55 +81,49 @@ scenes:
           - id: info_farm_runoff
             type: info
             geometry: { shape: circle, x: 100, y: 387.5, r: 50 }
-            title: Agricultural Runoff
+            title: Fertiliser and Runoff
             body: >-
-                Farmers use fertilisers to help crops grow strong and healthy. However, when too much fertiliser is used, rain can wash it off the soil.
-                
-                This is called runoff. The fertiliser can flow into rivers, making the water dirty and unsafe.
+                Farmers use fertiliser to help plants grow strong and healthy. If too much fertiliser is used, rain can wash it into nearby rivers. This is called runoff. Runoff can make river water dirty and unsafe, and it can harm fish and other animals. Using the right amount of fertiliser helps protect rivers.
+
 
             target_mechanic: Nutrient pollution and algal bloom formation.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: false
-            fun_fact: 💡Did you know? Studies show that too many nutrients in water can cause algae to grow quickly, which reduces oxygen for fish and harms them as you saw before!
+            fun_fact: Did you know? Too many nutrients in water can cause algae to grow quickly, which reduces oxygen for fish.
 
           - id: info_farm_irrigation
             type: info
             geometry: { shape: circle, x: 690, y: 400, r: 75 }
-            title: Irrigation Channels
+            title: Water Used for Farming
             body: >-
-                Farmers use water from rivers to grow crops. This is called irrigation. 
-                If the river water is dirty, it can carry germs and pollution onto fruits 
-                and vegetables. This means food may not be safe to eat unless it is properly 
-                cleaned. Clean water is very important for both farming and health.
+                Farmers use river water to grow crops. This is called irrigation. If the river water is dirty, it can carry germs and pollution onto fruits and vegetables. This can make food unsafe to eat unless it is properly cleaned. Clean water is important for both farming and health.
+
 
             target_mechanic: Water over-extraction and resulting habitat degradation.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
+            fun_fact: null
 
           - id: info_farm_soil
             type: info
             geometry: { shape: circle, x: 350, y: 480, r: 75 }
-            title: Soil Erosion
+            title: How Farms Affect Rivers
             body: >-
-                Water that flows off farms can carry soil, fertiliser, and waste into nearby rivers.
-                
-                This can make the river cloudy and polluted.
+                Water flowing off farms can carry soil, fertiliser, and waste into nearby rivers. This pollution can harm animals, plants, and people who depend on the river. Managing farm waste and runoff helps keep rivers clean.
 
-                Polluted water can affect animals, plants, and people who depend on the river. Managing farm waste and runoff helps keep rivers clean.
 
             target_mechanic: Soil erosion leading to high turbidity and sunlight blockage.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: false
-            fun_fact: 💡Did you know? Cloudy water (called high sediment) can block sunlight and harm plants and fish in the river.
+            fun_fact: Did you know? Cloudy water can block sunlight and harm plants and fish in the river.
 
           - id: info_farm_native_vegetation
             type: info
             geometry: { shape: circle, x: 640, y: 260, r: 50 }
-            title: Riparian Buffer Zones
+            title: How Plants Help Keep Rivers Clean
             body: >-
-                Plants and trees growing between farms and the river act like nature’s filter. 
-                Their roots help catch dirt and soak up extra nutrients before they can get into the water. 
-                This is one of the easiest and best ways to help keep rivers clean and healthy.
+                Plants and trees growing between farms and rivers help protect the water. Their roots catch dirt and soak up extra nutrients before they reach the river. This is an easy and effective way to keep rivers clean and healthy.
+
 
             target_mechanic: Natural filtration via riparian buffer vegetation.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
@@ -171,23 +165,20 @@ scenes:
             geometry: { shape: circle, x: 367.5, y: 340, r: 62.5 }
             title: Rain Carries Waste
             body: >-
-                When rubbish is left on the ground, rainwater can wash it away.
-                This water flows over land and carries waste into drains, streams, 
-                and rivers. This process is called runoff. In villages and towns, 
-                poor waste management means more rubbish can end up in rivers, especially
-                during heavy rain.
+                When rubbish is left on the ground, rainwater can wash it away. The water carries waste into drains, streams, and rivers. Poor waste management means more rubbish can end up polluting rivers.
+
             target_mechanic:  Runoff transporting waste into waterways during rain events.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: false
-            fun_fact: 💡Did you know? Runoff is a major contributor to water pollution. It can carry harmful chemicals, bacteria, and other pollutants into rivers and streams.
+            fun_fact: null
 
           - id: info_village_waste
             type: info
             geometry: { shape: circle, x: 250, y: 380, r: 50 }
             title: Household Wastewater
             body: >-
-                Water used in homes—for washing clothes, dishes, and bathing—is called wastewater.
-                In many areas, this water is not treated before being released into the environment. It can flow through pipes or open drains directly into rivers. Wastewater can carry soap, dirt, and harmful germs, which pollute rivers and make the water unsafe for people and animals.
+                Water used in homes for washing clothes, dishes, and bathing is called wastewater. In many places, this water is not cleaned before being released into the environment. It can carry soap, dirt, and germs into rivers, making the water unsafe for people and animals.
+
             target_mechanic: Untreated domestic wastewater and pathogen introduction.
 
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
@@ -199,8 +190,8 @@ scenes:
             geometry: { shape: circle, x: 432.5, y: 480, r: 62.5 }
             title: Medicines in Rivers
             body: >-
-                Medicines should be disposed of carefully, but sometimes they are thrown away with regular waste.
-                Rainwater can carry these substances into rivers. Even small amounts of medicines can affect water quality and harm aquatic life. Safe disposal of medicines helps reduce pollution and protect ecosystems.
+                Medicines should be thrown away carefully. If medicine is thrown away improperly, rainwater can carry it into rivers. Even small amounts of medicine can harm river plants and animals. Safe disposal helps protect the environment.
+
             target_mechanic: Pharmaceutical pollution from improper disposal.
 
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
@@ -240,38 +231,23 @@ scenes:
           - id: info_kids_macroinvertebrates
             type: info
             geometry: { shape: circle, x: 165, y: 455, r: 45 }
-            title: Plastic Bag Near The River
+            title: Plastic Pollution
             body: >-
-                Plastic bottles and wrappers are common types of rubbish found in rivers.
-                Unlike food or paper, plastic does not break down quickly. It can stay in
-                the environment for many years.
+                Rubbish such as plastic bottles, wrappers, and bags can end up near or in rivers. Plastic does not break down easily and can stay in the environment for many years. Animals like fish may mistake plastic for food, which can make them very sick. Plastic can also block rivers and trap small animals. To protect rivers, rubbish should always be thrown in the bin.
 
-                Fish and other animals may mistake plastic for food, which can make them sick. 
-                Plastic can also block waterways or get tangled around plants and animals.
-                
-                To protect rivers, plastic waste should be placed in bins or recycling, not 
-                left on the ground where it can wash into the water.
-
-                💡Did you know? A single plastic bottle can take hundreds of years to break down.
 
             target_mechanic: Impacts of plastic pollution on aquatic life and waterways.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
-            fun_fact: null
+            fun_fact: Did you know? A single plastic bottle can take hundreds of years to break down.
 
           - id: info_kids_safety
             type: info
             geometry: { shape: circle, x: 530, y: 460, r: 30 }
-            title: Fish Swimming in the Rubbish
+            title: Why Clean Rivers Matter
             body: >-
-                Rivers are home to many animals, including fish, insects, and birds. 
-                These animals depend on clean water to survive.
-               
-                When rubbish enters the river, it can damage habitats and make it 
-                harder for animals to find food or breathe properly.
-                
-                Clean rivers support healthy ecosystems and also provide water that 
-                communities can safely use.
+                Rivers are home to animals like fish and birds. These animals need clean water to survive and find food. When rubbish pollutes the river, it makes the water unsafe and harms the animals living there. Keeping rivers clean helps protect nature.
+
 
             target_mechanic: Rubbish in rivers damaging habitats
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
@@ -293,18 +269,15 @@ scenes:
           - id: info_kids_litter
             type: info
             geometry: { shape: circle, x: 240, y: 290, r: 50 }
-            title: Stormwater Drain or Pipe
+            title: Rainwater and Drains
             body: >-
-                During rain, water flows into drains and pipes that carry it away from roads and buildings. This water is called stormwater.
-                Stormwater often flows directly into rivers without being cleaned first. If rubbish or pollution enters the drain, it can travel straight into the river.
-                Keeping streets and public places clean helps stop pollution from reaching waterways.
-                
-                💡Did you know? Studies in Nepal show that urban drainage systems often carry waste directly into rivers without treatment. In cities like Kathmandu, many drains and pipes release untreated wastewater straight into rivers like the Bagmati.
+                When it rains, water flows into drains and pipes. This is called stormwater. In some places, stormwater goes straight into rivers without being cleaned. If rubbish or pollution enters the drain, it can be carried into the river and make the water dirty.
+
 
             target_mechanic: Microplastic degradation and wildlife ingestion.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
-            fun_fact: null
+            fun_fact: Did you know? Studies in Nepal show that many drains carry untreated wastewater straight into rivers like the Bagmati.
 
           # - id: info_kids_citizen_science
           #   type: info
@@ -352,10 +325,8 @@ scenes:
             geometry: { shape: circle, x: 655, y: 500, r: 50 }
             title: Rivers Are Life
             body: >-
-                Rivers begin high in the mountains and flow through villages, farms, and cities.
-                They provide water for drinking, growing food, and daily life.
-                In Nepal, rivers support both people and nature, connecting communities along their journey.
-                Protecting rivers means protecting life itself.
+                Rivers support both people and nature. Many rivers begin high in the mountains and flow through villages, farms, and cities. They provide water for drinking, growing food, and supporting animals and plants. Protecting rivers helps protect life.
+
 
             target_mechanic: Cultural stewardship and historical conservation ethics.
             include_example: true
@@ -366,8 +337,8 @@ scenes:
             geometry: { shape: circle, x: 862, y: 230, r: 44 }
             title: Everything Is Connected
             body: >-
-                What happens upstream affects everything downstream.
-                  Pollution from farms, factories, and villages can travel through the river and impact many communities. When we protect rivers in one place, we help protect people and nature everywhere along its path.
+                What happens in one part of the river affects everything downstream. Pollution from farms, factories, and villages can travel through the river and harm many communities, animals, and plants. Taking care of rivers in one place helps protect everyone.
+
 
             target_mechanic: Natural aeration generating dissolved oxygen.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
@@ -379,8 +350,8 @@ scenes:
             geometry: { shape: circle, x: 285, y: 432, r: 52 }
             title: Our Role in Protecting Rivers
             body: >-
-                Every person can help keep rivers clean.
-                Simple actions—like disposing of waste properly, using water carefully, and keeping surroundings clean—make a difference. By working together, communities can protect rivers for future generations.
+                Everyone can help protect rivers. Simple actions like throwing rubbish away properly, using water carefully, and keeping nature clean can make a big difference. When communities work together, rivers can stay healthy for future generations.
+
 
             target_mechanic: Environmental impact of biodegradable versus synthetic materials.
             include_example: true
@@ -419,12 +390,10 @@ scenes:
           - id: info_factories_discharge
             type: info
             geometry: { shape: circle, x: 395, y: 425, r: 25 }
-            title: Industrial Discharge
+            title: Industrial Wastewater
             body: >-
-                Pipes carrying untreated or partially treated wastewater release
-                heavy metals like mercury, lead and cadmium into the river.
-                These toxins accumulate in fish tissue — a process called
-                bioaccumulation — making them unsafe to eat.
+                Factories sometimes release wastewater into nearby rivers. This water can contain harmful chemicals, oils, and heavy metals. If the wastewater is not cleaned first, it can pollute rivers and make the water unsafe for people and animals. Cleaning factory waste helps protect the environment.
+
             target_mechanic: Heavy metal toxicity and bioaccumulation in food chains.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
@@ -433,27 +402,22 @@ scenes:
           - id: info_factories_thermal
             type: info
             geometry: { shape: circle, x: 462.5, y: 490, r: 87.5 }
-            title: Thermal Pollution
+            title: How Pollution Changes Water
             body: >-
-                Factories use river water for cooling and return it at a higher
-                temperature. Warm water holds less dissolved oxygen, stressing
-                cold-water species like trout. Even a few degrees of change can
-                shift the entire ecosystem.
+                When pollutants enter rivers, the water can become dark, cloudy, or smell bad. Rivers near cities and industrial areas can become heavily polluted if waste is not treated properly. Dirty water is unsafe for people and harmful to river ecosystems.
+
             target_mechanic: Thermal pollution reducing dissolved oxygen capacity.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
-            fun_fact: null
+            fun_fact: Did you know? Parts of Nepal's Bagmati River are heavily polluted due to untreated sewage and industrial waste.
 
           - id: info_factories_regulation
             type: info
             geometry: { shape: circle, x: 120, y: 182.5, r: 117.5 }
-            title: Environmental Regulation
+            title: Impact on Aquatic Life
             body: >-
-                Government regulations set limits on what factories can
-                discharge. Monitoring stations measure pollutant levels
-                continuously. When limits are breached, fines and mandatory
-                clean-ups are enforced — but enforcement depends on funding and
-                political will.
+                Pollution from factories can reduce oxygen in the water and introduce harmful chemicals. This can make fish and other river animals sick or even kill them. Clean water is important for aquatic life to survive.
+
             target_mechanic: Regulatory monitoring and penalty enforcement.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
@@ -462,16 +426,14 @@ scenes:
           - id: info_factories_treatment
             type: info
             geometry: { shape: circle, x: 790, y: 350, r: 65 }
-            title: Wastewater Treatment
+            title: Preventing Industrial Pollution
             body: >-
-                Modern treatment plants use physical, chemical and biological
-                processes to remove contaminants before water is returned to the
-                river. Constructed wetlands offer a low-energy alternative,
-                using natural processes to break down pollutants.
+                Factories can help protect rivers by cleaning wastewater before releasing it. Wastewater treatment systems remove harmful substances from the water. Following environmental rules helps keep rivers safe for people and animals.
+
             target_mechanic: Contaminant removal via industrial wastewater treatment.
             # image_asset: assets/nodes/Square_-_black_simple-cropped.svg
             include_example: true
-            fun_fact: null
+            fun_fact: Did you know? Wastewater treatment systems can remove many harmful substances before water is released.
 
       questions:
           - question: What is bioaccumulation?
