@@ -59,7 +59,7 @@ export class Engine {
     const panelBgTexture = await Assets.load("assets/panel/panel-background.webp");
     panelBgTexture.source.autoGenerateMipmaps = false;
     panelBgTexture.source.maxAnisotropy = 1;
-    const waterDropIconTexture = await Assets.load("assets/panel/water-drop-icon.webp");
+    const waterDropIconTexture = await Assets.load("assets/panel/dolphin-genie.webp");
     waterDropIconTexture.source.autoGenerateMipmaps = false;
     waterDropIconTexture.source.maxAnisotropy = 1;
 
