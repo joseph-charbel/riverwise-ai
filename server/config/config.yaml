@@ -8,8 +8,8 @@ cache_config:
     enabled: true
     ttl: 3600 # seconds; 0 = no expiry
     provider: memory # future: redis, file
-    preload_enabled: true
-    preload_file: config/preload_cache.yaml # optional; omit or set null to skip preload
+    preload_enabled: false
+    # preload_file: config/preload_cache.yaml # optional; omit or set null to skip preload
 
 chat_model_config:
     # provider: groq
