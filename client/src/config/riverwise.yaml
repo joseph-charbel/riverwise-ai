@@ -30,7 +30,7 @@ map:
 
         - node_id: farm
           label: Farm
-          order: 0
+          order: 1
           x: 170
           y: 200
           w: 60
@@ -41,7 +41,7 @@ map:
 
         - node_id: village
           label: Village
-          order: 0
+          order: 2
           x: 380
           y: 310
           w: 60
@@ -52,7 +52,7 @@ map:
 
         - node_id: factories
           label: Factories
-          order: 0
+          order: 3
           x: 830
           y: 230
           w: 60
@@ -63,7 +63,7 @@ map:
 
         - node_id: temple
           label: Temple
-          order: 0
+          order: 4
           x: 740
           y: 80
           w: 60
