@@ -10,6 +10,7 @@ const FADE_SPEED = 0.14;
 const QUIZ_BLUE = 0x1e93ee;
 const QUIZ_DARK_BLUE = 0x0D47A1;
 const QUIZ_LIGHT_BLUE = 0x8fcfff;
+const QUESTION_Y_OFFSET = 112;
 
 export class GenieQuiz {
   readonly container: Container;
@@ -95,7 +96,7 @@ export class GenieQuiz {
       }),
     });
     questionText.anchor.set(0.5, 0);
-    questionText.position.set(panelX + PANEL_W / 2, panelY + 100);
+    questionText.position.set(panelX + PANEL_W / 2, panelY + QUESTION_Y_OFFSET);
     questionText.eventMode = "none";
     this.container.addChild(questionText);
 

@@ -131,29 +131,37 @@ scenes:
             fun_fact: null
 
       questions:
-          - question: What is the primary effect of agricultural runoff on a river?
+          - question: Why do farmers use fertiliser?
             options:
-                - It makes the water warmer
-                - It triggers algal blooms that deplete oxygen
-                - It increases the river's flow speed
-                - It makes the water taste salty
+                - To scare birds away
+                - To help plants grow
+                - To stop the rain
+                - To make rivers dirty
             correct: 1
 
-          - question: Why are riparian buffer zones effective at protecting rivers?
+          - question: What is runoff?
             options:
-                - They shade the water from sunlight
-                - Their roots trap sediment and absorb nutrients
-                - They prevent flooding
-                - They attract predatory fish
-            correct: 1
+                - Mud drying in the sun
+                - Fish swimming quickly
+                - Water washing dirt and fertiliser into the river
+                - Rain stopping suddenly
+            correct: 2
 
-          - question: How does livestock access to waterways affect water quality?
+          - question: Why should fruits and vegetables be washed?
             options:
-                - It adds beneficial minerals
-                - It introduces bacteria like E. coli
-                - It cools the water temperature
-                - It has no measurable effect
-            correct: 1
+                - To make them sweeter
+                - To make them bigger
+                - Dirty water may have germs
+                - To make them shiny
+            correct: 2
+
+          - question: How do plants near rivers help?
+            options:
+                - They make more rain
+                - They stop fish from swimming
+                - They make the river deeper
+                - They keep dirt out of the river
+            correct: 3
 
     # ── Village ───────────────────────────────────────────────────────────
     - node_id: village
@@ -199,29 +207,37 @@ scenes:
             fun_fact: null
 
       questions:
-          - question: How can contaminants from the river affect the village well?
+          - question: What is wastewater?
             options:
-                - They travel through underground pipes
-                - They seep into the shared aquifer
-                - They evaporate and fall as acid rain
-                - They cannot — wells are completely separate
+                - Water from the mountains
+                - Fresh drinking water
+                - Water used for washing and cleaning
+                - Rainwater from clouds
+            correct: 2
+
+          - question: What can rain do to rubbish on the ground?
+            options:
+                - Turn it into flowers
+                - Wash it into rivers
+                - Make it disappear
+                - Turn it into food
             correct: 1
 
-          - question: Why are phosphates in household detergents harmful to rivers?
+          - question: Why should medicine be thrown away safely?
             options:
-                - They dissolve fish scales
-                - They fuel algal growth
-                - They raise water temperature
-                - They make the water cloudy
-            correct: 1
+                - It makes water cleaner
+                - It makes rivers smell nice
+                - It helps fish grow
+                - It can harm river animals and plants
+            correct: 3
 
-          - question: What is the benefit of rainwater harvesting for river health?
+          - question: What can household wastewater carry?
             options:
-                - It increases river flow
-                - It reduces stormwater runoff volume
-                - It raises groundwater levels
-                - It filters out heavy metals
-            correct: 1
+                - Clean drinking water
+                - Only bubbles
+                - Toys and books
+                - Soap, dirt, and germs
+            correct: 3
 
     # ── Kids Play Area ────────────────────────────────────────────────────
     - node_id: kids_play_area
@@ -292,28 +308,36 @@ scenes:
           #   image_asset: assets/nodes/Square_-_black_simple-cropped.svg
 
       questions:
-          - question: Why are macroinvertebrates useful indicators of water quality?
+          - question: Where should plastic rubbish go?
             options:
-                - They change colour in polluted water
-                - Their presence or absence reflects water conditions
-                - They produce chemicals that neutralise pollutants
-                - They are easy to see from the river bank
+                - In the river
+                - Under a tree
+                - In the bin
+                - On the ground
+            correct: 2
+
+          - question: What can happen if fish eat plastic?
+            options:
+                - They grow bigger
+                - They get sick
+                - They swim faster
+                - They change colour
             correct: 1
 
-          - question: When do bacteria counts in rivers typically spike?
+          - question: What is stormwater?
             options:
-                - During droughts
-                - After heavy rainfall
-                - At night
-                - In winter only
-            correct: 1
+                - Water used for drinking
+                - Water from a factory
+                - Water from the ocean
+                - Rainwater that goes into drains
+            correct: 3
 
-          - question: How do microplastics enter the food chain?
+          - question: Why do rivers need to stay clean?
             options:
-                - They dissolve into the water
-                - Fish and birds mistake them for food
-                - They are absorbed through plant roots
-                - They evaporate into the air
+                - So rubbish can float away
+                - So fish and animals can live safely
+                - So the river gets bigger
+                - So the water changes colour
             correct: 1
 
     # ── Temple ────────────────────────────────────────────────────────────
@@ -358,29 +382,37 @@ scenes:
             fun_fact: null
 
       questions:
-          - question: How do waterfalls benefit aquatic life downstream?
+          - question: Where do most rivers begin?
             options:
-                - They create barriers that protect fish from predators
-                - They aerate the water, boosting dissolved oxygen
-                - They filter out pollutants naturally
-                - They lower the water temperature
+                - In houses
+                - High in the mountains
+                - In factories
+                - In the ocean
             correct: 1
 
-          - question: Why is deforestation on mountain slopes harmful to rivers?
+          - question: "Rivers give us water for:"
             options:
-                - It blocks sunlight from reaching the water
-                - It accelerates erosion and disrupts water absorption
-                - It introduces invasive plant species
-                - It attracts more wildlife to the riverbank
+                - Playing games only
+                - Making toys
+                - Drinking and growing food
+                - Only washing cars
+            correct: 2
+
+          - question: What happens if one part of the river gets polluted?
+            options:
+                - The water disappears
+                - Pollution can affect other places too
+                - Nothing happens
+                - The river stops moving
             correct: 1
 
-          - question: What makes traditional flower and leaf offerings safer for rivers than modern substitutes?
+          - question: How can we help protect rivers?
             options:
-                - They sink to the bottom quickly
-                - They are biodegradable
-                - They repel fish
-                - They dissolve immediately
-            correct: 1
+                - Ignore pollution
+                - Wash dirty things in the river
+                - Throw waste away properly
+                - Throw rubbish in the water
+            correct: 2
 
     # ── Factories ─────────────────────────────────────────────────────────
     - node_id: factories
@@ -436,26 +468,34 @@ scenes:
             fun_fact: Did you know? Wastewater treatment systems can remove many harmful substances before water is released.
 
       questions:
-          - question: What is bioaccumulation?
+          - question: What can factories put into rivers if wastewater is not cleaned?
             options:
-                - The growth of algae on factory pipes
-                - The build-up of toxins in fish tissue over time
-                - The increase in river flow near factories
-                - The natural breakdown of pollutants
+                - Fresh milk
+                - Harmful chemicals
+                - Clean drinking water
+                - Fruit juice
             correct: 1
 
-          - question: How does thermal pollution affect cold-water species?
+          - question: What can polluted river water look like?
             options:
-                - It forces them to migrate upstream
-                - Warmer water holds less dissolved oxygen, stressing them
-                - It makes them grow faster than normal
-                - It has no significant effect
-            correct: 1
+                - Crystal clear
+                - Sparkly gold
+                - Dark or cloudy
+                - Bright pink
+            correct: 2
 
-          - question: What is a low-energy alternative to conventional wastewater treatment?
+          - question: How can dirty factory water hurt fish?
             options:
-                - Chlorine dosing
-                - Constructed wetlands
-                - Reverse osmosis
-                - Ultraviolet filtration
-            correct: 1
+                - It teaches them to swim faster
+                - It makes them stronger
+                - It helps them grow
+                - It can make them sick or kill them
+            correct: 3
+
+          - question: What should factories do before releasing water?
+            options:
+                - Add more rubbish
+                - Make it hotter
+                - Clean the wastewater
+                - Add soap
+            correct: 2
