@@ -126,8 +126,8 @@ export class GenieQuiz {
     state: "correct" | "wrong" | null
   ): void {
     const btn = new Graphics();
-    const fillColor = state === "correct" ? 0xc6e1b6 : state === "wrong" ? 0xfde0e0 : QUIZ_BLUE;
-    const strokeColor = state === "correct" ? 0x0a5b48 : state === "wrong" ? 0xE54C38 : 0x5dbbff;
+    const fillColor = state === "correct" ? 0x2ea94f : state === "wrong" ? 0xef4444 : QUIZ_BLUE;
+    const strokeColor = state === "correct" ? 0x2ea94f : state === "wrong" ? 0xef4444 : 0x5dbbff;
 
     btn.roundRect(0, 0, w, h, 10);
     btn.fill({ color: fillColor, alpha: 0.96 });
@@ -149,21 +149,46 @@ export class GenieQuiz {
 
     this.container.addChild(btn);
 
+    if (state === "correct" || state === "wrong") {
+      const badge = new Graphics();
+      const badgeX = x + w - 32;
+      const badgeY = y + h / 2;
+      const badgeColor = state === "correct" ? 0x2ea94f : 0xef4444;
+      badge.circle(badgeX, badgeY, 18);
+      badge.fill({ color: 0xffffff, alpha: 1 });
+      badge.setStrokeStyle({ width: 1.5, color: state === "correct" ? 0xd8f4df : 0xffd6d6 });
+      badge.stroke();
+      badge.setStrokeStyle({ width: 4, color: badgeColor });
+      if (state === "correct") {
+        badge.moveTo(badgeX - 8, badgeY - 1);
+        badge.lineTo(badgeX - 2, badgeY + 6);
+        badge.lineTo(badgeX + 9, badgeY - 8);
+      } else {
+        badge.moveTo(badgeX - 7, badgeY - 7);
+        badge.lineTo(badgeX + 7, badgeY + 7);
+        badge.moveTo(badgeX + 7, badgeY - 7);
+        badge.lineTo(badgeX - 7, badgeY + 7);
+      }
+      badge.stroke();
+      badge.eventMode = "none";
+      this.container.addChild(badge);
+    }
+
     const label = new Text({
       text,
       style: new TextStyle({
         fontFamily: "Poppins, sans-serif",
         fontSize: 12,
         fontWeight: "bold",
-        fill: state === "correct" ? 0x1b5e20 : state === "wrong" ? 0xb71c1c : 0xffffff,
+        fill: 0xffffff,
         wordWrap: true,
-        wordWrapWidth: w - 36,
+        wordWrapWidth: state === null ? w - 36 : w - 86,
         align: "center",
         lineHeight: 16,
       }),
     });
     label.anchor.set(0.5, 0.5);
-    label.position.set(x + w / 2, y + h / 2);
+    label.position.set(x + w / 2 - (state === null ? 0 : 16), y + h / 2);
     label.eventMode = "none";
     this.container.addChild(label);
   }
@@ -199,8 +224,8 @@ export class GenieQuiz {
       const oy = optionStartY + row * (optionH + gap);
 
       let state: "correct" | "wrong" | null = null;
-      if (i === q.correct) state = "correct";
-      else if (i === selectedIndex && !isCorrect) state = "wrong";
+      if (isCorrect && i === q.correct) state = "correct";
+      else if (!isCorrect && i === selectedIndex) state = "wrong";
 
       this.buildOptionButton(option, i, ox, oy, optionW, optionH, state);
     });
