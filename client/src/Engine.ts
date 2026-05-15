@@ -97,6 +97,9 @@ export class Engine {
     eventBus.on("scene:complete", (sceneId: unknown) => {
       this.mapOverlay.setCompleted(sceneId as string, true);
     });
+    eventBus.on("quiz:continue-to-map", () => {
+      this.mapOverlay.open();
+    });
 
     // Load initial scene or open map for selection
     if (startScene) {

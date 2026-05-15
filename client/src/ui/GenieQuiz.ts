@@ -300,20 +300,7 @@ export class GenieQuiz {
     cardSprite.eventMode = "none";
     this.container.addChild(cardSprite);
 
-    // Star burst decoration
-    const stars = new Graphics();
-    for (let i = 0; i < 12; i++) {
-      const angle = (i / 12) * Math.PI * 2;
-      const r = 70 + (i % 3) * 20;
-      const sx = panelX + PANEL_W / 2 + Math.cos(angle) * r;
-      const sy = panelY + PANEL_H / 2 + Math.sin(angle) * r * 0.6;
-      stars.circle(sx, sy, 3 + (i % 3));
-      stars.fill({ color: 0xffd700, alpha: 0.5 + (i % 3) * 0.15 });
-    }
-    stars.eventMode = "none";
-    this.container.addChild(stars);
-
-    this.drawWaterDropIcon(panelX + PANEL_W / 2, panelY + 100);
+    this.drawWaterDropIcon(panelX + PANEL_W / 2, panelY + 136, 145, 186);
 
     // Checkmark
     const check = new Text({
@@ -323,7 +310,6 @@ export class GenieQuiz {
     check.anchor.set(0.5);
     check.position.set(panelX + PANEL_W / 2, panelY + 200);
     check.eventMode = "none";
-    this.container.addChild(check);
 
     // Title
     const title = new Text({
@@ -336,7 +322,7 @@ export class GenieQuiz {
       }),
     });
     title.anchor.set(0.5);
-    title.position.set(panelX + PANEL_W / 2, panelY + 268);
+    title.position.set(panelX + PANEL_W / 2, panelY + 262);
     title.eventMode = "none";
     this.container.addChild(title);
 
@@ -352,24 +338,77 @@ export class GenieQuiz {
       }),
     });
     sub.anchor.set(0.5);
-    sub.position.set(panelX + PANEL_W / 2, panelY + 310);
+    sub.position.set(panelX + PANEL_W / 2, panelY + 304);
     sub.eventMode = "none";
     this.container.addChild(sub);
 
-    // Emit and auto-close
-    eventBus.emit("scene:complete", this.currentSceneId);
+    this.drawContinueButton(panelX + PANEL_W / 2, panelY + 334);
 
-    setTimeout(() => {
-      this.targetAlpha = 0;
-      this.startFade();
-    }, 2800);
+    eventBus.emit("scene:complete", this.currentSceneId);
   }
 
-  private drawWaterDropIcon(cx: number, cy: number): void {
+  private drawContinueButton(cx: number, y: number): void {
+    const button = new Container();
+    const buttonW = 210;
+    const buttonH = 38;
+    button.position.set(cx, y + buttonH / 2);
+
+    const bg = new Graphics();
+    bg.roundRect(-buttonW / 2, -buttonH / 2, buttonW, buttonH, 9);
+    bg.fill({ color: 0x0d6edb, alpha: 1 });
+    bg.setStrokeStyle({ width: 2, color: 0x49a8ff });
+    bg.stroke();
+    button.addChild(bg);
+
+    const label = new Text({
+      text: "Continue Your Journey",
+      style: new TextStyle({
+        fontFamily: "Poppins, sans-serif",
+        fontSize: 13,
+        fontWeight: "bold",
+        fill: 0xffffff,
+      }),
+    });
+    label.anchor.set(0, 0.5);
+    const groupW = 18 + 10 + label.width;
+    const groupX = -groupW / 2;
+
+    const icon = new Graphics();
+    const iconX = groupX + 9;
+    icon.circle(iconX, 0, 9);
+    icon.fill({ color: 0xffffff, alpha: 1 });
+    icon.setStrokeStyle({ width: 2.5, color: 0x0d6edb });
+    icon.moveTo(iconX - 4, 0);
+    icon.lineTo(iconX + 4, 0);
+    icon.moveTo(iconX, -4);
+    icon.lineTo(iconX + 5, 0);
+    icon.lineTo(iconX, 4);
+    icon.stroke();
+    icon.eventMode = "none";
+    button.addChild(icon);
+
+    label.position.set(groupX + 28, 0);
+    label.eventMode = "none";
+    button.addChild(label);
+
+    button.eventMode = "static";
+    button.cursor = "pointer";
+    button.on("pointerdown", () => {
+      this.targetAlpha = 0;
+      this.startFade();
+      eventBus.emit("quiz:continue-to-map");
+    });
+    button.on("pointerover", () => button.scale.set(1.02));
+    button.on("pointerout", () => button.scale.set(1));
+
+    this.container.addChild(button);
+  }
+
+  private drawWaterDropIcon(cx: number, cy: number, width = 99, height = 127): void {
     const icon = new Sprite(this.waterDropIconTexture);
     icon.anchor.set(0.5);
-    icon.width = 99;
-    icon.height = 127;
+    icon.width = width;
+    icon.height = height;
     icon.position.set(cx, cy);
     icon.eventMode = "none";
     this.container.addChild(icon);
