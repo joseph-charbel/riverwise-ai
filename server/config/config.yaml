@@ -12,12 +12,12 @@ cache_config:
     preload_file: config/preload_cache.yaml # optional; omit or set null to skip preload
 
 chat_model_config:
-    provider: groq
-    model: llama-3.1-8b-instant
-    # provider: google
-    # model: gemini-2.5-flash-lite
+    # provider: groq
+    # model: llama-3.1-8b-instant
+    provider: google
+    model: gemini-3.1-flash-lite
     kwargs:
-        temperature: 0.01
+        temperature: 0.75
 
 prompts_config:
     # system_prompt_file: prompts/meta.txt # prompt based on meta strategy (https://github.com/meta-prompting/meta-prompting?tab=readme-ov-file)

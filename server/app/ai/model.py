@@ -27,7 +27,7 @@ _cache_preloaded = False
 _LOG_PREVIEW_MAX = 260
 
 
-def _stringify_message_content(content: Any) -> str:
+def message_content_to_text(content: Any) -> str:
         if content is None:
                 return ""
         if isinstance(content, str):
@@ -58,7 +58,7 @@ def _human_text_from_messages(messages: list[BaseMessage]) -> str:
         chunks: list[str] = []
         for m in messages:
                 if isinstance(m, HumanMessage):
-                        chunks.append(_stringify_message_content(m.content))
+                        chunks.append(message_content_to_text(m.content))
         return "\n".join(chunks)
 
 
@@ -85,6 +85,20 @@ def _render_system_prompt(template: str, variables: dict[str, Any]) -> str:
                 student_interest=variables["student_interest"],
         )
         return rendered
+
+
+def _format_grade_prompt_target(
+        grade_level: str,
+        grade_rules_range: tuple[int, int] | None,
+) -> str:
+        """Return the grade label injected into the system prompt."""
+        if grade_rules_range is None:
+                return grade_level
+
+        lo, hi = grade_rules_range
+        if lo == hi:
+                return f"Grade {lo}"
+        return f"Grades {lo}-{hi}"
 
 
 def _append_grade_rules(rendered: str, grade_raw: Any) -> str:
@@ -253,7 +267,10 @@ def build_information_card_messages(
         """Build prompt artifacts for debug preview or LLM invocation."""
         system_prompt_template, example_prompt_template = _get_prompt_templates()
         vars_dict = {
-                "grade_level": grade_level,
+                "grade_level": _format_grade_prompt_target(
+                        grade_level,
+                        grade_rules_range,
+                ),
                 "student_interest": student_interest,
         }
 
@@ -264,7 +281,7 @@ def build_information_card_messages(
                 lo, hi = grade_rules_range
                 system_prompt = _append_grade_rules_span(system_prompt, lo, hi)
         else:
-                system_prompt = _append_grade_rules(system_prompt, vars_dict["grade_level"])
+                system_prompt = _append_grade_rules(system_prompt, grade_level)
 
         if target_mechanic:
                 human_content = f"**Target Mechanic:** {target_mechanic}\n\n{prompt}"
@@ -306,7 +323,7 @@ async def _invoke(messages: list[BaseMessage], *, operation: str) -> AIMessage:
 
         cached = await cache.get(cache_key)
         if cached is not None:
-                out = _stringify_message_content(cached.content)
+                out = message_content_to_text(cached.content)
                 logger.info(
                         "LLM skipped (cache hit) operation=%s cache_key_prefix=%s "
                         "human_chars=%d human_preview=%s response_chars=%d "
@@ -332,7 +349,7 @@ async def _invoke(messages: list[BaseMessage], *, operation: str) -> AIMessage:
         res = await _get_llm().ainvoke(messages)
         elapsed_ms = (time.perf_counter() - t0) * 1000
         await cache.set(cache_key, res)
-        out = _stringify_message_content(res.content)
+        out = message_content_to_text(res.content)
         logger.info(
                 "LLM response operation=%s response_chars=%d response_preview=%s "
                 "elapsed_ms=%.0f",

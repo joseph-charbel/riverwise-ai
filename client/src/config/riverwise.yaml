@@ -241,7 +241,7 @@ scenes:
 
     # ── Kids Play Area ────────────────────────────────────────────────────
     - node_id: kids_play_area
-      background_asset: assets/scenes/kids-play-area-bad.webp
+      background_asset: assets/scenes/kids-play-area-cropped.webp
       hotspots:
 
           - id: info_kids_macroinvertebrates
