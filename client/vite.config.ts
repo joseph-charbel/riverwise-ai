@@ -65,7 +65,7 @@ export default defineConfig({
     }),
   ],
   define: {
-    ENGINE_DEBUG: JSON.stringify(false),
+    ENGINE_DEBUG: JSON.stringify(true),
   },
   server: {
     proxy: {
